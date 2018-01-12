@@ -21,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThirdParty", "ThirdParty\Th
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThirdParty.Tests", "ThirdParty.Tests\ThirdParty.Tests.csproj", "{BFB92A91-6C21-479A-AE9A-6933A67D74D3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data.Tests", "Data.Tests\Data.Tests.csproj", "{9AC94BDF-0676-4CAC-BD1E-350C601C1072}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Data.Tests", "Data.Tests\Data.Tests.csproj", "{9AC94BDF-0676-4CAC-BD1E-350C601C1072}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

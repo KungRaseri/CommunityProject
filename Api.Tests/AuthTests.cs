@@ -23,15 +23,13 @@ namespace Api.Tests
             var username = Faker.Internet.UserName();
             var salt = BCrypt.Net.BCrypt.GenerateSalt();
 
-            var user = new User()
+            var user = new User
             {
                 Email = Faker.Internet.Email(username),
                 TwitchUsername = username,
                 Password = Crypto.PasswordCrypt(username, salt),
                 PasswordSalt = salt
             };
-
-
         }
 
         [TestCase("", "asjfhashfkajhsdf")]
