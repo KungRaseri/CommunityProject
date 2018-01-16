@@ -2,7 +2,7 @@
   <aside class="sidebar">
     <vuestic-scrollbar>
       <ul class="sidebar-menu">
-        <li v-for="(item, index) in menuItems">
+        <li v-for="(item, index) in menuItems" :key="index">
           <router-link :to="item.path"
                        class="sidebar-link"
                        @click="toggleMenuItem(item)"
@@ -21,7 +21,7 @@
           </a>
           <expanding>
             <ul class="sidebar-submenu in" v-show="item.meta.expanded">
-              <li v-for="childItem in item.children">
+              <li v-for="childItem in item.children" :key="childItem.name">
                 <router-link :to="childItem.path" class="sidebar-link sidebar-submenu-link">
                   {{childItem.meta.title}}
                 </router-link>

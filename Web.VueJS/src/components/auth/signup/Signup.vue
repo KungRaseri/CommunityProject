@@ -22,7 +22,7 @@
       </div>
       <div class="d-flex flex-column flex-lg-row align-items-center justify-content-between down-container">
         <button class="btn btn-primary" type="submit">
-          Sign Up
+          Register
         </button>
         <router-link class='link' :to="{name: 'Login'}">Already joined?</router-link>
       </div>

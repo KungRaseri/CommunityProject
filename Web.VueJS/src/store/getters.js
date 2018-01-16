@@ -4,6 +4,8 @@ const toggleWithoutAnimation = state => state.app.sidebar.withoutAnimation
 const config = state => state.app.config
 const palette = state => state.app.config.palette
 const isLoading = state => state.app.isLoading
+const isAuthenticated = state => state.app.isAuthenticated
+const token = state => state.app.token
 
 export {
   menuItems,
@@ -11,5 +13,7 @@ export {
   sidebarOpened,
   config,
   palette,
-  isLoading
+  isLoading,
+  isAuthenticated,
+  token
 }

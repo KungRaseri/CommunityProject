@@ -23,35 +23,59 @@ const state = {
       lighterGray: '#ddd'
     }
   },
-  isLoading: true
+  isLoading: true,
+  isAuthenticated: false,
+  token: {}
 }
 
 const mutations = {
-  [types.CLOSE_MENU] (state) {
+  [types.CLOSE_MENU](state) {
     if (document.documentElement.clientWidth < 992) {
       state.sidebar.opened = false
     }
   },
-  [types.TOGGLE_SIDEBAR] (state, opened) {
+  [types.TOGGLE_SIDEBAR](state, opened) {
     state.sidebar.opened = opened
   },
-  [types.TOGGLE_WITHOUT_ANIMATION] (state, value) {
+  [types.TOGGLE_WITHOUT_ANIMATION](state, value) {
     state.sidebar.withoutAnimation = value
   },
-  setLoading (state, isLoading) {
+  setLoading(state, isLoading) {
     state.isLoading = isLoading
+  },
+  [types.SET_IS_AUTHENTICATED](state, value) {
+    state.isAuthenticated = value
+  },
+  [types.SET_TOKEN](state, value) {
+    state.token = value
   }
 }
 
 const actions = {
-  closeMenu ({ commit }) {
+  closeMenu({
+    commit
+  }) {
     commit(types.CLOSE_MENU)
   },
-  toggleSidebar ({ commit }, opened) {
+  toggleSidebar({
+    commit
+  }, opened) {
     commit(types.TOGGLE_SIDEBAR, opened)
   },
-  isToggleWithoutAnimation ({ commit }, value) {
+  isToggleWithoutAnimation({
+    commit
+  }, value) {
     commit(types.TOGGLE_WITHOUT_ANIMATION, value)
+  },
+  setIsAuthenticated({
+    commit
+  }, value) {
+    commit(types.SET_IS_AUTHENTICATED, value)
+  },
+  setToken({
+    commit
+  }, value) {
+    commit(types.SET_TOKEN, value)
   }
 }
 

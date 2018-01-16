@@ -1,9 +1,0 @@
-.flexSpaceBetween {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.foldersList li.flexSpaceBetween > a {
-    @extend .flexSpaceBetween;
-}

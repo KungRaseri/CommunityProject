@@ -66,6 +66,12 @@ namespace Api
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseCors(cors =>
+                {
+                    cors
+                    .WithOrigins("http://localhost:8080")
+                    .AllowAnyHeader();
+                });
             }
 
             app.UseAuthentication();

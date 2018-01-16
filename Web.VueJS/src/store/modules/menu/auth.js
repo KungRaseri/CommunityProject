@@ -16,7 +16,7 @@ export default {
       path: '/auth/login',
       component: lazyLoading('auth/login/Login'),
       meta: {
-        default: false,
+        default: true,
         title: 'Login'
       }
     },

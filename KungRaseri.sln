@@ -13,9 +13,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{12BDBD80
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Data", "data\Data.csproj", "{DE08C364-423E-47FB-B2D6-87F44413529A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bot", "fury-bot\Bot.csproj", "{C6069991-C2E5-43E1-8C63-8896F8660AF0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bot", "Bot\Bot.csproj", "{C6069991-C2E5-43E1-8C63-8896F8660AF0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FuryBot.Tests", "fury-bot.Tests\FuryBot.Tests.csproj", "{D6760825-33EA-402A-A8F4-BADF8E4FCF08}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bot.Tests", "Bot.Tests\Bot.Tests.csproj", "{D6760825-33EA-402A-A8F4-BADF8E4FCF08}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThirdParty", "ThirdParty\ThirdParty.csproj", "{004824E2-0B6C-4C95-B046-8B995C9F3E44}"
 EndProject
