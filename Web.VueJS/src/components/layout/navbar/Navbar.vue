@@ -1,9 +1,9 @@
 <template>
   <nav class="navbar app-navbar navbar-toggleable-md">
     <div class="navbar-brand-container d-flex align-items-center justify-content-start">
-      <a class="navbar-brand" href="#">
-        <span class="i-kungraseri"></span>
-      </a>
+      <router-link class="navbar-brand" :to="{name: 'Dashboard'}">
+        <span class="i-vuestic"></span>
+      </router-link>
     </div>
 
     <div class="row navbar-container">
@@ -87,19 +87,21 @@ export default {
     dropdown: Dropdown
   },
 
-  computed: mapGetters(["sidebarOpened", "toggleWithoutAnimation"]),
+  computed: mapGetters(["sidebarOpened", "toggleWithoutAnimation", "user"]),
   methods: {
     ...mapActions([
       "closeMenu",
       "toggleSidebar",
       "isToggleWithoutAnimation",
       "setToken",
-      "setIsAuthenticated"
+      "setIsAuthenticated",
+      "setUser"
     ]),
     logout() {
       this.setToken({});
       this.setIsAuthenticated(false);
-      this.$router.push({ path: "/auth/login" });
+      this.setUser({});
+      this.$router.push({ name: "Login" });
     }
   }
 };

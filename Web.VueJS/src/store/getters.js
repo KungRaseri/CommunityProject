@@ -6,6 +6,7 @@ const palette = state => state.app.config.palette
 const isLoading = state => state.app.isLoading
 const isAuthenticated = state => state.app.isAuthenticated
 const token = state => state.app.token
+const user = state => state.app.user
 
 export {
   menuItems,
@@ -15,5 +16,6 @@ export {
   palette,
   isLoading,
   isAuthenticated,
-  token
+  token,
+  user
 }

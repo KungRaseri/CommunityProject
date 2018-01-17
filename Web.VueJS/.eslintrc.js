@@ -22,6 +22,7 @@ module.exports = {
     'space-before-function-paren': 0,
     'quotes': 0,
     'semi': 0,
+    'padded-blocks': 0,
     // allow async-await
     'generator-star-spacing': 0,
     'no-multiple-empty-lines': 0,

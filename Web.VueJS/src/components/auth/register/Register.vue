@@ -1,34 +1,40 @@
 <template>
-  <div class="login">
-    <h2>Welcome!</h2>
-    <form method="post" name="login" @submit.prevent="login">
+  <div class="signup">
+    <h2>Create New Account</h2>
+    <form method="post" name="signup" @submit.prevent="register">
       <div class="form-group">
         <div class="input-group">
-          <input v-model="email" type="text" id="email" name="email" required="required"/>
+          <input v-model="email" type="text" id="email" required="required"/>
           <label class="control-label" for="email">Email</label><i class="bar"></i>
         </div>
       </div>
       <div class="form-group">
         <div class="input-group">
-          <input v-model="password" type="password" id="password" name="password" required="required"/>
+          <input v-model="password" type="password" id="password" required="required"/>
           <label class="control-label" for="password">Password</label><i class="bar"></i>
         </div>
       </div>
+      <!-- <div class="abc-checkbox abc-checkbox-primary">
+        <input id="checkbox1" type="checkbox" checked>
+        <label for="checkbox1">
+          <span class="abc-label-text">I agree to <router-link to="">Terms of Use.</router-link></span>
+        </label>
+      </div> -->
       <div class="d-flex flex-column flex-lg-row align-items-center justify-content-between down-container">
         <button class="btn btn-primary" type="submit">
-          Login
+          Register
         </button>
-        <router-link class='link' :to="{name: 'Register'}">Create account</router-link>
+        <router-link class='link' :to="{name: 'Login'}">Already joined?</router-link>
       </div>
     </form>
   </div>
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { mapActions } from "vuex";
 
 export default {
-  name: "login",
+  name: "register",
   data() {
     return {
       email: "",
@@ -36,22 +42,26 @@ export default {
     };
   },
   methods: {
-    ...mapGetters(["isAuthenticated"]),
     ...mapActions(["setIsAuthenticated", "setToken", "setUser"]),
-    login() {
+    register() {
       var data = new FormData();
 
       data.append("email", this.email);
       data.append("password", this.password);
 
       this.$ax
-        .post(`auth/token`, data)
+        .post(`auth/register`, data)
         .then(response => {
-          var value = response.data.value;
-          if (value.token) {
-            this.setIsAuthenticated(true);
-            this.setToken(value.token);
-            this.setUser(value.user);
+          var user = response.data.value;
+          if (user) {
+            this.$ax.post(`auth/token`, data).then(response => {
+              var value = response.data.value;
+              if (value) {
+                this.setToken(value.token);
+                this.setIsAuthenticated(true);
+                this.setUser(value.user);
+              }
+            });
             this.$router.push({
               name: "Dashboard"
             });
@@ -70,7 +80,8 @@ export default {
 @import "../../../sass/variables";
 @import "../../../../node_modules/bootstrap/scss/mixins/breakpoints";
 @import "../../../../node_modules/bootstrap/scss/variables";
-.login {
+
+.signup {
   @include media-breakpoint-down(md) {
     width: 100%;
     padding-right: 2rem;
@@ -88,7 +99,7 @@ export default {
   width: 21.375rem;
 
   .down-container {
-    margin-top: 3.125rem;
+    margin-top: 2.6875rem;
   }
 }
 </style>

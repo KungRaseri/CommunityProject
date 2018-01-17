@@ -7,6 +7,8 @@ export default {
   meta: {
     default: false,
     title: 'Dashboard',
-    iconClass: 'vuestic-icon vuestic-icon-dashboard'
+    iconClass: 'vuestic-icon vuestic-icon-dashboard',
+    requiresAuth: true,
+    showInSidebarEnabled: false
   }
 }

@@ -26,23 +26,6 @@ namespace Api.Controllers.Account
             _userCollection = new CouchDbStore<User>(Settings.CouchDbUri);
         }
 
-        private async Task<User> Login(string email, string password)
-        {
-            User dbUser;
-
-            try
-            {
-                //dbUser = _userCollection.GetAsync()
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                return null;
-            }
-
-            return null;
-        }
-
         [AllowAnonymous]
         [Route("register")]
         [HttpPost]
@@ -73,10 +56,10 @@ namespace Api.Controllers.Account
 
             dbUser = await _userCollection.AddOrUpdateAsync(user);
 
-            dbUser.Password = "<monkaS>";
-            dbUser.PasswordSalt = "<monkaS>";
+            dbUser.Password = string.Empty;
+            dbUser.PasswordSalt = string.Empty;
 
-            return Json(dbUser);
+            return StatusCode((int)HttpStatusCode.OK, Json(dbUser));
         }
 
         [Route("token")]
@@ -106,8 +89,7 @@ namespace Api.Controllers.Account
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.PrimarySid, user.Id),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim(ClaimTypes.Name, user.TwitchUsername)
+                new Claim(JwtRegisteredClaimNames.Email, user.Email)
             };
 
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Settings.Keys.JWTSecurityKey));
@@ -139,12 +121,13 @@ namespace Api.Controllers.Account
                     Json(new { error = $"Error: {e.Message}. Stack Trace: {e.StackTrace}" }));
             }
 
+            user.Password = string.Empty;
+            user.PasswordSalt = string.Empty;
+
             return StatusCode((int)HttpStatusCode.OK, Json(new
             {
-                token = savedToken.Value,
-                userId = savedToken.UserId,
-                issued = savedToken.Issued,
-                expiration = savedToken.Expiration
+                user,
+                token = savedToken,
             }));
         }
     }

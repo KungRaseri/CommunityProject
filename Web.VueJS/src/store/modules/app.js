@@ -25,7 +25,8 @@ const state = {
   },
   isLoading: true,
   isAuthenticated: false,
-  token: {}
+  token: {},
+  user: {}
 }
 
 const mutations = {
@@ -48,6 +49,9 @@ const mutations = {
   },
   [types.SET_TOKEN](state, value) {
     state.token = value
+  },
+  [types.SET_USER](state, value) {
+    state.user = value
   }
 }
 
@@ -76,6 +80,11 @@ const actions = {
     commit
   }, value) {
     commit(types.SET_TOKEN, value)
+  },
+  setUser({
+    commit
+  }, value) {
+    commit(types.SET_USER, value)
   }
 }
 

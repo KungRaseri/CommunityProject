@@ -44,7 +44,6 @@ import SetupProfileTab from "./setup-profile-tab/SetupProfileTab.vue";
 import FeaturesTab from "./features-tab/FeaturesTab.vue";
 import DataVisualisationTab from "./data-visualisation-tab/DataVisualisation.vue";
 import DashboardBottomWidgets from "./DashboardBottomWidgets.vue";
-import { mapGetters } from "vuex"
 
 export default {
   name: "dashboard",
@@ -58,17 +57,6 @@ export default {
     SetupProfileTab,
     FeaturesTab,
     DashboardBottomWidgets
-  },
-  computed: {
-    ...mapGetters(["isAuthenticated"])
-  },
-  created() {
-
-  },
-  mounted() {
-    if (!this.isAuthenticated) {
-      this.$router.push({ path: "/auth/login" });
-    }
   }
 };
 </script>
