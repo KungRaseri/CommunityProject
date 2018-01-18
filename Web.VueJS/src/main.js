@@ -10,46 +10,7 @@ import {
   sync
 } from 'vuex-router-sync'
 import VuesticPlugin from 'src/components/vuestic-components/vuestic-components-plugin'
-import {
-  isAuthenticated
-} from './store/getters';
 import axios from 'axios';
-
-// var passport = require('passport');
-// var LocalStrategy = require('passport-local').LocalStrategy
-
-// passport.use(new LocalStrategy(
-//   function (email, password, done) {
-//     var data = new FormData();
-
-//     data.append("email", email);
-//     data.append("password", password);
-
-//     axios
-//       .create({
-//         baseURL: "http://localhost:53600/api/"
-//       })
-//       .post(`auth/token`, data)
-//       .then(response => {
-//         var token = response.data.value;
-//         if (token) {
-//           // asdfasdf
-//           this.setIsAuthenticated(true);
-//           this.setToken(token);
-//           this.$router.push({
-//             path: "/dashboard"
-//           });
-//           var user = {};
-//           // get user from api
-//           return done(null, user);
-//         }
-//         return done(null, false);
-//       })
-//       .catch(e => {
-//         return done(null, false);
-//       });
-//   }
-// ));
 
 Vue.prototype.$ax = axios
   .create({
@@ -79,7 +40,8 @@ let mediaHandler = () => {
 router.beforeEach((to, from, next) => {
   store.commit('setLoading', true)
   if (to.matched.some(route => route.meta.requiresAuth)) {
-    if (!isAuthenticated) {
+    console.log('test', 'is this working', '--- ' + to.meta.requiresAuth, store.getters.isAuthenticated);
+    if (!store.getters.isAuthenticated) {
       next({
         name: 'Login',
         query: {
@@ -92,7 +54,6 @@ router.beforeEach((to, from, next) => {
   } else {
     next();
   }
-  next()
 })
 
 router.afterEach((to, from) => {

@@ -15,7 +15,7 @@
     </div>
 
     <div class="wizard-body">
-      <div class="wizard-body-step" v-for="step in steps" v-show="isStepShown(step)">
+      <div class="wizard-body-step" v-for="step in steps" v-show="isStepShown(step)" :key="step.slot">
         <slot :name="step.slot" class="step-content"></slot>
       </div>
 

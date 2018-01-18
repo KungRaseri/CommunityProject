@@ -1,5 +1,5 @@
 <template>
-  <div class="dashboard">
+  <div class="profile">
     <div class="row">
       <div class="col-md-12">
         <vuestic-alert v-if="alert.active" :type="alert.type.name" :withCloseBtn="alert.withCloseBtn">
@@ -9,28 +9,10 @@
         </vuestic-alert>
       </div>
     </div>
-
-    <dashboard-info-widgets></dashboard-info-widgets>
-
-    <vuestic-widget class="no-padding no-v-padding" v-if="user.twitchUsername">
-      <vuestic-tabs :names="['Setup Profile']" ref="tabs">
-        <!-- <div slot="Data Visualization">
-          <data-visualisation-tab></data-visualisation-tab>
-        </div>
-        <div slot="Users & Members">
-          <users-members-tab></users-members-tab>
-        </div> -->
-        <div slot="Setup Profile">
-          <setup-profile-tab></setup-profile-tab>
-        </div>
-        <!-- <div slot="Features">
-          <features-tab></features-tab>
-        </div> -->
-      </vuestic-tabs>
-    </vuestic-widget>
-
-    <dashboard-bottom-widgets></dashboard-bottom-widgets>
-
+    <vuestic-profile-card :name="user.twitchUsername || 'Unknown'" 
+                      photoSource="http://via.placeholder.com/350x350"
+                      :social="{twitter: 'twitter.com', facebook: 'facebook.com', instagram: 'instagram.com'}">
+    </vuestic-profile-card>
   </div>
 </template>
 

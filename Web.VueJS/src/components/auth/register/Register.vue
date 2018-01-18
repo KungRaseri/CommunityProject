@@ -42,7 +42,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["setIsAuthenticated", "setToken", "setUser"]),
+    ...mapActions(["login"]),
     register() {
       var data = new FormData();
 
@@ -55,15 +55,16 @@ export default {
           var user = response.data.value;
           if (user) {
             this.$ax.post(`auth/token`, data).then(response => {
-              var value = response.data.value;
-              if (value) {
-                this.setToken(value.token);
-                this.setIsAuthenticated(true);
-                this.setUser(value.user);
+              var resValue = response.data.value;
+              if (resValue.token) {
+                this.$store.dispatch("login", resValue).then(() => {
+                  this.$router.push({ name: "Dashboard" });
+                });
+              } else {
+                this.$store.dispatch("logout").then(() => {
+                  this.$router.push({ name: "Login" });
+                });
               }
-            });
-            this.$router.push({
-              name: "Dashboard"
             });
           }
           // token was not given

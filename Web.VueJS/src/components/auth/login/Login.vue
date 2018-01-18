@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { mapGetters } from "vuex";
 
 export default {
   name: "login",
@@ -37,7 +37,6 @@ export default {
   },
   methods: {
     ...mapGetters(["isAuthenticated"]),
-    ...mapActions(["setIsAuthenticated", "setToken", "setUser"]),
     login() {
       var data = new FormData();
 
@@ -47,20 +46,25 @@ export default {
       this.$ax
         .post(`auth/token`, data)
         .then(response => {
-          var value = response.data.value;
-          if (value.token) {
-            this.setIsAuthenticated(true);
-            this.setToken(value.token);
-            this.setUser(value.user);
-            this.$router.push({
-              name: "Dashboard"
+          var resValue = response.data.value;
+          if (resValue.token) {
+            this.$store.dispatch("login", resValue).then(() => {
+              this.$router.push({ name: "Dashboard" });
+            });
+          } else {
+            this.$store.dispatch("logout").then(() => {
+              this.$router.push({ name: "Login" });
             });
           }
-          // token was not given
         })
         .catch(e => {
-          console.log(e);
+          // report error to sentry
         });
+    },
+    mounted() {
+      if (this.isAuthenticated) {
+        this.$store.dispatch("logout");
+      }
     }
   }
 };

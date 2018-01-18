@@ -87,21 +87,23 @@ export default {
     dropdown: Dropdown
   },
 
-  computed: mapGetters(["sidebarOpened", "toggleWithoutAnimation", "user"]),
+  computed: mapGetters([
+    "sidebarOpened",
+    "toggleWithoutAnimation",
+    "token",
+    "user"
+  ]),
   methods: {
     ...mapActions([
       "closeMenu",
       "toggleSidebar",
       "isToggleWithoutAnimation",
-      "setToken",
-      "setIsAuthenticated",
-      "setUser"
+      "logout"
     ]),
     logout() {
-      this.setToken({});
-      this.setIsAuthenticated(false);
-      this.setUser({});
-      this.$router.push({ name: "Login" });
+      this.$store.dispatch("logout").then(() => {
+        this.$router.push({ name: "Login" });
+      });
     }
   }
 };
