@@ -29,9 +29,6 @@ const ApiService = {
             reject(response);
           })
       });
-    },
-    Token() {
-
     }
   },
   User: {
@@ -46,8 +43,21 @@ const ApiService = {
           })
       });
     },
-    Post() {
+    Post(user) {
+      return new Promise((resolve, reject) => {
+        var data = new FormData();
 
+        data.append(user);
+
+        axios
+          .post('user', user)
+          .then(response => {
+            resolve(response);
+          })
+          .catch(response => {
+            reject(response);
+          })
+      })
     }
   }
 };
