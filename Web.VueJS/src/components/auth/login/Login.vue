@@ -38,13 +38,8 @@ export default {
   methods: {
     ...mapGetters(["isAuthenticated"]),
     login() {
-      var data = new FormData();
-
-      data.append("email", this.email);
-      data.append("password", this.password);
-
-      this.$ax
-        .post(`auth/token`, data)
+      this.$api.Auth
+        .Login({ email: this.email, password: this.password })
         .then(response => {
           var resValue = response.data.value;
           if (resValue.token) {
@@ -59,6 +54,7 @@ export default {
         })
         .catch(e => {
           // report error to sentry
+          console.log('error', e);
         });
     },
     mounted() {

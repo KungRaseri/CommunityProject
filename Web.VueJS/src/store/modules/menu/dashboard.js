@@ -6,7 +6,6 @@ export default {
     default: false,
     title: 'Dashboard',
     iconClass: 'vuestic-icon vuestic-icon-dashboard',
-    requiresAuth: true,
     showInSidebarEnabled: false
   },
   children: [
@@ -16,7 +15,8 @@ export default {
       component: lazyLoading('dashboard/Dashboard'),
       meta: {
         default: false,
-        title: 'Dashboard'
+        title: 'Dashboard',
+        requiresAuth: true
       }
     },
     {
@@ -25,7 +25,8 @@ export default {
       component: lazyLoading('dashboard/Profile'),
       meta: {
         default: false,
-        title: 'Profile'
+        title: 'Profile',
+        requiresAuth: true
       }
     }
   ]

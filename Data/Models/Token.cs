@@ -10,7 +10,6 @@ namespace Data.Models
 
         public string Value { get; set; }
         public string UserId { get; set; }
-        public string TwitchUsername { get; set; }
         public DateTime Expiration { get; set; }
         public DateTime Issued { get; set; }
     }

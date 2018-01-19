@@ -27,9 +27,9 @@ const state = {
     }
   },
   isLoading: true,
-  isAuthenticated: !!localStorage.getItem('token'),
-  token: localStorage.getItem('token') || {},
-  user: localStorage.getItem('user') || {}
+  isAuthenticated: !!JSON.parse(localStorage.getItem('token')),
+  token: JSON.parse(localStorage.getItem('token')) || {},
+  user: JSON.parse(localStorage.getItem('user')) || {}
 }
 
 const mutations = {
@@ -42,6 +42,8 @@ const mutations = {
   },
   [types.LOGOUT](state) {
     state.isAuthenticated = false;
+    state.user = {};
+    state.token = {};
   },
   [types.CLOSE_MENU](state) {
     if (document.documentElement.clientWidth < 992) {
@@ -81,8 +83,8 @@ const actions = {
     commit(types.LOGIN);
     return new Promise(resolve => {
       setTimeout(() => {
-        localStorage.setItem("user", value.user);
-        localStorage.setItem("token", value.token);
+        localStorage.setItem("user", JSON.stringify(value.user));
+        localStorage.setItem("token", JSON.stringify(value.token));
         commit(types.LOGIN_SUCCESS, value);
         resolve();
       }, 1000);
@@ -91,8 +93,7 @@ const actions = {
   logout({
     commit
   }) {
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
+    localStorage.clear();
     commit(types.LOGOUT);
   }
 }

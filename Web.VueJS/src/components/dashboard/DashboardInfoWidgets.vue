@@ -80,11 +80,9 @@ export default {
       return this.users.length;
     }
   },
-  mounted() {
-    this.$ax
-      .get(`user`, {
-        headers: { Authorization: "Bearer " + this.token.value }
-      })
+  beforeMount() {
+    this.$api.User
+      .Get()
       .then(response => {
         var value = response.data.value || -1;
         this.users = value;
@@ -92,7 +90,6 @@ export default {
       .catch(e => {
         console.log(e);
       });
-    this.$refs.circleProgress.$data.value = 70;
   }
 };
 </script>

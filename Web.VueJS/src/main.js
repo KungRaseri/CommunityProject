@@ -10,15 +10,9 @@ import {
   sync
 } from 'vuex-router-sync'
 import VuesticPlugin from 'src/components/vuestic-components/vuestic-components-plugin'
-import axios from 'axios';
+import ApiService from './services/api.service';
 
-Vue.prototype.$ax = axios
-  .create({
-    baseURL: "http://localhost:53600/api/",
-    headers: [
-      "Access-Control-Allow-Origin: *"
-    ]
-  });
+Vue.prototype.$api = ApiService;
 Vue.use(VuesticPlugin)
 Vue.use(BootstrapVue)
 
@@ -40,7 +34,6 @@ let mediaHandler = () => {
 router.beforeEach((to, from, next) => {
   store.commit('setLoading', true)
   if (to.matched.some(route => route.meta.requiresAuth)) {
-    console.log('test', 'is this working', '--- ' + to.meta.requiresAuth, store.getters.isAuthenticated);
     if (!store.getters.isAuthenticated) {
       next({
         name: 'Login',
