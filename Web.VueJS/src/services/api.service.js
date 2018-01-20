@@ -30,8 +30,21 @@ const ApiService = {
           })
       });
     },
-    Token() {
+    Register(credentials) {
+      return new Promise((resolve, reject) => {
+        var data = new FormData();
 
+        data.append("email", credentials.email);
+        data.append("password", credentials.password);
+
+        axios
+          .post(`auth/register`, data)
+          .then(response => {
+            resolve(response);
+          }).catch(response => {
+            reject(response);
+          })
+      });
     }
   },
   User: {
@@ -48,6 +61,32 @@ const ApiService = {
     },
     Post() {
 
+    }
+  },
+  StreamElements: {
+    GetTopPoints() {
+      return new Promise((resolve, reject) => {
+        axios
+          .get('se/points/top')
+          .then(response => {
+            resolve(response);
+          })
+          .catch(response => {
+            reject(response);
+          })
+      })
+    },
+    GetTopAlltimePoints() {
+      return new Promise((resolve, reject) => {
+        axios
+          .get('se/points/top/alltime')
+          .then(response => {
+            resolve(response);
+          })
+          .catch(response => {
+            reject(response);
+          })
+      })
     }
   }
 };

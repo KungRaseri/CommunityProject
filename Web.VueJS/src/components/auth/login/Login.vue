@@ -38,12 +38,18 @@ export default {
   methods: {
     ...mapGetters(["isAuthenticated"]),
     login() {
-      this.$api.Auth
-        .Login({ email: this.email, password: this.password })
+      this.$api.Auth.Login({ email: this.email, password: this.password })
         .then(response => {
           var resValue = response.data.value;
           if (resValue.token) {
             this.$store.dispatch("login", resValue).then(() => {
+              if (this.$route.query) {
+                var redirect = this.$route.query.redirect;
+                if (redirect) {
+                  this.$router.push({ path: redirect });
+                }
+                return;
+              }
               this.$router.push({ name: "Dashboard" });
             });
           } else {
@@ -54,14 +60,16 @@ export default {
         })
         .catch(e => {
           // report error to sentry
-          console.log('error', e);
+          console.log("error", e);
         });
-    },
-    mounted() {
-      if (this.isAuthenticated) {
-        this.$store.dispatch("logout");
-      }
     }
+  },
+  beforeMount() {
+    if (this.isAuthenticated) {
+      this.$router.push({ name: "Dashboard" });
+      return;
+    }
+    this.$store.dispatch("logout");
   }
 };
 </script>

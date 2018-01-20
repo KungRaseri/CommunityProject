@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
   name: "register",
@@ -41,6 +41,9 @@ export default {
       password: ""
     };
   },
+  computed: {
+    ...mapGetters(["isAuthenticated"])
+  },
   methods: {
     ...mapActions(["login"]),
     register() {
@@ -49,12 +52,11 @@ export default {
       data.append("email", this.email);
       data.append("password", this.password);
 
-      this.$ax
-        .post(`auth/register`, data)
+      this.$api.Auth.Register(data)
         .then(response => {
           var user = response.data.value;
           if (user) {
-            this.$ax.post(`auth/token`, data).then(response => {
+            this.$api.Auth.Login(data).then(response => {
               var resValue = response.data.value;
               if (resValue.token) {
                 this.$store.dispatch("login", resValue).then(() => {
@@ -66,13 +68,23 @@ export default {
                 });
               }
             });
+            return;
           }
-          // token was not given
+          this.$store.dispatch("logout").then(() => {
+            this.$router.push({ name: "Login" });
+          });
         })
         .catch(e => {
           console.log(e);
         });
     }
+  },
+  beforeMount() {
+    if (this.isAuthenticated) {
+      this.$router.push({ name: "Dashboard" });
+      return;
+    }
+    this.$store.dispatch("logout");
   }
 };
 </script>

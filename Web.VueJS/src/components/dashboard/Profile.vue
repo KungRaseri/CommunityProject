@@ -19,27 +19,13 @@
 <script>
 import VuesticWidget from "../vuestic-components/vuestic-widget/VuesticWidget";
 import VuesticAlert from "../vuestic-components/vuestic-alert/VuesticAlert";
-import DashboardInfoWidgets from "./DashboardInfoWidgets";
-import VuesticTabs from "../vuestic-components/vuestic-tabs/VuesticTabs.vue";
-// import UsersMembersTab from "./users-and-members-tab/UsersMembersTab.vue";
-import SetupProfileTab from "./setup-profile-tab/SetupProfileTab.vue";
-// import FeaturesTab from "./features-tab/FeaturesTab.vue";
-// import DataVisualisationTab from "./data-visualisation-tab/DataVisualisation.vue";
-import DashboardBottomWidgets from "./DashboardBottomWidgets.vue";
 import { mapGetters } from "vuex";
 
 export default {
-  name: "dashboard",
+  name: "profile",
   components: {
-    // DataVisualisationTab,
     VuesticWidget,
-    VuesticAlert,
-    DashboardInfoWidgets,
-    VuesticTabs,
-    // UsersMembersTab,
-    SetupProfileTab,
-    // FeaturesTab,
-    DashboardBottomWidgets
+    VuesticAlert
   },
   data() {
     return {

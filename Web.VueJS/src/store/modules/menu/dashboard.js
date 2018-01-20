@@ -28,6 +28,17 @@ export default {
         title: 'Profile',
         requiresAuth: true
       }
+    },
+    {
+      name: 'Loyalty',
+      path: '/dashboard/loyalty',
+      component: lazyLoading('dashboard/Loyalty'),
+      meta: {
+        default: false,
+        title: 'Loyalty',
+        requiresAuth: true
+      }
     }
+
   ]
 }
