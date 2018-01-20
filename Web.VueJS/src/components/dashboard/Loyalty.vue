@@ -9,17 +9,18 @@
         </vuestic-alert>
       </div>
     </div>
-    <vuestic-data-table 
+    <data-table 
       :tableFields="tableFields"
       :itemsPerPage="itemsPerPage"
       :sortFunctions="sortFunctions"
       :apiMode="false"
+      :apiUrl="''"
       :paginationPath="paginationPath"
       :data="topPoints.users"
       :dataTotal="topPoints._total">
-    </vuestic-data-table>
+    </data-table>
 
-    <vuestic-data-table 
+    <data-table 
       :tableFields="tableFields"
       :itemsPerPage="itemsPerPage"
       :sortFunctions="sortFunctions"
@@ -28,23 +29,21 @@
       :paginationPath="paginationPath"
       :data="topAlltimePoints.users"
       :dataTotal="topAlltimePoints._total">      
-     </vuestic-data-table>
+     </data-table>
   </div>
 </template>
 
 <script>
 import VuesticWidget from "../vuestic-components/vuestic-widget/VuesticWidget";
 import VuesticAlert from "../vuestic-components/vuestic-alert/VuesticAlert";
-import VuesticDataTable from "../vuestic-components/vuestic-datatable/VuesticDataTable.vue";
-
-import { mapGetters } from "vuex";
+import DataTable from "../vuestic-components/vuestic-datatable/VuesticDataTable.vue";
 
 export default {
   name: "loyalty",
   components: {
     VuesticWidget,
     VuesticAlert,
-    VuesticDataTable
+    DataTable
   },
   data() {
     return {
@@ -91,13 +90,10 @@ export default {
           return item1 >= item2 ? 1 : -1;
         }
       },
-      paginationPath: ""
+      paginationPath: "pagination"
     };
   },
-  computed: {
-    ...mapGetters(["user", "token"])
-  },
-  mounted() {
+  beforeMount() {
     this.$api.StreamElements.GetTopPoints().then(response => {
       this.topPoints = response.data.value;
     });

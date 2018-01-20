@@ -7,8 +7,8 @@
                       @items-per-page="onItemsPerPage"></items-per-page>
     </div>
     <vuetable ref="vuetable"
-              :apiUrl="apiUrl"
-              :apiMode="apiMode"
+              :apiUrl="''"
+              :apiMode="false"
               :fields="tableFields"
               :data="tableData"
               :dataTotal="dataCount"
@@ -68,7 +68,7 @@ export default {
     apiMode: {
       type: Boolean,
       default() {
-        return true;
+        return false;
       }
     },
     data: {
@@ -77,25 +77,32 @@ export default {
     sortFunctions: {
       type: Object
     },
+    dataTotal: {
+      type: Number
+    },
     paginationPath: {
       type: String,
       default() {
-        return "";
+        return "pagination";
       }
     }
   },
   data() {
     return {
-      tableData: this.data,
+      tableData: {
+        pagination: {},
+        data: []
+      },
       perPage: this.itemsPerPage[0].value,
       colorClasses: {},
       moreParams: {},
-      dataCount: this.dataTotal,
+      dataCount: 0,
       css: DataTableStyles
     };
   },
-  mounted() {
-    this.tableData = this.data;
+  beforeMount() {
+    this.tableData.data = new Array(this.data);
+    this.dataCount = this.dataTotal;
   },
   methods: {
     onFilterSet(filterText) {
@@ -105,7 +112,7 @@ export default {
         };
       } else {
         const txt = new RegExp(filterText, "i");
-        this.tableData = this.tableData.filter(function(item) {
+        this.tableData.data = this.tableData.data.filter(function(item) {
           return item.username.search(txt) >= 0 || item.points.search(txt) >= 0;
         });
       }
@@ -122,7 +129,8 @@ export default {
       this.$refs.vuetable.changePage(page);
     },
     dataManager(sortOrder, pagination) {
-      let data = new Array(this.tableData);
+      let data = this.tableData.data;
+
       let sortFunctions = this.sortFunctions;
 
       if (sortOrder.length > 0) {
