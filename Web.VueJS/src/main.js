@@ -33,6 +33,13 @@ let mediaHandler = () => {
 
 router.beforeEach((to, from, next) => {
   store.commit('setLoading', true)
+  store.dispatch('verifyTokenExpiration')
+    .then(resolve => {
+      console.log(resolve);
+      if (!resolve) {
+        localStorage.clear();
+      }
+    });
   if (to.matched.some(route => route.meta.requiresAuth)) {
     if (!store.getters.isAuthenticated) {
       next({

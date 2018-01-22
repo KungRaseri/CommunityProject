@@ -27,14 +27,13 @@ const state = {
     }
   },
   isLoading: true,
-  isAuthenticated: !!JSON.parse(localStorage.getItem('token')),
+  isAuthenticated: JSON.parse(localStorage.getItem('token')).expiration > Date.now(),
   token: JSON.parse(localStorage.getItem('token')) || {},
   user: JSON.parse(localStorage.getItem('user')) || {}
 }
 
 const mutations = {
-  [types.LOGIN](state) {
-  },
+  [types.LOGIN](state) {},
   [types.LOGIN_SUCCESS](state, value) {
     state.isAuthenticated = true;
     state.user = value.user;
@@ -95,6 +94,24 @@ const actions = {
   }) {
     localStorage.clear();
     commit(types.LOGOUT);
+  },
+  verifyTokenExpiration({
+    commit
+  }) {
+    return new Promise(resolve => {
+      var token = JSON.parse(localStorage.getItem('token'));
+      var now = new Date();
+      var utc = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds());
+      console.log('expiration', Date.parse(token.expiration));
+      console.log('utc', utc);
+      console.log('verify', Date.parse(token.expiration) < utc);
+      if (Date.parse(token.expiration) < utc) {
+        commit(types.LOGOUT);
+        resolve(false);
+      } else {
+        resolve(true);
+      }
+    });
   }
 }
 

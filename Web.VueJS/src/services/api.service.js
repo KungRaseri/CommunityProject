@@ -1,7 +1,6 @@
 import axios from 'axios';
 
 axios.defaults.baseURL = "http://localhost:53600/api/";
-
 axios.interceptors.request.use((config) => {
   var token = JSON.parse(localStorage.getItem('token'));
   if (token) {
