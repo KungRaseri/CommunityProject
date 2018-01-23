@@ -13,7 +13,7 @@ using ThirdParty;
 
 namespace Api.Controllers
 {
-    [Route("api/se/points")]
+    [Route("api/v1/se/points")]
     [Authorize]
     public class SEPointsController : BaseApiController
     {
