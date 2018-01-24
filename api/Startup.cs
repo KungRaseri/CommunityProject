@@ -3,9 +3,9 @@ using System.Linq;
 using System.Text;
 using Data.Helpers;
 using Data.Models;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -31,6 +31,13 @@ namespace Api
             var settingsCollection = new CouchDbStore<Settings>(configSettings.GetSection("CouchDbUri").Value);
 
             var settings = settingsCollection.GetAsync().GetAwaiter().GetResult().FirstOrDefault()?.Value;
+
+            services.AddApiVersioning(api =>
+            {
+                api.DefaultApiVersion = new ApiVersion(1, 0);
+                api.AssumeDefaultVersionWhenUnspecified = true;
+                api.ReportApiVersions = true;
+            });
 
             services.AddAuthentication(options =>
                 {

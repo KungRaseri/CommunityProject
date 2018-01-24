@@ -12,7 +12,8 @@ using MyCouch;
 
 namespace Api.Controllers
 {
-    [Route("api/v1/[controller]")]
+    [ApiVersion("1")]
+    [Route("api/v{versions:ApiVersion}/[controller]")]
     [Authorize]
     public class UserController : BaseApiController
     {

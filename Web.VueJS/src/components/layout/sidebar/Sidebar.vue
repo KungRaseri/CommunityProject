@@ -51,7 +51,6 @@ export default {
       var filteredItems = this.menuItems.filter(function(item) {
         return item.meta.showInSidebarEnabled === true;
       });
-      console.log(filteredItems);
       return filteredItems;
     }
   },

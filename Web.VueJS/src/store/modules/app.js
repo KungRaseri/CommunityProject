@@ -27,7 +27,7 @@ const state = {
     }
   },
   isLoading: true,
-  isAuthenticated: JSON.parse(localStorage.getItem('token')).expiration > Date.now(),
+  isAuthenticated: (JSON.parse(localStorage.getItem('token'))) ? JSON.parse(localStorage.getItem('token')).expiration > Date.now() : false,
   token: JSON.parse(localStorage.getItem('token')) || {},
   user: JSON.parse(localStorage.getItem('user')) || {}
 }
@@ -102,14 +102,18 @@ const actions = {
       var token = JSON.parse(localStorage.getItem('token'));
       var now = new Date();
       var utc = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds());
-      console.log('expiration', Date.parse(token.expiration));
-      console.log('utc', utc);
-      console.log('verify', Date.parse(token.expiration) < utc);
-      if (Date.parse(token.expiration) < utc) {
-        commit(types.LOGOUT);
-        resolve(false);
+      if (token) {
+        console.log('expiration', Date.parse(token.expiration));
+        console.log('utc', utc);
+        console.log('verify', Date.parse(token.expiration) < utc);
+        if (Date.parse(token.expiration) < utc) {
+          commit(types.LOGOUT);
+          resolve(false);
+        } else {
+          resolve(true);
+        }
       } else {
-        resolve(true);
+        resolve(false);
       }
     });
   }

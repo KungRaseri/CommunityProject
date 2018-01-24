@@ -9,41 +9,53 @@
         </vuestic-alert>
       </div>
     </div>
-    <data-table 
-      :tableFields="tableFields"
-      :itemsPerPage="itemsPerPage"
-      :sortFunctions="sortFunctions"
-      :apiMode="false"
-      :apiUrl="''"
-      :paginationPath="paginationPath"
-      :data="topPoints.users"
-      :dataTotal="topPoints._total">
-    </data-table>
-
-    <data-table 
-      :tableFields="tableFields"
-      :itemsPerPage="itemsPerPage"
-      :sortFunctions="sortFunctions"
-      :apiMode="false"
-      :apiUrl="''"
-      :paginationPath="paginationPath"
-      :data="topAlltimePoints.users"
-      :dataTotal="topAlltimePoints._total">      
-     </data-table>
+    <div class="row">
+      <vuestic-widget headerText="Top Booties" class="col-md-4">
+        <table class="table table-striped first-td-padding">
+            <thead>
+                <tr>
+                  <td>Twitch Username</td>
+                  <td>Booties</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="topUser in topPoints.users" :key="topUser.username">
+                    <td>{{topUser.username}}</td>
+                    <td>{{topUser.points}}</td>
+                </tr>
+            </tbody>
+        </table>
+      </vuestic-widget>
+      <div class="offset-md-2"></div>
+      <vuestic-widget headerText="Top Alltime Booties" class="col-md-4">
+        <table class="table table-striped first-td-padding">
+          <thead>
+              <tr>
+                <td>Twitch Username</td>
+                <td>Booties</td>
+              </tr>
+          </thead>
+          <tbody>
+              <tr v-for="topUser in topAlltimePoints.users" :key="topUser.username">
+                  <td>{{topUser.username}}</td>
+                  <td>{{topUser.points}}</td>
+              </tr>
+          </tbody>
+        </table>
+      </vuestic-widget>
+    </div>
   </div>
 </template>
 
 <script>
 import VuesticWidget from "../vuestic-components/vuestic-widget/VuesticWidget";
 import VuesticAlert from "../vuestic-components/vuestic-alert/VuesticAlert";
-import DataTable from "../vuestic-components/vuestic-datatable/VuesticDataTable.vue";
 
 export default {
   name: "loyalty",
   components: {
     VuesticWidget,
-    VuesticAlert,
-    DataTable
+    VuesticAlert
   },
   data() {
     return {

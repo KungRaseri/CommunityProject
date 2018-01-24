@@ -12,7 +12,7 @@
 
     <dashboard-info-widgets></dashboard-info-widgets>
 
-    <vuestic-widget class="no-padding no-v-padding" v-if="user.twitchUsername">
+    <vuestic-widget class="no-padding no-v-padding" v-if="!user.twitchUsername">
       <vuestic-tabs :names="['Setup Profile']" ref="tabs">
         <!-- <div slot="Data Visualization">
           <data-visualisation-tab></data-visualisation-tab>

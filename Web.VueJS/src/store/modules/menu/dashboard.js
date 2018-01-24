@@ -4,9 +4,10 @@ export default {
   name: 'Dashboard',
   meta: {
     default: false,
+    expanded: false,
     title: 'Dashboard',
     iconClass: 'vuestic-icon vuestic-icon-dashboard',
-    showInSidebarEnabled: false
+    showInSidebarEnabled: true
   },
   children: [
     {

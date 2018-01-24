@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Data.Models.StreamElements.Booties;
@@ -9,11 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using ThirdParty;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
-namespace Api.Controllers
+namespace Api.Controllers.ThirdParty
 {
-    [Route("api/v1/se/points")]
+    [ApiVersion("1")]
+    [Route("api/v{version:ApiVersion}/se/points")]
     [Authorize]
     public class SEPointsController : BaseApiController
     {
