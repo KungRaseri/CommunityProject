@@ -5,5 +5,5 @@ dotnet: 2.0.0
 install:
 - dotnet restore
 script:
-- dotnet build KungRaseri.sln
+- dotnet build
 - dotnet test *.Tests.csproj
