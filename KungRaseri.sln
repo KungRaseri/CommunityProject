@@ -5,23 +5,23 @@ VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{0B0416B5-277D-4CA3-8591-31CC383F9E54}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api", "Api\Api.csproj", "{8BEFC51A-2DE5-4E74-A99C-F0BEA252E7F0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api", "Api/Api.csproj", "{8BEFC51A-2DE5-4E74-A99C-F0BEA252E7F0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api.Tests", "Api.Tests\Api.Tests.csproj", "{2F6EF84E-F814-4203-AF56-264A0AFF020B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api.Tests", "Api.Tests/Api.Tests.csproj", "{2F6EF84E-F814-4203-AF56-264A0AFF020B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{12BDBD80-BAD3-4E52-BFC0-50F55FB30FF1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Data", "Data\Data.csproj", "{DE08C364-423E-47FB-B2D6-87F44413529A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Data", "Data/Data.csproj", "{DE08C364-423E-47FB-B2D6-87F44413529A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bot", "Bot\Bot.csproj", "{C6069991-C2E5-43E1-8C63-8896F8660AF0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bot", "Bot/Bot.csproj", "{C6069991-C2E5-43E1-8C63-8896F8660AF0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bot.Tests", "Bot.Tests\Bot.Tests.csproj", "{D6760825-33EA-402A-A8F4-BADF8E4FCF08}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bot.Tests", "Bot.Tests/Bot.Tests.csproj", "{D6760825-33EA-402A-A8F4-BADF8E4FCF08}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThirdParty", "ThirdParty\ThirdParty.csproj", "{004824E2-0B6C-4C95-B046-8B995C9F3E44}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThirdParty", "ThirdParty/ThirdParty.csproj", "{004824E2-0B6C-4C95-B046-8B995C9F3E44}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThirdParty.Tests", "ThirdParty.Tests\ThirdParty.Tests.csproj", "{BFB92A91-6C21-479A-AE9A-6933A67D74D3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThirdParty.Tests", "ThirdParty.Tests/ThirdParty.Tests.csproj", "{BFB92A91-6C21-479A-AE9A-6933A67D74D3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Data.Tests", "Data.Tests\Data.Tests.csproj", "{9AC94BDF-0676-4CAC-BD1E-350C601C1072}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Data.Tests", "Data.Tests/Data.Tests.csproj", "{9AC94BDF-0676-4CAC-BD1E-350C601C1072}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
