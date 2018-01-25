@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Core" Version="1.4.0" />
     <PackageReference Include="Faker.Net" Version="1.0.3" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.5.0" />
     <PackageReference Include="NUnit" Version="3.9.0" />
@@ -12,13 +13,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\data\Data.csproj" />
+    <ProjectReference Include="..\Data\Data.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="BCrypt.Net">
-      <HintPath>C:\Users\count\.nuget\packages\bcrypt-official\0.1.109\lib\BCrypt.Net.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>
