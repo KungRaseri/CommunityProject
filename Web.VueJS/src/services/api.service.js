@@ -1,7 +1,6 @@
 import axios from 'axios';
 
-axios.defaults.baseURL = "http://localhost:53600/api/";
-
+axios.defaults.baseURL = "http://localhost:53600/api/v1/";
 axios.interceptors.request.use((config) => {
   var token = JSON.parse(localStorage.getItem('token'));
   if (token) {
@@ -23,6 +22,22 @@ const ApiService = {
 
         axios
           .post(`auth/token`, data)
+          .then(response => {
+            resolve(response);
+          }).catch(response => {
+            reject(response);
+          })
+      });
+    },
+    Register(credentials) {
+      return new Promise((resolve, reject) => {
+        var data = new FormData();
+
+        data.append("email", credentials.email);
+        data.append("password", credentials.password);
+
+        axios
+          .post(`auth/register`, data)
           .then(response => {
             resolve(response);
           }).catch(response => {
@@ -51,6 +66,32 @@ const ApiService = {
 
         axios
           .post('user', user)
+          .then(response => {
+            resolve(response);
+          })
+          .catch(response => {
+            reject(response);
+          })
+      })
+    }
+  },
+  StreamElements: {
+    GetTopPoints() {
+      return new Promise((resolve, reject) => {
+        axios
+          .get('se/points/top')
+          .then(response => {
+            resolve(response);
+          })
+          .catch(response => {
+            reject(response);
+          })
+      })
+    },
+    GetTopAlltimePoints() {
+      return new Promise((resolve, reject) => {
+        axios
+          .get('se/points/top/alltime')
           .then(response => {
             resolve(response);
           })

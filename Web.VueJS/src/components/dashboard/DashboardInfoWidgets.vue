@@ -1,7 +1,7 @@
 <template>
   <div class="row dashboard-info-widgets">
     <div class="col-md-6 col-xl-3">
-      <vuestic-widget class="info-widget brand-info" :isLoading="userCount">
+      <vuestic-widget class="info-widget brand-info" :isLoading="userCount < 0">
         <div class="info-widget-inner">
           <div class="stats">
             <div class="stats-number" >
@@ -68,7 +68,9 @@ export default {
   name: "dashboard-info-widgets",
   data() {
     return {
-      users: {}
+      users: {},
+      topPoints: {},
+      topAlltimePoints: {}
     };
   },
   components: {
@@ -81,8 +83,7 @@ export default {
     }
   },
   beforeMount() {
-    this.$api.User
-      .Get()
+    this.$api.User.Get()
       .then(response => {
         var value = response.data.value || -1;
         this.users = value;
@@ -90,6 +91,12 @@ export default {
       .catch(e => {
         console.log(e);
       });
+    this.$api.StreamElements.GetTopPoints().then(response => {
+      this.topPoints = response.data.value;
+    });
+    this.$api.StreamElements.GetTopAlltimePoints().then(response => {
+      this.topAlltimePoints = response.data.value;
+    });
   }
 };
 </script>

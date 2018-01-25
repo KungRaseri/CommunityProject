@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net47</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,12 +11,12 @@
     <PackageReference Include="DSharpPlus.Interactivity" Version="3.2.3" />
     <PackageReference Include="DSharpPlus.Rest" Version="3.2.3" />
     <PackageReference Include="DSharpPlus.VoiceNext" Version="3.2.3" />
-    <PackageReference Include="TwitchLib" Version="1.5.9" />
+    <PackageReference Include="TwitchLib" Version="1.6.0" />
     <PackageReference Include="MyCouch" Version="5.0.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\data\Data.csproj" />
+    <ProjectReference Include="..\Data\Data.csproj" />
   </ItemGroup>
 
 </Project>

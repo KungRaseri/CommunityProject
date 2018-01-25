@@ -1,7 +1,7 @@
 <template>
   <div class="widget" :class="{'no-header': !headerText}">
     <div class="widget-header" v-if="headerText">{{headerText}}</div>
-    <div class="widget-body" v-if="isLoading">
+    <div class="widget-body" v-if="!isLoading">
       <slot></slot>
     </div>
     <trinity-rings-spinner v-else :animation-duration="1500" :size="33" :color="'#333'" :class="'spinner-center'" />

@@ -16,7 +16,8 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Api.Controllers.Account
 {
-    [Route("api/[controller]")]
+    [ApiVersion("1")]
+    [Route("api/v{version:ApiVersion}/[controller]")]
     public class AuthController : BaseApiController
     {
         private readonly CouchDbStore<User> _userCollection;
