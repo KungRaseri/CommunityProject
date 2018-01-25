@@ -1,18 +1,18 @@
 ﻿using System;
 using Data.Helpers;
 using Data.Models;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Data.Tests
 {
-    [TestFixture]
+    [TestClass]
     public class CouchDbStoreTests
     {
         private CouchDbStore<User> _usersCollection { get; set; }
         private CouchDbStore<Settings> _settingsCollection { get; set; }
         private Settings _settings;
 
-        [SetUp]
+        [TestInitialize]
         public void SetUpTests()
         {
             _settingsCollection = new CouchDbStore<Settings>("http://root:123456789@localhost:5984/");
@@ -21,23 +21,23 @@ namespace Data.Tests
             _usersCollection = new CouchDbStore<User>(_settings.CouchDbUri);
         }
 
-        [Test]
+        [TestMethod]
         public void FindUserByEmail_ReturnsUser()
         {
             var email = "damastaSlayer@monkasthatwasn'tgood.com";
 
             var user = _usersCollection.FindUserByEmail(email).GetAwaiter().GetResult();
 
-            Assert.That(user, Is.TypeOf<User>());
-            Assert.That(user.Email, Is.EqualTo(email));
+            Assert.IsInstanceOfType(user, typeof(User));
+            Assert.AreEqual(user.Email, email);
         }
 
-        [Test]
+        [TestMethod]
         public void FindUserByEmail_UserDoesNotExist_ReturnsNull()
         {
             var user = _usersCollection.FindUserByEmail(string.Empty).GetAwaiter().GetResult();
 
-            Assert.That(user, Is.Null);
+            Assert.IsNull(user);
         }
     }
 }

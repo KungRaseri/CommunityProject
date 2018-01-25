@@ -2,18 +2,18 @@
 using Data.Helpers;
 using Data.Models;
 using Data.Models.StreamElements.Giveaways;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ThirdParty.Tests
 {
-    [TestFixture]
+    [TestClass]
     public class GiveawayTests
     {
         private CouchDbStore<Settings> _settingsCollection;
         private Settings _settings;
         private StreamElements _seClient;
 
-        [SetUp]
+        [TestInitialize]
         public void SetupTests()
         {
             _settingsCollection = new CouchDbStore<Settings>("http://root:123456789@localhost:5984/");
@@ -21,7 +21,7 @@ namespace ThirdParty.Tests
             _seClient = new StreamElements(_settings);
         }
 
-        [Test]
+        [TestMethod]
         public void GetAllGiveaways_ReturnsGetGiveawayResponse()
         {
             var expectedMaximumTickets = 10;
@@ -33,7 +33,7 @@ namespace ThirdParty.Tests
             Assert.IsTrue(giveawayResponse.Active.MaxTickets == expectedMaximumTickets, $"The Maximum Tickets: {giveawayResponse.Active.MaxTickets} did not match the expected value: {expectedMaximumTickets}");
         }
 
-        [Test]
+        [TestMethod]
         public void GetPastGiveaways_ReturnsGiveawayArray()
         {
             var giveawayResponse = _seClient.GetPastGiveaways().GetAwaiter().GetResult();
@@ -42,7 +42,7 @@ namespace ThirdParty.Tests
             Assert.IsTrue(giveawayResponse[0].Winners.Any(), $"Expected more than 0 winners. Actual: {giveawayResponse[0].Winners.Count()}");
         }
 
-        [Test]
+        [TestMethod]
         public void GetSingleGiveaway_ReturnsGiveaway()
         {
             var giveaways = _seClient.GetAllGiveaways().GetAwaiter().GetResult();

@@ -2,18 +2,18 @@
 using Data.Helpers;
 using Data.Models;
 using Data.Models.StreamElements.Logs;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ThirdParty.Tests
 {
-    [TestFixture]
+    [TestClass]
     public class LogsTests
     {
         private CouchDbStore<Settings> _settingsCollection;
         private Settings _settings;
         private StreamElements _seClient;
 
-        [SetUp]
+        [TestInitialize]
         public void SetupTests()
         {
             _settingsCollection = new CouchDbStore<Settings>("http://root:123456789@localhost:5984/");
@@ -21,7 +21,7 @@ namespace ThirdParty.Tests
             _seClient = new StreamElements(_settings);
         }
 
-        [Test]
+        [TestMethod]
         public void GetLogs_ReturnsLogsArray()
         {
             var logsResponse = _seClient.GetLogs().GetAwaiter().GetResult();

@@ -1,23 +1,23 @@
 ﻿using Data.Helpers;
 using Data.Models;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Api.Tests
 {
-    [TestFixture, Ignore("We'll need to come back to this later, need to lern2code")]
+    [TestClass, Ignore("We'll need to come back to this later, need to lern2code")]
     public class AuthTests
     {
         private CouchDbStore<Settings> _settingsCollection;
         private Settings _settings;
 
-        [SetUp]
+        [TestInitialize]
         public void SetupTests()
         {
             _settingsCollection = new CouchDbStore<Settings>("http://root:123456789@localhost:5984/");
             _settings = _settingsCollection.GetAsync("9c3131ee7b9fb97491e8551211495381").GetAwaiter().GetResult();
         }
 
-        [Test]
+        [TestMethod]
         public void AuthController_Register_ReturnsUser()
         {
             var username = Faker.Internet.UserName();
@@ -32,14 +32,15 @@ namespace Api.Tests
             };
         }
 
-        [TestCase("", "asjfhashfkajhsdf")]
-        [TestCase("asdfjhakjsdfhkajshdf", "")]
+        [DataTestMethod]
+        [DataRow("", "asjfhashfkajhsdf")]
+        [DataRow("asdfjhakjsdfhkajshdf", "")]
         public void AuthController_Register_MissingParameters_ReturnsBadRequest(string email, string password)
         {
 
         }
 
-        [Test]
+        [TestMethod]
         public void AuthController_Register_AccountExists_ReturnsBadRequest()
         {
 

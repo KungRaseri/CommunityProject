@@ -1,20 +1,18 @@
-﻿using System.Linq;
-using Data.Helpers;
+﻿using Data.Helpers;
 using Data.Models;
-using Data.Models.StreamElements.Logs;
 using Data.Models.StreamElements.LoyaltySettings;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ThirdParty.Tests
 {
-    [TestFixture]
+    [TestClass]
     public class LoyaltyTests
     {
         private CouchDbStore<Settings> _settingsCollection;
         private Settings _settings;
         private StreamElements _seClient;
 
-        [SetUp]
+        [TestInitialize]
         public void SetupTests()
         {
             _settingsCollection = new CouchDbStore<Settings>("http://root:123456789@localhost:5984/");
@@ -22,7 +20,7 @@ namespace ThirdParty.Tests
             _seClient = new StreamElements(_settings);
         }
 
-        [Test]
+        [TestMethod]
         public void GetLoyaltySettings_ReturnsLoyaltySettings()
         {
             var loyaltyResponse = _seClient.GetLoyaltySettings().GetAwaiter().GetResult();

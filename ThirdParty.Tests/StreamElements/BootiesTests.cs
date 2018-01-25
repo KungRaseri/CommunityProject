@@ -1,20 +1,19 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
 using Data.Helpers;
 using Data.Models;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ThirdParty.Tests
 {
-    [TestFixture]
+    [TestClass]
     public class BootiesTests
     {
         private CouchDbStore<Settings> _settingsCollection;
         private Settings _settings;
         private StreamElements _seClient;
 
-        [SetUp]
+        [TestInitialize]
         public void SetupTests()
         {
             _settingsCollection = new CouchDbStore<Settings>("http://root:123456789@localhost:5984/");
@@ -22,7 +21,7 @@ namespace ThirdParty.Tests
             _seClient = new StreamElements(_settings);
         }
 
-        [Test]
+        [TestMethod]
         public void GetTopBooties_ReturnsGetTopBootiesResponse()
         {
             var expectedUsername = "majxr";
@@ -36,7 +35,7 @@ namespace ThirdParty.Tests
             Assert.IsTrue(bootiesResponse._total > minimumTotal, $"The Total: {bootiesResponse._total} did not meet the minimum expected value: {minimumTotal}");
         }
 
-        [Test]
+        [TestMethod]
         public void GetAllTimeBooties_ReturnsGetTopBootiesResponse()
         {
             var expectedUsername = "blazdnconfuzd";
@@ -53,7 +52,7 @@ namespace ThirdParty.Tests
             //Assert.IsTrue(bootiesResponse._total == expectedTotal, $"The Total: {bootiesResponse._total} did not match the expected value: {expectedTotal}");
         }
 
-        [Test]
+        [TestMethod]
         public void GetUserRank_ReturnsUser()
         {
             var expectedUsername = "blazdnconfuzd";
@@ -65,7 +64,7 @@ namespace ThirdParty.Tests
             Assert.IsTrue(user.Rank == expectedRank, $"Expected rank: {expectedRank}. Actual: {user.Rank}");
         }
 
-        [Test, Ignore("Untestable until they fix their shit and respond with status code in each response.")]
+        [TestMethod, Ignore("Untestable until they fix their shit and respond with status code in each response.")]
         public void GetUserRank_UserDoesNotExist_ReturnsErrorResponse()
         {
             var expectedStatusCode = HttpStatusCode.NotFound;
@@ -78,7 +77,7 @@ namespace ThirdParty.Tests
             Assert.IsTrue(user.Message == $"{username} was not found");
         }
 
-        [Test]
+        [TestMethod]
         public void GetPointsByUser_ReturnsUser()
         {
             var expectedUsername = "blazdnconfuzd";
@@ -90,7 +89,7 @@ namespace ThirdParty.Tests
             Assert.IsTrue(user.Rank == expectedRank, $"Expected rank: {expectedRank}. Actual: {user.Rank}");
         }
 
-        [Test]
+        [TestMethod]
         public void GetPointsByUser_UserDoesNotExist_ReturnsErrorResponse()
         {
             var expectedStatusCode = HttpStatusCode.NotFound;
