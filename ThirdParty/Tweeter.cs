@@ -10,26 +10,22 @@ using Tweetinvi.Parameters;
 
 namespace ThirdParty
 {
-    public class Twitter
+    public class Tweeter
     {
         private readonly ITwitterCredentials TwitterCredentials;
 
-        public Twitter(Settings settings)
+        public Tweeter(Settings settings)
         {
             TwitterCredentials = new Tweetinvi.Models.TwitterCredentials(settings.Keys.Twitter.ConsumerKey, settings.Keys.Twitter.ConsumerSecret, settings.Keys.Twitter.AccessToken, settings.Keys.Twitter.AccessTokenSecret);
             Auth.ApplicationCredentials = TwitterCredentials;
         }
 
-        public async Task<ITweet> GetLatestTweet(string name)
+        public async Task<ITweet> GetLatestTweetFromTimeline(string name)
         {
-            var tweetParameters = new SearchTweetsParameters("dasmehdi")
-            {
-                TweetSearchType = TweetSearchType.OriginalTweetsOnly
-            };
+            var user = await UserAsync.GetUserFromScreenName(name);
+            var timeline = Timeline.GetUserTimeline(user.Id);
 
-            var tweets = await SearchAsync.SearchTweets(tweetParameters);
-
-            return tweets.LastOrDefault();
+            return timeline.FirstOrDefault();
         }
     }
 }
