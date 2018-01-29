@@ -11,11 +11,11 @@ namespace Api.Controllers.ThirdParty
     [Route("api/v{version:ApiVersion}/tweet")]
     public class TwitterController : BaseApiController
     {
-        private readonly Tweeter _twitterClient;
+        private readonly Twatter _twitterClient;
 
         public TwitterController(IConfiguration configuration) : base(configuration)
         {
-            _twitterClient = new Tweeter(Settings);
+            _twitterClient = new Twatter(Settings);
         }
 
         [HttpGet("{name}")]

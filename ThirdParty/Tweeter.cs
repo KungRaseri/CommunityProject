@@ -1,20 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Data.Models;
 using Tweetinvi;
 using Tweetinvi.Models;
-using Tweetinvi.Parameters;
 
 namespace ThirdParty
 {
-    public class Tweeter
+    public class Twatter
     {
         private readonly ITwitterCredentials TwitterCredentials;
 
-        public Tweeter(Settings settings)
+        public Twatter(Settings settings)
         {
             TwitterCredentials = new Tweetinvi.Models.TwitterCredentials(settings.Keys.Twitter.ConsumerKey, settings.Keys.Twitter.ConsumerSecret, settings.Keys.Twitter.AccessToken, settings.Keys.Twitter.AccessTokenSecret);
             Auth.ApplicationCredentials = TwitterCredentials;

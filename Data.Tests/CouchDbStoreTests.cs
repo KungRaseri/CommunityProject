@@ -19,12 +19,19 @@ namespace Data.Tests
             _settings = _settingsCollection.GetAsync("9c3131ee7b9fb97491e8551211495381").GetAwaiter().GetResult();
 
             _usersCollection = new CouchDbStore<User>(_settings.CouchDbUri);
+
+            var user = new User()
+            {
+                Email = "buttlicker@slurrrrrp.com"
+            };
+
+            _usersCollection.AddOrUpdateAsync(user).GetAwaiter().GetResult();
         }
 
         [TestMethod]
         public void FindUserByEmail_ReturnsUser()
         {
-            var email = "damastaSlayer@monkasthatwasn'tgood.com";
+            var email = "buttlicker@slurrrrrp.com";
 
             var user = _usersCollection.FindUserByEmail(email).GetAwaiter().GetResult();
 

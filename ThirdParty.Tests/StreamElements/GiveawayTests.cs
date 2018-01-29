@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ThirdParty.Tests
 {
-    [TestClass]
+    [TestClass, Ignore("Need to rewrite these tests so that they can be ran without maintenance")]
     public class GiveawayTests
     {
         private CouchDbStore<Settings> _settingsCollection;

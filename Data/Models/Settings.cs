@@ -10,5 +10,6 @@ namespace Data.Models
         public string CommandCharacter { get; set; }
         public Keys Keys { get; set; }
         public string CouchDbUri { get; set; }
+        public string MySqlUri { get; set; }
     }
 }
