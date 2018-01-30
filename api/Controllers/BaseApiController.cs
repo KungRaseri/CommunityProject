@@ -12,6 +12,7 @@ using Microsoft.Rest;
 
 namespace Api.Controllers
 {
+    [Produces("application/json")]
     public class BaseApiController : Controller
     {
         protected readonly IConfiguration Configuration;

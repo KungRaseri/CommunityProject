@@ -14,7 +14,7 @@ namespace Api.Controllers
         [HttpGet]
         public ActionResult Get()
         {
-            return StatusCode((int)HttpStatusCode.OK, Json("KungRaseri API is running..."));
+            return Json("KungRaseri API is running...");
         }
     }
 }

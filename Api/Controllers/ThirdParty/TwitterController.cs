@@ -1,4 +1,6 @@
-﻿using System.Net;
+﻿using System;
+using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -8,6 +10,7 @@ using ThirdParty;
 
 namespace Api.Controllers.ThirdParty
 {
+    [ApiVersion("1")]
     [Route("api/v{version:ApiVersion}/tweet")]
     public class TwitterController : BaseApiController
     {
@@ -23,7 +26,7 @@ namespace Api.Controllers.ThirdParty
         {
             var tweet = await _twitterClient.GetLatestTweetFromTimeline(name);
 
-            return StatusCode((int)HttpStatusCode.OK, Json(tweet.FullText));
+            return Json(tweet.FullText.Replace("\n", " "));
         }
     }
 }

@@ -43,7 +43,7 @@ namespace Api.Controllers
                 return StatusCode((int)HttpStatusCode.InternalServerError, Json(e));
             }
 
-            return StatusCode((int)HttpStatusCode.OK, Json(users));
+            return Json(users);
         }
 
         [HttpGet]
