@@ -7,5 +7,6 @@
         public TwitterCredentials Twitter { get; set; }
         public string Discord { get; set; }
         public string StreamElements { get; set; }
+        public string GoogleApiKey { get; set; }
     }
 }

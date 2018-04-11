@@ -14,7 +14,7 @@ namespace Api.Tests
         public void SetupTests()
         {
             _settingsCollection = new CouchDbStore<Settings>("http://root:123456789@localhost:5984/");
-            _settings = _settingsCollection.GetAsync("9c3131ee7b9fb97491e8551211495381").GetAwaiter().GetResult();
+            _settings = _settingsCollection.FindAsync("9c3131ee7b9fb97491e8551211495381").GetAwaiter().GetResult();
         }
 
         [TestMethod]

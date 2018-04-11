@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
-using TwitchLib;
-using TwitchLib.Models.API.v5.Clips;
+using TwitchLib.Api;
+using TwitchLib.Api.Models.v5.Clips;
 
 namespace Bot.Discord.Commands
 {
@@ -14,7 +14,8 @@ namespace Bot.Discord.Commands
         [Command("followage")]
         public async Task GetChannelFollowingCommand(CommandContext cmdContext, string channelName)
         {
-            var api = new TwitchAPI(KungRaseriBot.Settings.Keys.Twitch.ClientId);
+            var api = new TwitchAPI();
+            await api.Settings.SetClientIdAsync(KungRaseriBot.Settings.Keys.Twitch.ClientId);
 
             try
             {
@@ -51,8 +52,8 @@ namespace Bot.Discord.Commands
         [Command("toplive")]
         public async Task GetTopLiveChannelsCommand(CommandContext cmdContext, int amount)
         {
-            var api = new TwitchAPI(KungRaseriBot.Settings.Keys.Twitch.ClientId);
-
+            var api = new TwitchAPI();
+            await api.Settings.SetClientIdAsync(KungRaseriBot.Settings.Keys.Twitch.ClientId);
             try
             {
                 var streamsMetadataResponse = await api.Streams.helix.GetStreamsMetadata();
@@ -83,7 +84,8 @@ namespace Bot.Discord.Commands
         [Command("topclips")]
         public async Task GetTopClipsCommand(CommandContext cmdContext, [Description("The amount of clips you want returned.")]int amount, [Description("The channel that you would like the top clips from")]string channelName = null)
         {
-            var api = new TwitchAPI(KungRaseriBot.Settings.Keys.Twitch.ClientId);
+            var api = new TwitchAPI();
+            await api.Settings.SetClientIdAsync(KungRaseriBot.Settings.Keys.Twitch.ClientId);
 
             try
             {

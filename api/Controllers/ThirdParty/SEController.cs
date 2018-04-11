@@ -14,11 +14,11 @@ namespace Api.Controllers.ThirdParty
     [Authorize]
     public class SEPointsController : BaseApiController
     {
-        private readonly StreamElements _seClient;
+        private readonly StreamElementsService _seClient;
 
         public SEPointsController(IConfiguration configuration) : base(configuration)
         {
-            _seClient = new StreamElements(Settings);
+            _seClient = new StreamElementsService(Settings);
         }
 
         [HttpGet]

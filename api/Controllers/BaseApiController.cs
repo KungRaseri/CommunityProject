@@ -7,6 +7,7 @@ using Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Rest;
+using ThirdParty;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -18,6 +19,7 @@ namespace Api.Controllers
         protected readonly IConfiguration Configuration;
         protected readonly Settings Settings;
         protected CouchDbStore<Token> TokenCollection { get; set; }
+        protected readonly GoogleService GoogleClient;
 
         public BaseApiController(IConfiguration configuration)
         {
@@ -30,6 +32,7 @@ namespace Api.Controllers
             Settings = settingCollection.GetAsync().GetAwaiter().GetResult().FirstOrDefault()?.Value;
 
             TokenCollection = new CouchDbStore<Token>(Settings?.CouchDbUri);
+            GoogleClient = new GoogleService(Settings);
         }
     }
 }

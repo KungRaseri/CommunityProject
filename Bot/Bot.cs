@@ -7,9 +7,12 @@ using Data.Helpers;
 using Data.Models;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
-using TwitchLib;
-using TwitchLib.Events.Services.LiveStreamMonitor;
-using TwitchLib.Services;
+using ThirdParty;
+using TwitchLib.Api;
+using TwitchLib.Api.Services;
+using TwitchLib.Api.Services.Events.LiveStreamMonitor;
+using TwitchLib.Client.Events;
+using TwitchLib.Client.Models;
 
 namespace Bot
 {
@@ -18,7 +21,7 @@ namespace Bot
         public static Settings Settings { get; set; }
 
         private static DiscordShardedClient _discord;
-        private static TwitchClient _twitch;
+        private static TwitchBotService _twitch;
         private static LiveStreamMonitor _liveStreamMonitor;
         private static CouchDbStore<Settings> _settingsCollection;
         private static CommandsNextModule _commands;
@@ -31,7 +34,9 @@ namespace Bot
             try
             {
                 ConfigureBots();
-                _liveStreamMonitor.SetStreamsByUsername(new List<string>() { "blazdnconfuzd" });
+                StartTwitchBot();
+                ConfigureEvents();
+                _liveStreamMonitor.SetStreamsByUsername(new List<string>() { "kungraseri" });
 
             }
             catch (Exception e)
@@ -42,8 +47,28 @@ namespace Bot
                 return;
             }
 
-            //StartTwitchBot();
-            StartDiscordBotAsync(_discord).ConfigureAwait(false).GetAwaiter().GetResult();
+            //StartDiscordBotAsync(_discord).ConfigureAwait(false).GetAwaiter().GetResult();
+            Console.ReadLine();
+        }
+
+        private static void ConfigureEvents()
+        {
+            _twitch.Client.OnBeingHosted += OnBeingHosted;
+            _twitch.Client.OnHostLeft += OnHostLeft;
+            _twitch.Client.OnNowHosting += OnNowHosting;
+            _twitch.Client.OnConnected += OnConnected;
+            _twitch.Client.OnJoinedChannel += OnJoinChannel;
+            _twitch.Client.OnLeftChannel += OnLeftChannel;
+            _twitch.Client.OnDisconnected += OnDisconnected;
+            _twitch.Client.OnNewSubscriber += OnNewSubscriber;
+            _twitch.Client.OnReSubscriber += OnReSubscriber;
+            _twitch.Client.OnGiftedSubscription += OnGiftedSubscription;
+            _twitch.Client.OnUserBanned += OnUserBanned;
+            _twitch.Client.OnUserJoined += OnUserJoined;
+            _twitch.Client.OnUserLeft += OnUserLeft;
+            _twitch.Client.OnUserTimedout += OnUserTimedOut;
+            _twitch.Client.OnWhisperCommandReceived += OnWhisperCommandReceived;
+            _twitch.Client.OnChatCommandReceived += OnChatCommandReceived;
         }
 
         public static async Task StartDiscordBotAsync(DiscordShardedClient discord)
@@ -80,6 +105,7 @@ namespace Bot
         public static void StartTwitchBot()
         {
             _twitch.Connect();
+            _twitch.JoinChannel("KungRaseri");
         }
 
         private static void ConfigureBots()
@@ -90,7 +116,7 @@ namespace Bot
                 return;
             }
 
-            _liveStreamMonitor = new LiveStreamMonitor(new TwitchAPI(Settings.Keys.Twitch.ClientId), clientId: Settings.Keys.Twitch.ClientId);
+            //_liveStreamMonitor = new LiveStreamMonitor(new TwitchAPI(), clientId: Settings.Keys.Twitch.ClientId);
 
             _discord = new DiscordShardedClient(new DiscordConfiguration
             {
@@ -108,6 +134,95 @@ namespace Bot
             _commands.RegisterCommands<TwitchCommands>();
             _commands.RegisterCommands<DungeonMasterCommands>();
             _commands.RegisterCommands<JanitorCommands>();
+
+            var credentials = new ConnectionCredentials("KungRaseri", "biux90vq6aosq2mr881xugyzv5bk4u");
+
+            _twitch = new TwitchBotService(credentials);
         }
+
+        #region Events 
+
+        private static void OnHostLeft(object sender, EventArgs e)
+        {
+            Console.WriteLine("OnHostLeft");
+        }
+
+        public static void OnBeingHosted(object sender, OnBeingHostedArgs e)
+        {
+            Console.WriteLine("OnBeingHosted");
+        }
+
+        private static void OnNowHosting(object sender, OnNowHostingArgs e)
+        {
+            Console.WriteLine("OnNowHosting");
+        }
+
+        private static void OnConnected(object sender, OnConnectedArgs e)
+        {
+            Console.WriteLine("OnConnected");
+        }
+
+        private static void OnGiftedSubscription(object sender, OnGiftedSubscriptionArgs e)
+        {
+            Console.WriteLine("OnGiftedSubscription");
+        }
+
+        private static void OnReSubscriber(object sender, OnReSubscriberArgs e)
+        {
+            Console.WriteLine("OnReSubscriber");
+        }
+
+        private static void OnNewSubscriber(object sender, OnNewSubscriberArgs e)
+        {
+            Console.WriteLine("OnNewSubscriber");
+        }
+
+        private static void OnUserTimedOut(object sender, OnUserTimedoutArgs e)
+        {
+            Console.WriteLine("OnUserTimedOut");
+        }
+
+        private static void OnUserLeft(object sender, OnUserLeftArgs e)
+        {
+            Console.WriteLine("OnUserLeft");
+        }
+
+        private static void OnUserJoined(object sender, OnUserJoinedArgs e)
+        {
+            Console.WriteLine("OnUserJoined");
+        }
+
+        private static void OnUserBanned(object sender, OnUserBannedArgs e)
+        {
+            Console.WriteLine("OnUserBanned");
+        }
+
+        private static void OnDisconnected(object sender, OnDisconnectedArgs e)
+        {
+            Console.WriteLine("OnDisconnected");
+        }
+
+        private static void OnLeftChannel(object sender, OnLeftChannelArgs e)
+        {
+            Console.WriteLine("OnLeftChannel");
+        }
+
+        private static void OnJoinChannel(object sender, OnJoinedChannelArgs e)
+        {
+            Console.WriteLine("OnJoinChannel");
+        }
+
+        private static void OnChatCommandReceived(object sender, OnChatCommandReceivedArgs e)
+        {
+            Console.WriteLine("OnChatCommandReceived");
+        }
+
+        private static void OnWhisperCommandReceived(object sender, OnWhisperCommandReceivedArgs e)
+        {
+            Console.WriteLine("OnWhisperCommandReceived");
+        }
+
+        #endregion
+
     }
 }

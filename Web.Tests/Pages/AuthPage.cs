@@ -1,5 +1,4 @@
 ﻿using OpenQA.Selenium;
-using OpenQA.Selenium.Support.PageObjects;
 
 namespace Web.Tests.Pages
 {
@@ -7,7 +6,7 @@ namespace Web.Tests.Pages
     {
         public AuthPage(IWebDriver driver)
         {
-            PageFactory.InitElements(driver, this);
+            //PageFactory.InitElements(driver, this);
         }
     }
 }

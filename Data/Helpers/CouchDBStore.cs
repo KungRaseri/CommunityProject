@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Data.Interfaces;
 using Data.Models;
+using Data.Models.Twitch;
 using MyCouch;
 using MyCouch.Requests;
 using MyCouch.Responses;
@@ -106,9 +107,9 @@ namespace Data.Helpers
         /// 
         /// </summary>
         /// <returns></returns>
-        public virtual async Task<IEnumerable<Row<T>>> GetAsync()
+        public virtual async Task<IEnumerable<Row<T>>> GetAsync(string viewFilter = null, string key = null)
         {
-            var query = new Query(EntityName, $"{EntityName}-all");
+            var query = new Query(EntityName, (string.IsNullOrEmpty(viewFilter)) ? $"{EntityName}-all" : viewFilter) { Key = key };
 
             var resultTest = await Store.QueryAsync<T>(query);
 
@@ -119,10 +120,11 @@ namespace Data.Helpers
         /// 
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="viewFilter"></param>
         /// <returns></returns>
-        public virtual async Task<T> GetAsync(string id)
+        public virtual async Task<T> FindAsync(string id, string viewFilter = null)
         {
-            var query = new Query(EntityName, $"{EntityName}-all") { Key = id };
+            var query = new Query(EntityName, (string.IsNullOrEmpty(viewFilter)) ? $"{EntityName}-all" : viewFilter) { Key = id };
 
             var result = await Store.QueryAsync<T>(query);
 
@@ -138,13 +140,35 @@ namespace Data.Helpers
         {
             DocumentHeaderResponse response;
 
-            if (!string.IsNullOrEmpty(entity.Id) )
+            if (typeof(T) == typeof(VOD))
             {
-                response = await Client.Documents.PutAsync(entity.Id, Client.Serializer.Serialize(entity));
+                var vod = entity as VOD;
+
+                var query = new Query(EntityName, $"{EntityName}-by-video-id") { Key = vod?.Video.Id };
+                var existingRows = await Store.QueryAsync<T>(query);
+
+                var record = existingRows.FirstOrDefault()?.Value as VOD;
+
+                if (record != null)
+                {
+                    record.Video = vod?.Video;
+                    response = await Client.Documents.PutAsync(record.Id, Client.Serializer.Serialize(record));
+                }
+                else
+                {
+                    response = await Client.Documents.PostAsync(Client.Serializer.Serialize(entity));
+                }
             }
             else
             {
-                response = await Client.Documents.PostAsync(Client.Serializer.Serialize(entity));
+                if (!string.IsNullOrEmpty(entity.Id))
+                {
+                    response = await Client.Documents.PutAsync(entity.Id, Client.Serializer.Serialize(entity));
+                }
+                else
+                {
+                    response = await Client.Documents.PostAsync(Client.Serializer.Serialize(entity));
+                }
             }
 
             //response = await Store.StoreAsync(entity.Id, Client.Serializer.Serialize(entity));

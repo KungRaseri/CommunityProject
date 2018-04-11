@@ -53,7 +53,7 @@ namespace Api.Controllers
             User user;
             try
             {
-                user = await _userCollection.GetAsync(id);
+                user = await _userCollection.FindAsync(id);
                 user.Password = string.Empty;
                 user.PasswordSalt = string.Empty;
             }
