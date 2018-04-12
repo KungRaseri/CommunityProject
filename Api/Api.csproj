@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+    <PublishWithAspNetCoreTargetManifest>false</PublishWithAspNetCoreTargetManifest>
     <ApplicationInsightsResourceId>/subscriptions/acb7babc-3fb9-49a3-a4cc-c454dc47dd47/resourcegroups/kungraseri-api/providers/microsoft.insights/components/kungraseri-api</ApplicationInsightsResourceId>
     <ApplicationInsightsAnnotationResourceId>/subscriptions/acb7babc-3fb9-49a3-a4cc-c454dc47dd47/resourcegroups/kungraseri-api/providers/microsoft.insights/components/kungraseri-api</ApplicationInsightsAnnotationResourceId>
   </PropertyGroup>
