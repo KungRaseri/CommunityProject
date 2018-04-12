@@ -1,10 +1,16 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
+using System.Net.WebSockets;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using Api.Controllers.WebSockets;
 using Data.Helpers;
 using Data.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -63,12 +69,13 @@ namespace Api
                 });
 
             services.Configure<IISOptions>("api.kungraseri.ninja", options => { });
-
             services.AddMvc();
+
+            services.AddWebSocketManager();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment())
             {
@@ -84,6 +91,42 @@ namespace Api
             app.UseAuthentication();
 
             app.UseMvc();
+            app.UseWebSockets();
+
+            app.MapWebSocketManager("/botcommandrelay", serviceProvider.GetService<BotCommandRelayHandler>());
+
+            //app.Use(async (context, next) =>
+            //{
+            //    if (context.Request.Path == "/ws")
+            //    {
+            //        if (context.WebSockets.IsWebSocketRequest)
+            //        {
+            //            var webSocket = await context.WebSockets.AcceptWebSocketAsync();
+            //            await Echo(context, webSocket);
+            //        }
+            //        else
+            //        {
+            //            context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            //        }
+            //    }
+            //    else
+            //    {
+            //        await next();
+            //    }
+            //});
+        }
+
+        private async Task Echo(HttpContext context, WebSocket webSocket)
+        {
+            var buffer = new byte[1024 * 4];
+            var result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+            while (!result.CloseStatus.HasValue)
+            {
+                await webSocket.SendAsync(new ArraySegment<byte>(buffer, 0, result.Count), result.MessageType, result.EndOfMessage, CancellationToken.None);
+
+                result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+            }
+            await webSocket.CloseAsync(result.CloseStatus.Value, result.CloseStatusDescription, CancellationToken.None);
         }
     }
 }

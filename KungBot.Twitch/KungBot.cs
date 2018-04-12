@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Data.Helpers;
 using Data.Models;
+using KungBot.Twitch.Commands;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 using MyCouch;
+using RestSharp;
 using ThirdParty;
 using Tweetinvi.Parameters;
 using TwitchLib.Client;
@@ -51,13 +53,14 @@ namespace KungBot.Twitch
 
         private async void InitializeBot()
         {
-            var credentials = new ConnectionCredentials(_settings?.Keys.Twitch.Bot.Username, _settings?.Keys.Twitch.Bot.Oauth);
+            var credentials = new ConnectionCredentials(_settings?.TwitchBotSettings.Username, _settings?.Keys.Twitch.Bot.Oauth);
 
             _client.Initialize(credentials, "KungRaseri", autoReListenOnExceptions: false);
             _client.ChatThrottler = new MessageThrottler(_client, 20, TimeSpan.FromSeconds(30));
             await _client.ChatThrottler.StartQueue();
-
             _client.WhisperThrottler = new MessageThrottler(_client, 20, TimeSpan.FromSeconds(30));
+
+            _client.AddChatCommandIdentifier(_settings.TwitchBotSettings.CommandCharacter);
 
             _client.OnJoinedChannel += OnJoinedChannel;
             _client.OnMessageReceived += OnMessageReceived;
@@ -69,8 +72,14 @@ namespace KungBot.Twitch
             _client.OnUserTimedout += OnUserTimedOut;
         }
 
-        private void OnUserTimedOut(object sender, OnUserTimedoutArgs e)
+        private async void OnUserTimedOut(object sender, OnUserTimedoutArgs e)
         {
+            var client = new RestClient("http://localhost:57463/ws/api/botcommandrelay");
+            var request = new RestRequest(Method.GET);
+            request.AddQueryParameter("command", "timeout");
+            request.AddQueryParameter("message", $"{e.Username} timed out for {e.TimeoutDuration} seconds. Reason: {e.TimeoutReason} Kappa");
+            await client.ExecuteGetTaskAsync(request);
+            
             _client.SendMessage(e.Channel, $"{e.Username} timed out for {e.TimeoutDuration} seconds. Reason: {e.TimeoutReason} Kappa");
         }
 
@@ -86,24 +95,20 @@ namespace KungBot.Twitch
             }
 
             var commandType = Type.GetType($"KungBot.Twitch.Commands.{runMe.Identifier}Command");
-            var command = Activator.CreateInstance(commandType);
+
+            if (!(Activator.CreateInstance(commandType) is ICommand command))
+            {
+                return;
+            }
+
+            command.IsActive = runMe.IsActive;
+            command.Name = runMe.Name;
+            command.AuthorizeLevel = runMe.AuthorizationLevel;
+            command.Identifier = runMe.Identifier;
+
             var commandMethod = commandType.GetMethod(runMe.Instructions);
 
-            commandMethod.Invoke(command, new object[] { _client, _twitchService, e.Command, runMe});
-
-            //switch (command)
-            //{
-            //    case "test":
-            //        _client.SendMessage(e.Command.ChatMessage.Channel, "Test Complete. Now leave me alone!");
-            //        break;
-            //    case "emotes":
-            //        _client.SendMessage(e.Command.ChatMessage.Channel, "Tier 1 emote: kungraHEY Tier 2 emote: kungraDERP Tier 3 emote: kungraTHRONE");
-            //        break;
-            //    case "uptime":
-            //        break;
-            //    default:
-            //        return;
-            //}
+            commandMethod.Invoke(command, new object[] { _client, _twitchService, e.Command, runMe });
         }
 
         private void OnConnectionError(object sender, OnConnectionErrorArgs e)
@@ -120,8 +125,8 @@ namespace KungBot.Twitch
         {
             _client.SendMessage(e.Channel,
                 e.Subscriber.IsTwitchPrime
-                    ? $"Welcome {e.Subscriber.DisplayName} to the substers! You just earned 500 points! So kind of you to use your Twitch Prime on this channel!"
-                    : $"Welcome {e.Subscriber.DisplayName} to the substers! You just earned 500 points!");
+                    ? $"Welcome {e.Subscriber.DisplayName} to the {_settings.TwitchBotSettings.CommunityName}! You just earned {_settings.TwitchBotSettings.NewSubAwardAmount} {_settings.TwitchBotSettings.PointsName}! May the Lords bless you for using your Twitch Prime!"
+                    : $"Welcome {e.Subscriber.DisplayName} to the {_settings.TwitchBotSettings.CommunityName}! You just earned {_settings.TwitchBotSettings.NewSubAwardAmount} {_settings.TwitchBotSettings.PointsName}!");
         }
 
         private void OnWhisperReceived(object sender, OnWhisperReceivedArgs e)
@@ -132,10 +137,9 @@ namespace KungBot.Twitch
 
         private void OnMessageReceived(object sender, OnMessageReceivedArgs e)
         {
-            if (e.ChatMessage.Message.ToLower().Contains("hey"))
-            {
-                _client.SendMessage(e.ChatMessage.Channel, $"HeyGuys");
-            }
+            //keyword matching
+            //blacklist
+            //whitelist
         }
 
         private void OnJoinedChannel(object sender, OnJoinedChannelArgs e)
