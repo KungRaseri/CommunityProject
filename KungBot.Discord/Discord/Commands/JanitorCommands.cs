@@ -4,14 +4,14 @@ using System.Threading.Tasks;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 
-namespace Bot.Discord.Commands
+namespace KungBot.Discord.Discord.Commands
 {
     public class JanitorCommands
     {
         [Command("clean")]
         public async Task CleanChannelCommand(CommandContext cmdContext)
         {
-            var messagesResponse = await cmdContext.Channel.GetMessagesAsync(limit:50);
+            var messagesResponse = await cmdContext.Channel.GetMessagesAsync(limit: 50);
             var messages = messagesResponse.Where(dm => (dm.Author.IsBot && dm.Author.Username.Equals("KungRaseriBot")) || dm.Content.StartsWith(".")).ToList();
 
             await cmdContext.TriggerTypingAsync();

@@ -1,4 +1,4 @@
-﻿namespace Bot.Discord.Commands
+﻿namespace KungBot.Discord.Discord.Commands
 {
     public class HumbleBundleCommands
     {
