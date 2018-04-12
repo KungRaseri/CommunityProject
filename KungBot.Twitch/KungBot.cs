@@ -70,6 +70,17 @@ namespace KungBot.Twitch
             _client.OnConnectionError += OnConnectionError;
             _client.OnChatCommandReceived += OnChatCommandReceived;
             _client.OnUserTimedout += OnUserTimedOut;
+            _client.OnUserBanned += ClientOnOnUserBanned;
+        }
+
+        private async void ClientOnOnUserBanned(object sender, OnUserBannedArgs e)
+        {
+            var client = new RestClient("http://localhost:57463/ws/api/botcommandrelay");
+            var request = new RestRequest(Method.GET);
+            request.AddQueryParameter("command", "timeout");
+            request.AddQueryParameter("message", $"{e.Username} has been banned. Reason: {e.BanReason} Kappa");
+
+            await client.ExecuteGetTaskAsync(request);
         }
 
         private async void OnUserTimedOut(object sender, OnUserTimedoutArgs e)
@@ -78,9 +89,8 @@ namespace KungBot.Twitch
             var request = new RestRequest(Method.GET);
             request.AddQueryParameter("command", "timeout");
             request.AddQueryParameter("message", $"{e.Username} timed out for {e.TimeoutDuration} seconds. Reason: {e.TimeoutReason} Kappa");
+
             await client.ExecuteGetTaskAsync(request);
-            
-            _client.SendMessage(e.Channel, $"{e.Username} timed out for {e.TimeoutDuration} seconds. Reason: {e.TimeoutReason} Kappa");
         }
 
         private void OnChatCommandReceived(object sender, OnChatCommandReceivedArgs e)
