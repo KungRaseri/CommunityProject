@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
-    <PublishWithAspNetCoreTargetManifest>false</PublishWithAspNetCoreTargetManifest>
     <ApplicationInsightsResourceId>/subscriptions/acb7babc-3fb9-49a3-a4cc-c454dc47dd47/resourcegroups/kungraseri-api/providers/microsoft.insights/components/kungraseri-api</ApplicationInsightsResourceId>
     <ApplicationInsightsAnnotationResourceId>/subscriptions/acb7babc-3fb9-49a3-a4cc-c454dc47dd47/resourcegroups/kungraseri-api/providers/microsoft.insights/components/kungraseri-api</ApplicationInsightsAnnotationResourceId>
   </PropertyGroup>
@@ -11,7 +10,8 @@
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.2.1" />
     <PackageReference Include="Microsoft.AspNet.SignalR" Version="2.2.3" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.6" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="2.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Antiforgery" Version="2.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="2.2.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.3" />
     <PackageReference Include="MyCouch.AspNet.Identity" Version="0.3.0" />
   </ItemGroup>
