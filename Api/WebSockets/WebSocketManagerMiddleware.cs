@@ -2,9 +2,10 @@
 using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
+using Api.WebSockets.Handlers;
 using Microsoft.AspNetCore.Http;
 
-namespace Api.Controllers.WebSockets
+namespace Api.WebSockets
 {
     public class WebSocketManagerMiddleware
     {

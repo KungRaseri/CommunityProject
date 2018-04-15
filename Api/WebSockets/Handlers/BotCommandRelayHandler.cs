@@ -1,22 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Net;
-using System.Net.Http;
-using System.Net.WebSockets;
-using System.Security.Claims;
+﻿using System.Net.WebSockets;
 using System.Text;
 using System.Threading.Tasks;
-using Data.Helpers;
-using Data.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace Api.Controllers.WebSockets
+namespace Api.WebSockets.Handlers
 {
     public class BotCommandRelayHandler : WebSocketHandler
     {

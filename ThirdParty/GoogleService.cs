@@ -38,19 +38,5 @@ namespace ThirdParty
                 return result;
             }
         }
-
-        public static class UrlShortener
-        {
-            public static async Task<string> ShortenUrl(string longUrl)
-            {
-                var urlShortener = new UrlshortenerService(new BaseClientService.Initializer() { ApiKey = _settings.Keys.GoogleApiKey });
-
-                var url = new Google.Apis.Urlshortener.v1.Data.Url { LongUrl = longUrl };
-
-                var shortUrl = await urlShortener.Url.Insert(url).ExecuteAsync();
-
-                return shortUrl.Id;
-            }
-        }
     }
 }

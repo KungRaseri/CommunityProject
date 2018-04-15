@@ -18,4 +18,10 @@
     <ProjectReference Include="..\ThirdParty\ThirdParty.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="UrlShortener">
+      <HintPath>C:\Users\count\.nuget\packages\sandersade.urlshortener\1.0.0\lib\netstandard2.0\UrlShortener.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

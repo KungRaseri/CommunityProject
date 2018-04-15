@@ -33,7 +33,7 @@ namespace Api.Controllers.ThirdParty
                 return "No tweets could be found.";
             }
 
-            var shortUrl = await GoogleService.UrlShortener.ShortenUrl(tweet.Url);
+            var shortUrl = tweet.Url;
 
             return $"{tweet.FullText.Replace("\n", " ")} - {shortUrl} - {tweet.CreatedAt.TimeAgo()}";
         }

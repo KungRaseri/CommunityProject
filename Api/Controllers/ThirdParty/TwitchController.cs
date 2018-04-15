@@ -59,7 +59,7 @@ namespace Api.Controllers.ThirdParty
                 return "No video for that game could be found. Please try another.";
             }
 
-            var shortUrl = await GoogleService.UrlShortener.ShortenUrl($"https://www.twitch.tv/videos/{video.Id}");
+            var shortUrl = $"https://www.twitch.tv/videos/{video.Id}";
 
             return $"{video.Title} - {shortUrl}";
         }
@@ -89,7 +89,7 @@ namespace Api.Controllers.ThirdParty
                 return "No video for that game could be found. Please try another.";
             }
 
-            var shortUrl = await GoogleService.UrlShortener.ShortenUrl($"https://www.twitch.tv/videos/{video.Id}");
+            var shortUrl = $"https://www.twitch.tv/videos/{video.Id}";
 
             return $"{video.Title} - {shortUrl}";
         }

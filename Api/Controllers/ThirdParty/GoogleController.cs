@@ -21,12 +21,13 @@ namespace Api.Controllers.ThirdParty
 
             if (video == null)
             {
-                return "No video with that title could be found. Please try another.";
+                return "Channel not found. Please try another.";
             }
 
             var url = $"https://www.youtube.com/watch?v={video.Id.VideoId}";
+            var shortUrl = url;
 
-            return $"{video.Snippet.Title} - {await GoogleService.UrlShortener.ShortenUrl(url)}";
+            return $"{video.Snippet.Title} - {shortUrl}";
         }
     }
 }
