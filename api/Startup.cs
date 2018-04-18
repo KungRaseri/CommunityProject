@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Net.Http.Headers;
 
 namespace Api
 {
@@ -38,6 +39,12 @@ namespace Api
             var settingsCollection = new CouchDbStore<Settings>(configSettings.GetSection("CouchDbUri").Value);
 
             var settings = settingsCollection.GetAsync().GetAwaiter().GetResult().FirstOrDefault()?.Value;
+
+            services.AddResponseCaching(options =>
+            {
+                options.UseCaseSensitivePaths = true;
+                options.MaximumBodySize = 1024;
+            });
 
             services.AddApiVersioning(api =>
             {
@@ -70,7 +77,20 @@ namespace Api
                 });
 
             services.Configure<IISOptions>("api.kungraseri.ninja", options => { });
-            services.AddMvc();
+            services.AddMvc(options =>
+            {
+                options.CacheProfiles.Add("Default",
+                    new CacheProfile()
+                    {
+                        Duration = 60
+                    });
+                options.CacheProfiles.Add("Never",
+                new CacheProfile()
+                {
+                    Location = ResponseCacheLocation.None,
+                    NoStore = true
+                });
+            });
 
             services.AddWebSocketManager();
         }
@@ -90,9 +110,21 @@ namespace Api
             }
 
             app.UseAuthentication();
-
+            app.UseResponseCaching();
             app.UseMvc();
             app.UseWebSockets();
+
+            app.Use(async (context, next) =>
+            {
+                context.Response.GetTypedHeaders().CacheControl = new CacheControlHeaderValue()
+                {
+                    Public = true,
+                    MaxAge = TimeSpan.FromSeconds(60)
+                };
+                context.Response.Headers[HeaderNames.Vary] = new string[] {"Accept-Encoding"};
+
+                await next();
+            });
 
             app.MapWebSocketManager("/botcommandrelay", serviceProvider.GetService<BotCommandRelayHandler>());
 

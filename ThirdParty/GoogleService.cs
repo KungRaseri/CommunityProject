@@ -11,23 +11,29 @@ namespace ThirdParty
 {
     public class GoogleService
     {
-        protected static Settings _settings;
+        public YoutubeEndpoint Youtube { get; set; }
 
         public GoogleService(Settings settings)
         {
-            _settings = settings;
+            Youtube = new YoutubeEndpoint(settings.Keys.GoogleApiKey);
         }
 
-        public static class Youtube
+        public class YoutubeEndpoint
         {
-            public static async Task<SearchResult> GetLatestYoutubeVideo(string channelId)
+            private readonly YouTubeService YoutubeService;
+
+            public YoutubeEndpoint(string apiKey)
             {
-                var yt = new YouTubeService(new BaseClientService.Initializer()
+                YoutubeService = new YouTubeService(new BaseClientService.Initializer()
                 {
-                    ApiKey = _settings.Keys.GoogleApiKey
+                    ApiKey = apiKey
                 });
 
-                var searchRequest = yt.Search.List("snippet");
+            }
+
+            public async Task<SearchResult> GetLatestVideo(string channelId)
+            {
+                var searchRequest = YoutubeService.Search.List("snippet");
                 searchRequest.ChannelId = channelId;
                 searchRequest.PublishedAfter = DateTime.Parse("01/01/2018");
                 searchRequest.MaxResults = 10;

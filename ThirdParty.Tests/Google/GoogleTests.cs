@@ -11,7 +11,7 @@ namespace ThirdParty.Tests.Google
     {
         private CouchDbStore<Settings> _settingsCollection;
         private Settings _settings;
-        private GoogleService _googleClient;
+        private GoogleService _googleService;
         private UrlShortener _urlShortener;
 
         [TestInitialize]
@@ -19,7 +19,7 @@ namespace ThirdParty.Tests.Google
         {
             _settingsCollection = new CouchDbStore<Settings>("http://root:123456789@localhost:5984/");
             _settings = _settingsCollection.FindAsync("9c3131ee7b9fb97491e8551211495381").GetAwaiter().GetResult();
-            _googleClient = new GoogleService(_settings);
+            _googleService = new GoogleService(_settings);
             _urlShortener = new UrlShortener(CharacterSet.Base94);
         }
 
@@ -27,7 +27,7 @@ namespace ThirdParty.Tests.Google
         public void GetLatestYoutubeVideo_ReturnsSearchListResponse()
         {
             var channelId = "UCH3dHHNk1pSgDFtGy_XdL0Q";
-            var video = GoogleService.Youtube.GetLatestYoutubeVideo(channelId).GetAwaiter().GetResult();
+            var video = _googleService.Youtube.GetLatestVideo(channelId).GetAwaiter().GetResult();
 
             Assert.IsInstanceOfType(video, typeof(SearchResult));
             Assert.IsTrue(video.Snippet.ChannelId == channelId);
