@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using ShortUrl;
 using ThirdParty;
 
 namespace Api.Controllers.ThirdParty
@@ -31,7 +32,7 @@ namespace Api.Controllers.ThirdParty
             }
 
             var url = $"https://www.youtube.com/watch?v={video.Id.VideoId}";
-            var shortUrl = url;
+            var shortUrl = await _googleService.UrlShortener.ShortenUrl(url);
 
             return $"{video.Snippet.Title} - {shortUrl}";
         }

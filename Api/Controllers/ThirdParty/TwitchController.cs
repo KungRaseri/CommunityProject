@@ -19,11 +19,13 @@ namespace Api.Controllers.ThirdParty
     {
         private readonly TwitchService _twitchClient;
         private readonly CouchDbStore<VOD> _vodCollection;
+        private readonly GoogleService _googleService;
 
         public TwitchController(IConfiguration configuration) : base(configuration)
         {
             _twitchClient = new TwitchService(Settings);
             _vodCollection = new CouchDbStore<VOD>(Settings.CouchDbUri);
+            _googleService = new GoogleService(Settings);
         }
 
         [HttpGet("{channelName}/vod/game/{game}")]
@@ -59,7 +61,7 @@ namespace Api.Controllers.ThirdParty
                 return "No video for that game could be found. Please try another.";
             }
 
-            var shortUrl = $"https://www.twitch.tv/videos/{video.Id}";
+            var shortUrl = _googleService.UrlShortener.ShortenUrl($"https://www.twitch.tv/videos/{video.Id}");
 
             return $"{video.Title} - {shortUrl}";
         }
@@ -89,7 +91,7 @@ namespace Api.Controllers.ThirdParty
                 return "No video for that game could be found. Please try another.";
             }
 
-            var shortUrl = $"https://www.twitch.tv/videos/{video.Id}";
+            var shortUrl = _googleService.UrlShortener.ShortenUrl($"https://www.twitch.tv/videos/{video.Id}");
 
             return $"{video.Title} - {shortUrl}";
         }

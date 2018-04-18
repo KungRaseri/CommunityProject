@@ -16,10 +16,12 @@ namespace Api.Controllers.ThirdParty
     public class TwitterController : BaseApiController
     {
         private readonly TwitterService _twitterClient;
+        private readonly GoogleService _googleService;
 
         public TwitterController(IConfiguration configuration) : base(configuration)
         {
             _twitterClient = new TwitterService(Settings);
+            _googleService = new GoogleService(Settings);
         }
 
         [HttpGet("{name}/latest")]
@@ -33,7 +35,7 @@ namespace Api.Controllers.ThirdParty
                 return "No tweets could be found.";
             }
 
-            var shortUrl = tweet.Url;
+            var shortUrl = _googleService.UrlShortener.ShortenUrl(tweet.Url);
 
             return $"{tweet.FullText.Replace("\n", " ")} - {shortUrl} - {tweet.CreatedAt.TimeAgo()}";
         }

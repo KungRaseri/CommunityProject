@@ -12,10 +12,12 @@ namespace ThirdParty
     public class GoogleService
     {
         public YoutubeEndpoint Youtube { get; set; }
+        public UrlShortenerEndpoint UrlShortener { get; set; }
 
         public GoogleService(Settings settings)
         {
             Youtube = new YoutubeEndpoint(settings.Keys.GoogleApiKey);
+            UrlShortener = new UrlShortenerEndpoint(settings.Keys.GoogleApiKey);
         }
 
         public class YoutubeEndpoint
@@ -42,6 +44,25 @@ namespace ThirdParty
                 var result = results.Items.FirstOrDefault();
 
                 return result;
+            }
+        }
+
+        public class UrlShortenerEndpoint
+        {
+            private readonly UrlshortenerService _urlShortener;
+
+            public UrlShortenerEndpoint(string apiKey)
+            {
+                _urlShortener = new UrlshortenerService(new BaseClientService.Initializer() { ApiKey = apiKey });
+            }
+
+            public async Task<string> ShortenUrl(string longUrl)
+            {
+                var url = new Google.Apis.Urlshortener.v1.Data.Url { LongUrl = longUrl };
+
+                var shortUrl = await _urlShortener.Url.Insert(url).ExecuteAsync();
+
+                return shortUrl.Id;
             }
         }
     }
