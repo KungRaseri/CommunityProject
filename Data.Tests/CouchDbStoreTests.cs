@@ -9,13 +9,12 @@ namespace Data.Tests
     public class CouchDbStoreTests
     {
         private CouchDbStore<User> _usersCollection { get; set; }
-        private CouchDbStore<Settings> _settingsCollection { get; set; }
         
         [TestInitialize]
         public void SetUpTests()
         {
-            _settingsCollection = new CouchDbStore<Settings>("http://root:123456789@localhost:5984/");
-            var settings = _settingsCollection.FindAsync("9c3131ee7b9fb97491e8551211495381").GetAwaiter().GetResult();
+            var settingsCollection = new CouchDbStore<Settings>("http://root:123456789@localhost:5984/");
+            var settings = settingsCollection.FindAsync("9c3131ee7b9fb97491e8551211495381").GetAwaiter().GetResult();
 
             _usersCollection = new CouchDbStore<User>(settings.CouchDbUri);
 

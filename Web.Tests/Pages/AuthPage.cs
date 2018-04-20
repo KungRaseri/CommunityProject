@@ -6,7 +6,6 @@ namespace Web.Tests.Pages
     {
         public AuthPage(IWebDriver driver)
         {
-            //PageFactory.InitElements(driver, this);
         }
     }
 }

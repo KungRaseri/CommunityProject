@@ -4,7 +4,7 @@ using Web.Tests.Pages;
 namespace Web.Tests
 {
     [TestClass]
-    [Ignore]
+    [Ignore("Not yet implemented")]
     public class AuthTests
     {
         [TestInitialize]
