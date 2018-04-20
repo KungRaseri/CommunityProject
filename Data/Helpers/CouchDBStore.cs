@@ -171,8 +171,6 @@ namespace Data.Helpers
                 }
             }
 
-            //response = await Store.StoreAsync(entity.Id, Client.Serializer.Serialize(entity));
-
             var result = await Store.GetByIdAsync<T>(response.Id);
 
             return result;
@@ -208,8 +206,6 @@ namespace Data.Helpers
             {
                 response = await Client.Documents.PostAsync(Client.Serializer.Serialize(entity));
             }
-
-            //response = await Store.StoreAsync(entity.Id, Client.Serializer.Serialize(entity));
 
             var result = await Store.GetByIdAsync<T>(response.Id);
 

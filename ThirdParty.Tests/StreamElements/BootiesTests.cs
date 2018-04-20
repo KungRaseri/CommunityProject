@@ -47,7 +47,6 @@ namespace ThirdParty.Tests.StreamElements
 
             Assert.IsTrue(maxPoints == blazdnconfuzdPoints, $"The max points: {maxPoints} did not match the expected value: {blazdnconfuzdPoints} ");
             Assert.IsTrue(bootiesResponse.Users.FirstOrDefault(bu => bu.Username.Contains(expectedUsername))?.Points > minimumPointAmount, $"The user's points did not meet the minimum expected value: {minimumPointAmount} ");
-            //Assert.IsTrue(bootiesResponse._total == expectedTotal, $"The Total: {bootiesResponse._total} did not match the expected value: {expectedTotal}");
         }
 
         [TestMethod]

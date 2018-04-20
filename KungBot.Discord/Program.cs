@@ -8,27 +8,28 @@ using Data.Helpers;
 using Data.Models;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
-using DSharpPlus.Entities;
 using KungBot.Discord.Discord.Commands;
 
 namespace KungBot.Discord
 {
-    internal class Program
+    public class Program
     {
         private static DiscordShardedClient Client;
         private static ClientWebSocket _webSocket;
         private static CommandsNextModule CommandsNext { get; set; }
-        public static Settings _settings;
 
-        private static void Main(string[] args)
+        protected static void Main(string[] args)
         {
             var settingsCollection = new CouchDbStore<Settings>("http://root:123456789@localhost:5984"); // LEAKED
-            _settings = settingsCollection.GetAsync().Result.FirstOrDefault()?.Value;
+            var settings = settingsCollection.GetAsync().Result.FirstOrDefault()?.Value;
+
+            if (settings == null)
+                throw new NullReferenceException("Could not find settings");
 
             _webSocket = new ClientWebSocket();
             try
             {
-                Configure();
+                Configure(settings.Keys.Discord, settings.DiscordBotSettings.CommandCharacter);
                 Initialize();
             }
             catch (Exception e)
@@ -51,11 +52,11 @@ namespace KungBot.Discord
             return Task.CompletedTask;
         }
 
-        private static void Configure()
+        private static void Configure(string discordToken, string commandCharacter)
         {
             var config = new DiscordConfiguration()
             {
-                Token = _settings.Keys.Discord,
+                Token = discordToken,
                 TokenType = TokenType.Bot,
                 LogLevel = LogLevel.Debug,
                 UseInternalLogHandler = true
@@ -64,7 +65,7 @@ namespace KungBot.Discord
             Client = new DiscordShardedClient(config);
             CommandsNext = Client.UseCommandsNext(new CommandsNextConfiguration()
             {
-                StringPrefix = _settings.DiscordBotSettings.CommandCharacter
+                StringPrefix = commandCharacter
             }).FirstOrDefault().Value;
 
             CommandsNext.RegisterCommands<TwitchCommands>();

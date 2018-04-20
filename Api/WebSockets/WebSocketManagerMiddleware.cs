@@ -36,9 +36,6 @@ namespace Api.WebSockets
                 else if (result.MessageType == WebSocketMessageType.Close)
                     await _webSocketHandler.OnDisconnected(socket);
             });
-
-            //TODO - investigate the Kestrel exception thrown when this is the last middleware
-            //await _next.Invoke(context);
         }
 
         private async Task Receive(WebSocket socket, Action<WebSocketReceiveResult, byte[]> handleMessage)

@@ -19,9 +19,9 @@ namespace KungBot.Twitch
     public class KungBot
     {
         private readonly Settings _settings;
-        private static TwitchClient _client;
-        private static ILogger<TwitchClient> _logger;
-        private static TwitchService _twitchService;
+        private readonly TwitchClient _client;
+        private readonly ILogger<TwitchClient> _logger;
+        private readonly TwitchService _twitchService;
         private readonly List<Command> _commands;
 
         public KungBot()
@@ -31,10 +31,7 @@ namespace KungBot.Twitch
 
             var commandCollection = new CouchDbStore<Command>(_settings?.CouchDbUri);
             _commands = commandCollection.GetAsync().Result.Select(row => row.Value).ToList();
-        }
 
-        public void Connect()
-        {
             var factory = new LoggerFactory(new List<ILoggerProvider>()
             {
                 new ConsoleLoggerProvider(new ConsoleLoggerSettings(){Switches = {new KeyValuePair<string, LogLevel>("KungTheBot", LogLevel.Debug) }})
@@ -43,7 +40,10 @@ namespace KungBot.Twitch
             _client = new TwitchClient(_logger);
 
             _twitchService = new TwitchService(_settings);
+        }
 
+        public void Connect()
+        {
             Task.Run(InitializeBot);
             Console.WriteLine("Connecting...");
             Console.WriteLine($"Loaded {_commands.Count} commands");
@@ -153,7 +153,7 @@ namespace KungBot.Twitch
 
         private void OnJoinedChannel(object sender, OnJoinedChannelArgs e)
         {
-
+            Console.WriteLine($"{e.BotUsername}: {e.Channel}");
         }
 
         public void Disconnect()

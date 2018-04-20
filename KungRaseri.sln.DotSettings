@@ -2,4 +2,6 @@
 	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=API/@EntryIndexedValue">API</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=JWT/@EntryIndexedValue">JWT</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=SE/@EntryIndexedValue">SE</s:String>
-	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=VOD/@EntryIndexedValue">VOD</s:String></wpf:ResourceDictionary>
+	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=VOD/@EntryIndexedValue">VOD</s:String>
+	<s:String x:Key="/Default/FilterSettingsManager/AttributeFilterXml/@EntryValue">&lt;data /&gt;</s:String>
+	<s:String x:Key="/Default/FilterSettingsManager/CoverageFilterXml/@EntryValue">&lt;data&gt;&lt;IncludeFilters&gt;&lt;Filter ModuleMask="*" ModuleVersionMask="*" ClassMask="*" FunctionMask="*" IsEnabled="True" /&gt;&lt;/IncludeFilters&gt;&lt;ExcludeFilters /&gt;&lt;/data&gt;</s:String></wpf:ResourceDictionary>

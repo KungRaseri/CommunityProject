@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Data.Helpers;
+using Data.Models;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using TwitchLib.Api;
@@ -11,11 +13,19 @@ namespace KungBot.Discord.Discord.Commands
 {
     public class TwitchCommands
     {
+        private readonly Settings _settings;
+
+        public TwitchCommands()
+        {
+            var settingsCollection = new CouchDbStore<Settings>("http://root:123456789@localhost:5984"); // LEAKED
+            _settings = settingsCollection.GetAsync().Result.FirstOrDefault()?.Value;
+        }
+
         [Command("followage")]
         public async Task GetChannelFollowingCommand(CommandContext cmdContext, string channelName)
         {
             var api = new TwitchAPI();
-            await api.Settings.SetClientIdAsync(Program._settings.Keys.Twitch.ClientId);
+            await api.Settings.SetClientIdAsync(_settings.Keys.Twitch.ClientId);
 
             try
             {
@@ -53,10 +63,9 @@ namespace KungBot.Discord.Discord.Commands
         public async Task GetTopLiveChannelsCommand(CommandContext cmdContext, int amount)
         {
             var api = new TwitchAPI();
-            await api.Settings.SetClientIdAsync(Program._settings.Keys.Twitch.ClientId);
+            await api.Settings.SetClientIdAsync(_settings.Keys.Twitch.ClientId);
             try
             {
-                //var streamsMetadataResponse = await api.Streams.helix.GetStreamsMetadataAsync();
                 var liveStreamsResponse = await api.Streams.v5.GetLiveStreamsAsync(limit: amount);
 
                 var liveStreams = liveStreamsResponse.Streams.OrderByDescending(s => s.Viewers).ToList();
@@ -85,7 +94,7 @@ namespace KungBot.Discord.Discord.Commands
         public async Task GetTopClipsCommand(CommandContext cmdContext, [Description("The amount of clips you want returned.")]int amount, [Description("The channel that you would like the top clips from")]string channelName = null)
         {
             var api = new TwitchAPI();
-            await api.Settings.SetClientIdAsync(Program._settings.Keys.Twitch.ClientId);
+            await api.Settings.SetClientIdAsync(_settings.Keys.Twitch.ClientId);
 
             try
             {

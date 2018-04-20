@@ -121,47 +121,12 @@ namespace Api
                     Public = true,
                     MaxAge = TimeSpan.FromSeconds(60)
                 };
-                context.Response.Headers[HeaderNames.Vary] = new[] {"Accept-Encoding"};
+                context.Response.Headers[HeaderNames.Vary] = new[] { "Accept-Encoding" };
 
                 await next();
             });
 
             app.MapWebSocketManager("/botcommandrelay", serviceProvider.GetService<BotCommandRelayHandler>());
-
-            //app.Use(async (context, next) =>
-            //{
-            //    if (context.Request.Path == "/ws")
-            //    {
-            //        if (context.WebSockets.IsWebSocketRequest)
-            //        {
-            //            var webSocket = await context.WebSockets.AcceptWebSocketAsync();
-            //            await Echo(context, webSocket);
-            //        }
-            //        else
-            //        {
-            //            context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            //        }
-            //    }
-            //    else
-            //    {
-            //        await next();
-            //    }
-            //});
-        }
-
-        private async Task Echo(HttpContext context, WebSocket webSocket)
-        {
-            var buffer = new byte[1024 * 4];
-            var result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-            while (!result.CloseStatus.HasValue)
-            {
-                await webSocket.SendAsync(new ArraySegment<byte>(buffer, 0, result.Count), result.MessageType,
-                    result.EndOfMessage, CancellationToken.None);
-
-                result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-            }
-
-            await webSocket.CloseAsync(result.CloseStatus.Value, result.CloseStatusDescription, CancellationToken.None);
         }
     }
 }

@@ -8,7 +8,7 @@ namespace Api.WebSockets.Handlers
 {
     public abstract class WebSocketHandler
     {
-        public WebSocketHandler(WebSocketConnectionManager webSocketConnectionManager)
+        protected WebSocketHandler(WebSocketConnectionManager webSocketConnectionManager)
         {
             WebSocketConnectionManager = webSocketConnectionManager;
         }

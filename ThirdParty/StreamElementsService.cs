@@ -13,9 +13,8 @@ namespace ThirdParty
 {
     public class StreamElementsService
     {
-        protected static Settings _settings;
         public RestClient StreamElementsClient { get; set; }
-
+        private readonly Settings _settings;
 
         public StreamElementsService(Settings settings)
         {
