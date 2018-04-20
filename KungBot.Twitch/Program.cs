@@ -3,9 +3,9 @@ using System.Threading;
 
 namespace KungBot.Twitch
 {
-    public class Program
+    public static class Program
     {
-        protected static void Main(string[] args)
+        public static void Main(string[] args)
         {
             var bot = new KungBot();
             bot.Connect();

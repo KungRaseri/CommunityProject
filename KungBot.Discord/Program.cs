@@ -24,7 +24,10 @@ namespace KungBot.Discord
             var settings = settingsCollection.GetAsync().Result.FirstOrDefault()?.Value;
 
             if (settings == null)
-                throw new ArgumentNullException(nameof(settings), "Could not find settings");
+            {
+                Console.WriteLine("Settings could not be found...");
+                return;
+            }
 
             _webSocket = new ClientWebSocket();
             try
