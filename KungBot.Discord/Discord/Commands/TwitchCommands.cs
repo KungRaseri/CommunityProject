@@ -56,7 +56,7 @@ namespace KungBot.Discord.Discord.Commands
             await api.Settings.SetClientIdAsync(Program._settings.Keys.Twitch.ClientId);
             try
             {
-                var streamsMetadataResponse = await api.Streams.helix.GetStreamsMetadataAsync();
+                //var streamsMetadataResponse = await api.Streams.helix.GetStreamsMetadataAsync();
                 var liveStreamsResponse = await api.Streams.v5.GetLiveStreamsAsync(limit: amount);
 
                 var liveStreams = liveStreamsResponse.Streams.OrderByDescending(s => s.Viewers).ToList();
