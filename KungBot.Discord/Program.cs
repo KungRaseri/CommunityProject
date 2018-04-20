@@ -12,19 +12,19 @@ using KungBot.Discord.Discord.Commands;
 
 namespace KungBot.Discord
 {
-    public class Program
+    public static class Program
     {
         private static DiscordShardedClient Client;
         private static ClientWebSocket _webSocket;
         private static CommandsNextModule CommandsNext { get; set; }
 
-        protected static void Main(string[] args)
+        public static void Main(string[] args)
         {
             var settingsCollection = new CouchDbStore<Settings>("http://root:123456789@localhost:5984"); // LEAKED
             var settings = settingsCollection.GetAsync().Result.FirstOrDefault()?.Value;
 
             if (settings == null)
-                throw new NullReferenceException("Could not find settings");
+                throw new ArgumentNullException(nameof(settings), "Could not find settings");
 
             _webSocket = new ClientWebSocket();
             try

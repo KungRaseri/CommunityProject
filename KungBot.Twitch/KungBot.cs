@@ -36,7 +36,7 @@ namespace KungBot.Twitch
             {
                 new ConsoleLoggerProvider(new ConsoleLoggerSettings(){Switches = {new KeyValuePair<string, LogLevel>("KungTheBot", LogLevel.Debug) }})
             });
-            _logger = new Logger<TwitchClient>(factory);//new ConsoleLogger();
+            _logger = new Logger<TwitchClient>(factory);
             _client = new TwitchClient(_logger);
 
             _twitchService = new TwitchService(_settings);

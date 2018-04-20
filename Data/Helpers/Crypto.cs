@@ -45,16 +45,26 @@ namespace Data.Helpers
                 aes.Padding = PaddingMode.Zeros;
                 using (var encryptor = aes.CreateEncryptor(key, aes.IV))
                 {
+                    CryptoStream ecs = null;
+
                     using (var ems = new MemoryStream())
                     {
-                        byte[] decryptedContent;
-                        using (var ecs = new CryptoStream(ems, encryptor, CryptoStreamMode.Write))
-                        using (var esw = new StreamWriter(ecs))
+                        byte[] decryptedContent = { };
+                        try
                         {
-                            esw.Write(value);
-                            esw.Flush();
-                            ecs.FlushFinalBlock();
-                            decryptedContent = ems.ToArray();
+                            ecs = new CryptoStream(ems, encryptor, CryptoStreamMode.Write);
+                            using (var esw = new StreamWriter(ecs))
+                            {
+                                esw.Write(value);
+                                esw.Flush();
+                                ecs.FlushFinalBlock();
+                                decryptedContent = ems.ToArray();
+                            }
+
+                        }
+                        catch (Exception e)
+                        {
+                            ecs?.Dispose();
                         }
 
                         var iv = aes.IV;
@@ -88,22 +98,31 @@ namespace Data.Helpers
                 aes.Padding = PaddingMode.Zeros;
                 using (var decryptor = aes.CreateDecryptor(key, iv))
                 {
-                    string result;
+                    string result = string.Empty;
+                    CryptoStream dcs = null;
                     using (var dms = new MemoryStream(cipher))
                     {
-                        using (var dcs = new CryptoStream(dms, decryptor, CryptoStreamMode.Read))
-                        using (var dsr = new StreamReader(dcs))
+                        try
                         {
-                            try
+                            dcs = new CryptoStream(dms, decryptor, CryptoStreamMode.Read);
+                            using (var dsr = new StreamReader(dcs))
                             {
-                                result = dsr.ReadToEnd();
-                            }
-                            catch (Exception e)
-                            {
-                                Console.WriteLine(e);
-                                throw;
+                                try
+                                {
+                                    result = dsr.ReadToEnd();
+                                }
+                                catch (Exception e)
+                                {
+                                    Console.WriteLine(e);
+                                    throw;
+                                }
                             }
                         }
+                        catch (Exception e)
+                        {
+                            dcs?.Dispose();
+                        }
+
                     }
                     // Remove the padding from the decrypted string
                     result = result.Split('\0')[0];
