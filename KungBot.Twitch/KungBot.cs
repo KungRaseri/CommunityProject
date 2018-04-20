@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Data.Helpers;
 using Data.Models;
 using KungBot.Twitch.Commands;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
-using MyCouch;
 using RestSharp;
 using ThirdParty;
-using Tweetinvi.Parameters;
 using TwitchLib.Client;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Models;
@@ -45,13 +44,13 @@ namespace KungBot.Twitch
 
             _twitchService = new TwitchService(_settings);
 
-            InitializeBot();
+            Task.Run(InitializeBot);
             Console.WriteLine("Connecting...");
             Console.WriteLine($"Loaded {_commands.Count} commands");
             _client.Connect();
         }
 
-        private async void InitializeBot()
+        private async Task InitializeBot()
         {
             var credentials = new ConnectionCredentials(_settings?.TwitchBotSettings.Username, _settings?.Keys.Twitch.Bot.Oauth);
 
@@ -60,7 +59,7 @@ namespace KungBot.Twitch
             await _client.ChatThrottler.StartQueue();
             _client.WhisperThrottler = new MessageThrottler(_client, 20, TimeSpan.FromSeconds(30));
 
-            _client.AddChatCommandIdentifier(_settings.TwitchBotSettings.CommandCharacter);
+            if (_settings != null) _client.AddChatCommandIdentifier(_settings.TwitchBotSettings.CommandCharacter);
 
             _client.OnJoinedChannel += OnJoinedChannel;
             _client.OnMessageReceived += OnMessageReceived;

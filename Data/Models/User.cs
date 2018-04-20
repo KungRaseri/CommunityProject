@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Data.Interfaces;
+﻿using Data.Interfaces;
 
 namespace Data.Models
 {
@@ -15,6 +12,5 @@ namespace Data.Models
         public string TwitchUsername { get; set; }
         public bool IsFollower { get; set; }
         public bool IsSubscriber { get; set; }
-        public bool IsDrugAddict = true;
     }
 }
