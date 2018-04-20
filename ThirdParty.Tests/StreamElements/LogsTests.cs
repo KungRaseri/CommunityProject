@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Data;
 using Data.Helpers;
 using Data.Models;
 using Data.Models.StreamElements.Logs;
@@ -14,7 +15,7 @@ namespace ThirdParty.Tests.StreamElements
         [TestInitialize]
         public void SetupTests()
         {
-            var settingsCollection = new CouchDbStore<Settings>("http://root:123456789@localhost:5984/");
+            var settingsCollection = new CouchDbStore<Settings>(ApplicationConstants.CouchDbLocalUrl);
             var settings = settingsCollection.FindAsync("9c3131ee7b9fb97491e8551211495381").GetAwaiter().GetResult();
             _seClient = new StreamElementsService(settings);
         }

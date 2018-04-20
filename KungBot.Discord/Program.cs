@@ -4,6 +4,7 @@ using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Data;
 using Data.Helpers;
 using Data.Models;
 using DSharpPlus;
@@ -20,7 +21,7 @@ namespace KungBot.Discord
 
         public static void Main(string[] args)
         {
-            var settingsCollection = new CouchDbStore<Settings>("http://root:123456789@localhost:5984"); // LEAKED
+            var settingsCollection = new CouchDbStore<Settings>(ApplicationConstants.CouchDbLocalUrl); // LEAKED
             var settings = settingsCollection.GetAsync().Result.FirstOrDefault()?.Value;
 
             if (settings == null)

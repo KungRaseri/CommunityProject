@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Data;
 using Data.Helpers;
 using Data.Models;
 using Data.Models.Twitch;
@@ -17,14 +18,13 @@ namespace TwitchCrawler
         private CouchDbStore<Settings> _settingsCollection;
         private TwitchService _twitchService;
         private Settings _settings;
-        private const string LocalCouchDBUri = "http://root:123456789@localhost:5984/";
 
         [TestInitialize]
         public void SetUpTests()
         {
-            _settingsCollection = new CouchDbStore<Settings>(LocalCouchDBUri);
+            _settingsCollection = new CouchDbStore<Settings>(ApplicationConstants.CouchDbLocalUrl);
             _settings = _settingsCollection.FindAsync("9c3131ee7b9fb97491e8551211495381").GetAwaiter().GetResult();
-            _vodCollection = new CouchDbStore<VOD>(LocalCouchDBUri);
+            _vodCollection = new CouchDbStore<VOD>(ApplicationConstants.CouchDbLocalUrl);
             _twitchService = new TwitchService(_settings);
         }
 

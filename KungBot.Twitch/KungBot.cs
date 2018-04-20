@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Data;
 using Data.Helpers;
 using Data.Models;
 using KungBot.Twitch.Commands;
@@ -26,7 +27,7 @@ namespace KungBot.Twitch
 
         public KungBot()
         {
-            var settingsCollection = new CouchDbStore<Settings>("http://root:123456789@localhost:5984"); // LEAKED
+            var settingsCollection = new CouchDbStore<Settings>(ApplicationConstants.CouchDbLocalUrl);
             _settings = settingsCollection.GetAsync().Result.FirstOrDefault()?.Value;
 
             var commandCollection = new CouchDbStore<Command>(_settings?.CouchDbUri);
