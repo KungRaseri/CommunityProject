@@ -12,7 +12,7 @@ namespace Api.WebSockets
             PathString path,
             WebSocketHandler handler)
         {
-            return app.Map(path, (_app) => _app.UseMiddleware<WebSocketManagerMiddleware>(handler));
+            return app.Map(path, _app => _app.UseMiddleware<WebSocketManagerMiddleware>(handler));
         }
 
         public static IServiceCollection AddWebSocketManager(this IServiceCollection services)
@@ -20,12 +20,8 @@ namespace Api.WebSockets
             services.AddTransient<WebSocketConnectionManager>();
 
             foreach (var type in Assembly.GetEntryAssembly().ExportedTypes)
-            {
                 if (type.GetTypeInfo().BaseType == typeof(WebSocketHandler))
-                {
                     services.AddSingleton(type);
-                }
-            }
 
             return services;
         }

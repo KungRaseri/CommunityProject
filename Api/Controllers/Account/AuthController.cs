@@ -33,22 +33,19 @@ namespace Api.Controllers.Account
         public async Task<ActionResult> Register(User user)
         {
             if (string.IsNullOrEmpty(user.Email) || string.IsNullOrEmpty(user.Password))
-            {
-                return StatusCode((int)HttpStatusCode.BadRequest, Json(new { error = "Email or Password are required" }));
-            }
+                return StatusCode((int) HttpStatusCode.BadRequest,
+                    Json(new {error = "Email or Password are required"}));
 
             var dbUser = await _userCollection.FindUserByEmail(user.Email);
 
             if (dbUser != null)
-            {
-                return StatusCode((int)HttpStatusCode.BadRequest, Json(new { error = "Account already exists" }));
-            }
+                return StatusCode((int) HttpStatusCode.BadRequest, Json(new {error = "Account already exists"}));
 
             var salt = BCrypt.Net.BCrypt.GenerateSalt();
 
             var hashedPassword = Crypto.PasswordCrypt(user.Password, salt);
 
-            user = new User()
+            user = new User
             {
                 Email = user.Email,
                 Password = hashedPassword,
@@ -60,7 +57,7 @@ namespace Api.Controllers.Account
             dbUser.Password = string.Empty;
             dbUser.PasswordSalt = string.Empty;
 
-            return StatusCode((int)HttpStatusCode.OK, Json(dbUser));
+            return StatusCode((int) HttpStatusCode.OK, Json(dbUser));
         }
 
         [Route("token")]
@@ -69,23 +66,18 @@ namespace Api.Controllers.Account
         public async Task<ActionResult> Token(string email, string password)
         {
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
-            {
-                return StatusCode((int)HttpStatusCode.BadRequest, Json(new { error = "Email or Password are required" }));
-            }
+                return StatusCode((int) HttpStatusCode.BadRequest,
+                    Json(new {error = "Email or Password are required"}));
 
             var user = await _userCollection.FindUserByEmail(email);
 
             if (user == null)
-            {
-                return StatusCode((int)HttpStatusCode.Unauthorized, Json(new { error = "Invalid credentials" }));
-            }
+                return StatusCode((int) HttpStatusCode.Unauthorized, Json(new {error = "Invalid credentials"}));
 
             var hashedPassword = Crypto.PasswordCrypt(password, user.PasswordSalt);
 
             if (!hashedPassword.Equals(user.Password))
-            {
-                return StatusCode((int)HttpStatusCode.Unauthorized, Json(new { error = "Invalid credentials" }));
-            }
+                return StatusCode((int) HttpStatusCode.Unauthorized, Json(new {error = "Invalid credentials"}));
 
             var claims = new List<Claim>
             {
@@ -96,7 +88,7 @@ namespace Api.Controllers.Account
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Settings.Keys.JWTSecurityKey));
 
             var jwt = new JwtSecurityToken(new JwtHeader(
-                new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256)),
+                    new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256)),
                 new JwtPayload("kungraseri-api", "kungraseri-audience", claims, null, DateTime.UtcNow.AddDays(1)));
 
             var token = new JwtSecurityTokenHandler().WriteToken(jwt);
@@ -106,8 +98,9 @@ namespace Api.Controllers.Account
             try
             {
                 var dbToken = await TokenCollection.FindTokenByUserId(user.Id);
-                savedToken = await TokenCollection.AddOrUpdateTokenAsync(((dbToken == null) || dbToken.Expiration < DateTime.UtcNow)
-                        ? new Token()
+                savedToken = await TokenCollection.AddOrUpdateTokenAsync(
+                    dbToken == null || dbToken.Expiration < DateTime.UtcNow
+                        ? new Token
                         {
                             Value = token,
                             UserId = user.Id,
@@ -118,17 +111,17 @@ namespace Api.Controllers.Account
             }
             catch (Exception e)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError,
-                    Json(new { error = $"Error: {e.Message}. Stack Trace: {e.StackTrace}" }));
+                return StatusCode((int) HttpStatusCode.InternalServerError,
+                    Json(new {error = $"Error: {e.Message}. Stack Trace: {e.StackTrace}"}));
             }
 
             user.Password = string.Empty;
             user.PasswordSalt = string.Empty;
 
-            return StatusCode((int)HttpStatusCode.OK, Json(new
+            return StatusCode((int) HttpStatusCode.OK, Json(new
             {
                 user,
-                token = savedToken,
+                token = savedToken
             }));
         }
     }

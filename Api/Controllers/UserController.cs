@@ -32,7 +32,7 @@ namespace Api.Controllers
             {
                 var dbUsers = await _userCollection.GetAsync();
                 users = dbUsers.ToList();
-                users.ForEach((user) =>
+                users.ForEach(user =>
                 {
                     user.Value.Password = string.Empty;
                     user.Value.PasswordSalt = string.Empty;
@@ -40,7 +40,7 @@ namespace Api.Controllers
             }
             catch (Exception e)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, Json(e));
+                return StatusCode((int) HttpStatusCode.InternalServerError, Json(e));
             }
 
             return Json(users);
@@ -59,10 +59,10 @@ namespace Api.Controllers
             }
             catch (Exception e)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, Json(e));
+                return StatusCode((int) HttpStatusCode.InternalServerError, Json(e));
             }
 
-            return StatusCode((int)HttpStatusCode.OK, Json(user));
+            return StatusCode((int) HttpStatusCode.OK, Json(user));
         }
     }
 }

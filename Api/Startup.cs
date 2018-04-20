@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Net;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
@@ -60,10 +59,11 @@ namespace Api
                 })
                 .AddJwtBearer("JwtBearer", jwtBearerOptions =>
                 {
-                    jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters()
+                    jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(settings?.Keys.JWTSecurityKey)),
+                        IssuerSigningKey =
+                            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(settings?.Keys.JWTSecurityKey)),
 
                         ValidateIssuer = true,
                         ValidIssuer = "kungraseri-api",
@@ -80,16 +80,16 @@ namespace Api
             services.AddMvc(options =>
             {
                 options.CacheProfiles.Add("Default",
-                    new CacheProfile()
+                    new CacheProfile
                     {
                         Duration = 60
                     });
                 options.CacheProfiles.Add("Never",
-                new CacheProfile()
-                {
-                    Location = ResponseCacheLocation.None,
-                    NoStore = true
-                });
+                    new CacheProfile
+                    {
+                        Location = ResponseCacheLocation.None,
+                        NoStore = true
+                    });
             });
 
             services.AddWebSocketManager();
@@ -104,8 +104,8 @@ namespace Api
                 app.UseCors(cors =>
                 {
                     cors
-                    .WithOrigins("http://localhost:8080")
-                    .AllowAnyHeader();
+                        .WithOrigins("http://localhost:8080")
+                        .AllowAnyHeader();
                 });
             }
 
@@ -116,12 +116,12 @@ namespace Api
 
             app.Use(async (context, next) =>
             {
-                context.Response.GetTypedHeaders().CacheControl = new CacheControlHeaderValue()
+                context.Response.GetTypedHeaders().CacheControl = new CacheControlHeaderValue
                 {
                     Public = true,
                     MaxAge = TimeSpan.FromSeconds(60)
                 };
-                context.Response.Headers[HeaderNames.Vary] = new string[] {"Accept-Encoding"};
+                context.Response.Headers[HeaderNames.Vary] = new[] {"Accept-Encoding"};
 
                 await next();
             });
@@ -155,10 +155,12 @@ namespace Api
             var result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
             while (!result.CloseStatus.HasValue)
             {
-                await webSocket.SendAsync(new ArraySegment<byte>(buffer, 0, result.Count), result.MessageType, result.EndOfMessage, CancellationToken.None);
+                await webSocket.SendAsync(new ArraySegment<byte>(buffer, 0, result.Count), result.MessageType,
+                    result.EndOfMessage, CancellationToken.None);
 
                 result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
             }
+
             await webSocket.CloseAsync(result.CloseStatus.Value, result.CloseStatusDescription, CancellationToken.None);
         }
     }

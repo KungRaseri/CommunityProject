@@ -1,8 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using Data.Extensions;
+﻿using System.Threading.Tasks;
 using Humanizer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -16,8 +12,8 @@ namespace Api.Controllers.ThirdParty
     [Route("api/v{version:ApiVersion}/tweet")]
     public class TwitterController : BaseApiController
     {
-        private readonly TwitterService _twitterClient;
         private readonly GoogleService _googleService;
+        private readonly TwitterService _twitterClient;
 
         public TwitterController(IConfiguration configuration) : base(configuration)
         {
@@ -31,10 +27,7 @@ namespace Api.Controllers.ThirdParty
         {
             var tweet = await _twitterClient.GetLatestTweetFromTimeline(name);
 
-            if (tweet == null)
-            {
-                return "No tweets could be found.";
-            }
+            if (tweet == null) return "No tweets could be found.";
 
             var shortUrl = await _googleService.UrlShortener.ShortenUrl(tweet.Url);
 

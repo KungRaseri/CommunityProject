@@ -33,10 +33,10 @@ namespace Api.Controllers.ThirdParty
             }
             catch (Exception e)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, Json(e));
+                return StatusCode((int) HttpStatusCode.InternalServerError, Json(e));
             }
 
-            return StatusCode((int)HttpStatusCode.OK, Json(topPoints));
+            return StatusCode((int) HttpStatusCode.OK, Json(topPoints));
         }
 
         [HttpGet]
@@ -51,10 +51,10 @@ namespace Api.Controllers.ThirdParty
             }
             catch (Exception e)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, Json(e));
+                return StatusCode((int) HttpStatusCode.InternalServerError, Json(e));
             }
 
-            return StatusCode((int)HttpStatusCode.OK, Json(topAllTimePoints));
+            return StatusCode((int) HttpStatusCode.OK, Json(topAllTimePoints));
         }
     }
 }

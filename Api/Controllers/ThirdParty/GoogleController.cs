@@ -19,15 +19,13 @@ namespace Api.Controllers.ThirdParty
 
         [HttpGet("youtube/{channelId}/latest")]
         [Produces("text/plain")]
-        [ResponseCache(Duration = 43200, NoStore = false, Location = ResponseCacheLocation.Any, VaryByHeader = "Accept-Encoding")]
+        [ResponseCache(Duration = 43200, NoStore = false, Location = ResponseCacheLocation.Any,
+            VaryByHeader = "Accept-Encoding")]
         public async Task<string> GetLatestYouTubeVideo(string channelId)
         {
             var video = await _googleService.Youtube.GetLatestVideo(channelId);
 
-            if (video == null)
-            {
-                return "Channel not found. Please try another.";
-            }
+            if (video == null) return "Channel not found. Please try another.";
 
             var url = $"https://www.youtube.com/watch?v={video.Id.VideoId}";
             var shortUrl = await _googleService.UrlShortener.ShortenUrl(url);

@@ -10,7 +10,8 @@ namespace Api.Controllers
     {
         private readonly BotCommandRelayHandler _botCommandRelayHandler;
 
-        public BotCommandRelayController(IConfiguration configuration, BotCommandRelayHandler botCommandRelayHandler) : base(configuration)
+        public BotCommandRelayController(IConfiguration configuration, BotCommandRelayHandler botCommandRelayHandler) :
+            base(configuration)
         {
             _botCommandRelayHandler = botCommandRelayHandler;
         }

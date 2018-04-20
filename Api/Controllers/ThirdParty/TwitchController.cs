@@ -17,9 +17,9 @@ namespace Api.Controllers.ThirdParty
     [Route("api/v{version:ApiVersion}/twitch")]
     public class TwitchController : BaseApiController
     {
+        private readonly GoogleService _googleService;
         private readonly TwitchService _twitchClient;
         private readonly CouchDbStore<VOD> _vodCollection;
-        private readonly GoogleService _googleService;
 
         public TwitchController(IConfiguration configuration) : base(configuration)
         {
@@ -46,7 +46,8 @@ namespace Api.Controllers.ThirdParty
             {
                 try
                 {
-                    var videoRow = dbVideos.Where(dbv => dbv.Value.Video.Game.Contains(game)).Select(v => v.Value).FirstOrDefault();
+                    var videoRow = dbVideos.Where(dbv => dbv.Value.Video.Game.Contains(game)).Select(v => v.Value)
+                        .FirstOrDefault();
                     video = videoRow?.Video;
                 }
                 catch (Exception e)
@@ -56,10 +57,7 @@ namespace Api.Controllers.ThirdParty
                 }
             }
 
-            if (video == null)
-            {
-                return "No video for that game could be found. Please try another.";
-            }
+            if (video == null) return "No video for that game could be found. Please try another.";
 
             var shortUrl = _googleService.UrlShortener.ShortenUrl($"https://www.twitch.tv/videos/{video.Id}");
 
@@ -79,22 +77,18 @@ namespace Api.Controllers.ThirdParty
                 var channelId = await _twitchClient.GetChannelIdFromChannelName(channelName);
 
                 video = await _twitchClient.GetVideoFromChannelIdWithTitle(channelId, title);
-
             }
             else
             {
-                video = dbVideo.FirstOrDefault(v => v.Value.Video.Title.StripAndLower().Contains(title.StripAndLower()))?.Value.Video;
+                video = dbVideo.FirstOrDefault(v => v.Value.Video.Title.StripAndLower().Contains(title.StripAndLower()))
+                    ?.Value.Video;
             }
 
-            if (video == null)
-            {
-                return "No video for that game could be found. Please try another.";
-            }
+            if (video == null) return "No video for that game could be found. Please try another.";
 
             var shortUrl = _googleService.UrlShortener.ShortenUrl($"https://www.twitch.tv/videos/{video.Id}");
 
             return $"{video.Title} - {shortUrl}";
         }
-
     }
 }

@@ -8,7 +8,8 @@ namespace Api.WebSockets.Handlers
 {
     public class BotCommandRelayHandler : WebSocketHandler
     {
-        public BotCommandRelayHandler(WebSocketConnectionManager webSocketConnectionManager) : base(webSocketConnectionManager)
+        public BotCommandRelayHandler(WebSocketConnectionManager webSocketConnectionManager) : base(
+            webSocketConnectionManager)
         {
         }
 

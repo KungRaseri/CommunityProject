@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using Data.Helpers;
 using Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Rest;
 using ThirdParty;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -17,9 +13,8 @@ namespace Api.Controllers
     public class BaseApiController : Controller
     {
         protected readonly IConfiguration Configuration;
-        protected readonly Settings Settings;
-        protected CouchDbStore<Token> TokenCollection { get; set; }
         protected readonly GoogleService GoogleClient;
+        protected readonly Settings Settings;
 
         public BaseApiController(IConfiguration configuration)
         {
@@ -34,5 +29,7 @@ namespace Api.Controllers
             TokenCollection = new CouchDbStore<Token>(Settings?.CouchDbUri);
             GoogleClient = new GoogleService(Settings);
         }
+
+        protected CouchDbStore<Token> TokenCollection { get; set; }
     }
 }

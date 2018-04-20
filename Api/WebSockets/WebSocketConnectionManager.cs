@@ -9,7 +9,8 @@ namespace Api.WebSockets
 {
     public class WebSocketConnectionManager
     {
-        private ConcurrentDictionary<string, WebSocket> _sockets = new ConcurrentDictionary<string, WebSocket>();
+        private readonly ConcurrentDictionary<string, WebSocket> _sockets =
+            new ConcurrentDictionary<string, WebSocket>();
 
         public WebSocket GetSocketById(string id)
         {
@@ -25,6 +26,7 @@ namespace Api.WebSockets
         {
             return _sockets.FirstOrDefault(p => p.Value == socket).Key;
         }
+
         public void AddSocket(WebSocket socket)
         {
             _sockets.TryAdd(CreateConnectionId(), socket);
@@ -35,9 +37,9 @@ namespace Api.WebSockets
             WebSocket socket;
             _sockets.TryRemove(id, out socket);
 
-            await socket.CloseAsync(closeStatus: WebSocketCloseStatus.NormalClosure,
-                statusDescription: "Closed by the WebSocketManager",
-                cancellationToken: CancellationToken.None);
+            await socket.CloseAsync(WebSocketCloseStatus.NormalClosure,
+                "Closed by the WebSocketManager",
+                CancellationToken.None);
         }
 
         private string CreateConnectionId()
