@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Data.Extensions;
+using Humanizer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using ThirdParty;
@@ -35,9 +36,9 @@ namespace Api.Controllers.ThirdParty
                 return "No tweets could be found.";
             }
 
-            var shortUrl = _googleService.UrlShortener.ShortenUrl(tweet.Url);
+            var shortUrl = await _googleService.UrlShortener.ShortenUrl(tweet.Url);
 
-            return $"{tweet.FullText.Replace("\n", " ")} - {shortUrl} - {tweet.CreatedAt.TimeAgo()}";
+            return $"{tweet.FullText.Replace("\n", " ")} - {shortUrl} - {tweet.CreatedAt.Humanize()}";
         }
     }
 }
