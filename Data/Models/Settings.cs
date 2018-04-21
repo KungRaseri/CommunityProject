@@ -15,6 +15,5 @@ namespace Data.Models
         public string CookieToken { get; set; }
         public TwitchBotSettings TwitchBotSettings { get; set; }
         public DiscordBotSettings DiscordBotSettings { get; set; }
-        public WebSocketSettings WebSocketSettings { get; set; }
     }
 }
