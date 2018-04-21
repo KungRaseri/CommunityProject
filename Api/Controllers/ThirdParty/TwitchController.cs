@@ -19,12 +19,12 @@ namespace Api.Controllers.ThirdParty
     {
         private readonly GoogleService _googleService;
         private readonly TwitchService _twitchClient;
-        private readonly CouchDbStore<VOD> _vodCollection;
+        private readonly CouchDbStore<Vod> _vodCollection;
 
         public TwitchController(IConfiguration configuration) : base(configuration)
         {
             _twitchClient = new TwitchService(Settings);
-            _vodCollection = new CouchDbStore<VOD>(Settings.CouchDbUri);
+            _vodCollection = new CouchDbStore<Vod>(Settings.CouchDbUri);
             _googleService = new GoogleService(Settings);
         }
 

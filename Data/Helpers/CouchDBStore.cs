@@ -92,11 +92,6 @@ namespace Data.Helpers
         /// <returns></returns>
         public virtual async Task<ViewQueryResponse> CreateGetView(string map)
         {
-            var viewDocument = new
-            {
-                views = new { view = new { map = map } }
-            };
-
             var viewRequest = new QueryViewRequest(EntityName, $"{EntityName}-all");
 
             var view = await Client.Views.QueryAsync(viewRequest);
@@ -140,14 +135,14 @@ namespace Data.Helpers
         {
             DocumentHeaderResponse response;
 
-            if (typeof(T) == typeof(VOD))
+            if (typeof(T) == typeof(Vod))
             {
-                var vod = entity as VOD;
+                var vod = entity as Vod;
 
                 var query = new Query(EntityName, $"{EntityName}-by-video-id") { Key = vod?.Video.Id };
                 var existingRows = await Store.QueryAsync<T>(query);
 
-                var record = existingRows.FirstOrDefault()?.Value as VOD;
+                var record = existingRows.FirstOrDefault()?.Value as Vod;
 
                 if (record != null)
                 {

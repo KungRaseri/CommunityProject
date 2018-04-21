@@ -21,7 +21,6 @@ namespace KungBot.Twitch
     {
         private readonly Settings _settings;
         private readonly TwitchClient _client;
-        private readonly ILogger<TwitchClient> _logger;
         private readonly TwitchService _twitchService;
         private readonly List<Command> _commands;
 
@@ -37,8 +36,9 @@ namespace KungBot.Twitch
             {
                 new ConsoleLoggerProvider(new ConsoleLoggerSettings(){Switches = {new KeyValuePair<string, LogLevel>("KungTheBot", LogLevel.Debug) }})
             });
-            _logger = new Logger<TwitchClient>(factory);
-            _client = new TwitchClient(_logger);
+
+            ILogger<TwitchClient> logger = new Logger<TwitchClient>(factory);
+            _client = new TwitchClient(logger);
 
             _twitchService = new TwitchService(_settings);
         }
@@ -75,7 +75,7 @@ namespace KungBot.Twitch
 
         private async void ClientOnOnUserBanned(object sender, OnUserBannedArgs e)
         {
-            var client = new RestClient("http://localhost:57463/ws/api/botcommandrelay");
+            var client = new RestClient(ApplicationConstants.WebsocketsLocalBotCommandUrl);
             var request = new RestRequest(Method.GET);
             request.AddQueryParameter("command", "timeout");
             request.AddQueryParameter("message", $"{e.Username} has been banned. Reason: {e.BanReason} Kappa");
@@ -85,7 +85,7 @@ namespace KungBot.Twitch
 
         private async void OnUserTimedOut(object sender, OnUserTimedoutArgs e)
         {
-            var client = new RestClient("http://localhost:57463/ws/api/botcommandrelay");
+            var client = new RestClient(ApplicationConstants.WebsocketsLocalBotCommandUrl);
             var request = new RestRequest(Method.GET);
             request.AddQueryParameter("command", "timeout");
             request.AddQueryParameter("message", $"{e.Username} timed out for {e.TimeoutDuration} seconds. Reason: {e.TimeoutReason} Kappa");

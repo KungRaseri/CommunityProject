@@ -39,7 +39,6 @@ namespace ThirdParty.Tests.StreamElements
         {
             var expectedUsername = "blazdnconfuzd";
             var minimumPointAmount = 1000;
-            var expectedTotal = 1;
 
             var bootiesResponse = _seClient.GetAllTimePoints().GetAwaiter().GetResult();
 

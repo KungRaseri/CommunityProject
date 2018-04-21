@@ -14,18 +14,16 @@ namespace TwitchCrawler
     [TestClass, TestCategory("Migrator")]
     public class Migrator
     {
-        private CouchDbStore<VOD> _vodCollection;
-        private CouchDbStore<Settings> _settingsCollection;
+        private CouchDbStore<Vod> _vodCollection;
         private TwitchService _twitchService;
-        private Settings _settings;
 
         [TestInitialize]
         public void SetUpTests()
         {
-            _settingsCollection = new CouchDbStore<Settings>(ApplicationConstants.CouchDbLocalUrl);
-            _settings = _settingsCollection.FindAsync("9c3131ee7b9fb97491e8551211495381").GetAwaiter().GetResult();
-            _vodCollection = new CouchDbStore<VOD>(ApplicationConstants.CouchDbLocalUrl);
-            _twitchService = new TwitchService(_settings);
+            var settingsCollection = new CouchDbStore<Settings>(ApplicationConstants.CouchDbLocalUrl);
+            var settings = settingsCollection.FindAsync("9c3131ee7b9fb97491e8551211495381").GetAwaiter().GetResult();
+            _vodCollection = new CouchDbStore<Vod>(ApplicationConstants.CouchDbLocalUrl);
+            _twitchService = new TwitchService(settings);
         }
 
         [TestMethod]
@@ -43,14 +41,14 @@ namespace TwitchCrawler
 
                 videos.Videos.ForEach(video =>
                 {
-                    var vod = new VOD()
+                    var vod = new Vod()
                     {
                         ImportedAt = DateTime.UtcNow,
                         Video = video
                     };
 
                     var dbVod = _vodCollection.AddOrUpdateAsync(vod).GetAwaiter().GetResult();
-                    Assert.IsInstanceOfType(dbVod, typeof(VOD));
+                    Assert.IsInstanceOfType(dbVod, typeof(Vod));
                 });
 
                 offset += 100;

@@ -4,7 +4,7 @@ using TwitchLib.Api.Models.v5.Videos;
 
 namespace Data.Models.Twitch
 {
-    public class VOD : IEntity
+    public class Vod : IEntity
     {
         public string Id { get; set; }
         public string Rev { get; set; }

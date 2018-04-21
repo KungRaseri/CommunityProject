@@ -8,12 +8,10 @@ namespace ThirdParty
 {
     public class Twatter
     {
-        private readonly ITwitterCredentials TwitterCredentials;
-
         public Twatter(Settings settings)
         {
-            TwitterCredentials = new Tweetinvi.Models.TwitterCredentials(settings.Keys.Twitter.ConsumerKey, settings.Keys.Twitter.ConsumerSecret, settings.Keys.Twitter.AccessToken, settings.Keys.Twitter.AccessTokenSecret);
-            Auth.ApplicationCredentials = TwitterCredentials;
+            ITwitterCredentials twitterCredentials = new Tweetinvi.Models.TwitterCredentials(settings.Keys.Twitter.ConsumerKey, settings.Keys.Twitter.ConsumerSecret, settings.Keys.Twitter.AccessToken, settings.Keys.Twitter.AccessTokenSecret);
+            Auth.ApplicationCredentials = twitterCredentials;
         }
 
         public async Task<ITweet> GetLatestTweetFromTimeline(string name)

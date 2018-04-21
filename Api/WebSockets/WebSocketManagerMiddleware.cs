@@ -30,12 +30,18 @@ namespace Api.WebSockets
 
             await Receive(socket, async (result, buffer) =>
             {
-                if (result.MessageType == WebSocketMessageType.Text)
-                    await _webSocketHandler.ReceiveAsync(socket, result, buffer);
-
-                else if (result.MessageType == WebSocketMessageType.Close)
-                    await _webSocketHandler.OnDisconnected(socket);
+                switch (result.MessageType)
+                {
+                    case WebSocketMessageType.Text:
+                        await _webSocketHandler.ReceiveAsync(socket, result, buffer);
+                        break;
+                    case WebSocketMessageType.Close:
+                        await _webSocketHandler.OnDisconnected(socket);
+                        break;
+                }
             });
+
+            await _next.Invoke(context);
         }
 
         private async Task Receive(WebSocket socket, Action<WebSocketReceiveResult, byte[]> handleMessage)

@@ -16,7 +16,6 @@ namespace KungBot.Discord
     public static class Program
     {
         private static DiscordShardedClient Client;
-        private static ClientWebSocket _webSocket;
         private static CommandsNextModule CommandsNext { get; set; }
 
         public static void Main(string[] args)
@@ -30,7 +29,6 @@ namespace KungBot.Discord
                 return;
             }
 
-            _webSocket = new ClientWebSocket();
             try
             {
                 Configure(settings.Keys.Discord, settings.DiscordBotSettings.CommandCharacter);
@@ -78,7 +76,7 @@ namespace KungBot.Discord
         public static async Task RunBotAsync()
         {
             var client = new ClientWebSocket();
-            await client.ConnectAsync(new Uri("ws://localhost:57463/botcommandrelay"), CancellationToken.None);
+            await client.ConnectAsync(new Uri(ApplicationConstants.WebsocketsLocalBotCommandUrl), CancellationToken.None);
 
             Console.WriteLine("Connected!");
 

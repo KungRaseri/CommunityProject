@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Api.WebSockets;
 using Api.WebSockets.Handlers;
+using Data;
 using Data.Helpers;
 using Data.Models;
 using Microsoft.AspNetCore.Builder;
@@ -104,7 +105,7 @@ namespace Api
                 app.UseCors(cors =>
                 {
                     cors
-                        .WithOrigins("http://localhost:8080")
+                        .WithOrigins(ApplicationConstants.LocalhostEightyEighty)
                         .AllowAnyHeader();
                 });
             }
