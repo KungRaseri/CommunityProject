@@ -26,10 +26,11 @@ namespace KungBot.Twitch
 
         public KungBot()
         {
-            var settingsCollection = new CouchDbStore<Settings>(ApplicationConstants.CouchDbLocalUrl);
+            //TODO: Put default couchdburl in appsettings and transform during CI/CD
+            var settingsCollection = new CouchDbStore<Settings>(Settings.CouchDbUrl);
             _settings = settingsCollection.GetAsync().Result.FirstOrDefault()?.Value;
 
-            var commandCollection = new CouchDbStore<Command>(_settings?.CouchDbUri);
+            var commandCollection = new CouchDbStore<Command>(Settings.CouchDbUrl);
             _commands = commandCollection.GetAsync().Result.Select(row => row.Value).ToList();
 
             var factory = new LoggerFactory(new List<ILoggerProvider>()
@@ -75,7 +76,7 @@ namespace KungBot.Twitch
 
         private async void ClientOnOnUserBanned(object sender, OnUserBannedArgs e)
         {
-            var client = new RestClient(ApplicationConstants.WebsocketsLocalBotCommandUrl);
+            var client = new RestClient(WebSocketSettings.LocalBotCommandRelayUrl);
             var request = new RestRequest(Method.GET);
             request.AddQueryParameter("command", "timeout");
             request.AddQueryParameter("message", $"{e.Username} has been banned. Reason: {e.BanReason} Kappa");
@@ -85,7 +86,7 @@ namespace KungBot.Twitch
 
         private async void OnUserTimedOut(object sender, OnUserTimedoutArgs e)
         {
-            var client = new RestClient(ApplicationConstants.WebsocketsLocalBotCommandUrl);
+            var client = new RestClient(WebSocketSettings.LocalBotCommandRelayUrl);
             var request = new RestRequest(Method.GET);
             request.AddQueryParameter("command", "timeout");
             request.AddQueryParameter("message", $"{e.Username} timed out for {e.TimeoutDuration} seconds. Reason: {e.TimeoutReason} Kappa");

@@ -20,7 +20,8 @@ namespace KungBot.Discord
 
         public static void Main(string[] args)
         {
-            var settingsCollection = new CouchDbStore<Settings>(ApplicationConstants.CouchDbLocalUrl); // LEAKED
+            //TODO: Put default couchdburl in appsettings and transform during CI/CD
+            var settingsCollection = new CouchDbStore<Settings>(Settings.CouchDbUrl); // LEAKED
             var settings = settingsCollection.GetAsync().Result.FirstOrDefault()?.Value;
 
             if (settings == null)
@@ -76,7 +77,7 @@ namespace KungBot.Discord
         public static async Task RunBotAsync()
         {
             var client = new ClientWebSocket();
-            await client.ConnectAsync(new Uri(ApplicationConstants.WebsocketsLocalBotCommandUrl), CancellationToken.None);
+            await client.ConnectAsync(new Uri(WebSocketSettings.LocalBotCommandRelayUrl), CancellationToken.None);
 
             Console.WriteLine("Connected!");
 

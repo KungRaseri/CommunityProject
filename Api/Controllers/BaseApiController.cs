@@ -14,7 +14,8 @@ namespace Api.Controllers
     {
         protected readonly IConfiguration Configuration;
         protected readonly GoogleService GoogleClient;
-        protected readonly Settings Settings;
+        protected readonly Settings _settings;
+        protected CouchDbStore<Token> TokenCollection { get; set; }
 
         public BaseApiController(IConfiguration configuration)
         {
@@ -23,13 +24,11 @@ namespace Api.Controllers
             var configSettings = Configuration.GetSection("Settings");
 
             var settingCollection = new CouchDbStore<Settings>(configSettings.GetSection("CouchDbUri").Value);
+            TokenCollection = new CouchDbStore<Token>(configSettings.GetSection("CouchDbUri").Value);
 
-            Settings = settingCollection.GetAsync().GetAwaiter().GetResult().FirstOrDefault()?.Value;
+            _settings = settingCollection.GetAsync().GetAwaiter().GetResult().FirstOrDefault()?.Value;
 
-            TokenCollection = new CouchDbStore<Token>(Settings?.CouchDbUri);
-            GoogleClient = new GoogleService(Settings);
+            GoogleClient = new GoogleService(_settings);
         }
-
-        protected CouchDbStore<Token> TokenCollection { get; set; }
     }
 }

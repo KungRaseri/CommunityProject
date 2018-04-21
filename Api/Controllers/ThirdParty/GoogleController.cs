@@ -14,7 +14,7 @@ namespace Api.Controllers.ThirdParty
 
         public GoogleController(IConfiguration configuration) : base(configuration)
         {
-            _googleService = new GoogleService(Settings);
+            _googleService = new GoogleService(_settings);
         }
 
         [HttpGet("youtube/{channelId}/latest")]

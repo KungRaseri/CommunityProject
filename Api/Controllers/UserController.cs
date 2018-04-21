@@ -21,7 +21,7 @@ namespace Api.Controllers
 
         public UserController(IConfiguration configuration) : base(configuration)
         {
-            _userCollection = new CouchDbStore<User>(Settings.CouchDbUri);
+            _userCollection = new CouchDbStore<User>(Settings.CouchDbUrl);
         }
 
         [HttpGet]

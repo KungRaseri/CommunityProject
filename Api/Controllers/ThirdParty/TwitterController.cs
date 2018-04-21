@@ -17,8 +17,8 @@ namespace Api.Controllers.ThirdParty
 
         public TwitterController(IConfiguration configuration) : base(configuration)
         {
-            _twitterClient = new TwitterService(Settings);
-            _googleService = new GoogleService(Settings);
+            _twitterClient = new TwitterService(_settings);
+            _googleService = new GoogleService(_settings);
         }
 
         [HttpGet("{name}/latest")]

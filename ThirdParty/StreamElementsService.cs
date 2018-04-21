@@ -20,7 +20,7 @@ namespace ThirdParty
         {
             _settings = settings;
 
-            StreamElementsClient = new RestClient(_settings.StreamElementsAPIUrl)
+            StreamElementsClient = new RestClient(Settings.StreamElementsAPIUrl)
             {
                 Authenticator = new JwtAuthenticator(_settings.Keys.StreamElements)
             };

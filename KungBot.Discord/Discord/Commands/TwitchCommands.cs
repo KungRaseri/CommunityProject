@@ -18,7 +18,7 @@ namespace KungBot.Discord.Discord.Commands
 
         public TwitchCommands()
         {
-            var settingsCollection = new CouchDbStore<Settings>(ApplicationConstants.CouchDbLocalUrl);
+            var settingsCollection = new CouchDbStore<Settings>(Settings.CouchDbUrl);
             _settings = settingsCollection.GetAsync().Result.FirstOrDefault()?.Value;
         }
 

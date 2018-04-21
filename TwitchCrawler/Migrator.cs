@@ -20,9 +20,9 @@ namespace TwitchCrawler
         [TestInitialize]
         public void SetUpTests()
         {
-            var settingsCollection = new CouchDbStore<Settings>(ApplicationConstants.CouchDbLocalUrl);
+            var settingsCollection = new CouchDbStore<Settings>(Settings.CouchDbUrl);
             var settings = settingsCollection.FindAsync("9c3131ee7b9fb97491e8551211495381").GetAwaiter().GetResult();
-            _vodCollection = new CouchDbStore<Vod>(ApplicationConstants.CouchDbLocalUrl);
+            _vodCollection = new CouchDbStore<Vod>(Settings.CouchDbUrl);
             _twitchService = new TwitchService(settings);
         }
 

@@ -18,7 +18,7 @@ namespace Api.Controllers.ThirdParty
 
         public SEPointsController(IConfiguration configuration) : base(configuration)
         {
-            _seClient = new StreamElementsService(Settings);
+            _seClient = new StreamElementsService(_settings);
         }
 
         [HttpGet]

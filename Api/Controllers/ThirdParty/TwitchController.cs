@@ -23,9 +23,9 @@ namespace Api.Controllers.ThirdParty
 
         public TwitchController(IConfiguration configuration) : base(configuration)
         {
-            _twitchClient = new TwitchService(Settings);
-            _vodCollection = new CouchDbStore<Vod>(Settings.CouchDbUri);
-            _googleService = new GoogleService(Settings);
+            _twitchClient = new TwitchService(_settings);
+            _vodCollection = new CouchDbStore<Vod>(Data.Models.Settings.CouchDbUrl);
+            _googleService = new GoogleService(_settings);
         }
 
         [HttpGet("{channelName}/vod/game/{game}")]

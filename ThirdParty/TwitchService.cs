@@ -15,23 +15,18 @@ namespace ThirdParty
     public class TwitchService
     {
         private readonly TwitchAPI _twitchApi;
-        private readonly CouchDbStore<Vod> _vodCollection;
 
         public TwitchService(Settings settings)
         {
             _twitchApi = new TwitchAPI();
             _twitchApi.Settings.SetClientIdAsync(settings.Keys.Twitch.ClientId).GetAwaiter().GetResult();
             _twitchApi.Settings.SetAccessTokenAsync(settings.Keys.Twitch.Bot.Oauth).GetAwaiter().GetResult();
-
-            _vodCollection = new CouchDbStore<Vod>(settings.CouchDbUri);
         }
 
         public async Task<TimeSpan?> GetUpTimeByChannel(string channelId)
         {
             return await _twitchApi.Streams.v5.GetUptimeAsync(channelId);
         }
-
-        #region VODs
 
         public async Task<string> GetChannelIdFromChannelName(string channelName)
         {
@@ -101,6 +96,5 @@ namespace ThirdParty
 
             return video;
         }
-        #endregion // VODs
     }
 }

@@ -21,10 +21,12 @@ namespace Api.Controllers.Account
     public class AuthController : BaseApiController
     {
         private readonly CouchDbStore<User> _userCollection;
+        private readonly Crypto _cryptoService;
 
         public AuthController(IConfiguration configuration) : base(configuration)
         {
-            _userCollection = new CouchDbStore<User>(Settings.CouchDbUri);
+            _userCollection = new CouchDbStore<User>(Settings.CouchDbUrl);
+            _cryptoService = new Crypto(_settings.CookieToken);
         }
 
         [AllowAnonymous]
@@ -43,7 +45,7 @@ namespace Api.Controllers.Account
 
             var salt = BCrypt.Net.BCrypt.GenerateSalt();
 
-            var hashedPassword = Crypto.PasswordCrypt(user.Password, salt);
+            var hashedPassword = _cryptoService.PasswordCrypt(user.Password, salt);
 
             user = new User
             {
@@ -74,7 +76,7 @@ namespace Api.Controllers.Account
             if (user == null)
                 return StatusCode((int) HttpStatusCode.Unauthorized, Json(new {error = "Invalid credentials"}));
 
-            var hashedPassword = Crypto.PasswordCrypt(password, user.PasswordSalt);
+            var hashedPassword = _cryptoService.PasswordCrypt(password, user.PasswordSalt);
 
             if (!hashedPassword.Equals(user.Password))
                 return StatusCode((int) HttpStatusCode.Unauthorized, Json(new {error = "Invalid credentials"}));
@@ -85,7 +87,7 @@ namespace Api.Controllers.Account
                 new Claim(JwtRegisteredClaimNames.Email, user.Email)
             };
 
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Settings.Keys.JWTSecurityKey));
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.Keys.JWTSecurityKey));
 
             var jwt = new JwtSecurityToken(new JwtHeader(
                     new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256)),

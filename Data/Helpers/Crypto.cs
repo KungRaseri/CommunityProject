@@ -5,36 +5,46 @@ using System.Text;
 
 namespace Data.Helpers
 {
-    public static class Crypto
+    public class Crypto
     {
         //TODO: Store in DB or appsettings.
-        private static readonly byte[] CookieToken = Encoding.UTF8.GetBytes("1hssk29ash4ksah3lt29sj");
+        private readonly byte[] CookieToken;
+
+        public Crypto(string token)
+        {
+            if (string.IsNullOrEmpty(token))
+            {
+                throw new ArgumentNullException(nameof(token), "Must provide a token");
+            }
+
+            CookieToken = Encoding.UTF8.GetBytes(token);
+        }
 
         // salt needs to be at least 22 characters
-        public static string PasswordCrypt(string password, string salt)
+        public string PasswordCrypt(string password, string salt)
         {
             if (string.IsNullOrEmpty(salt))
             {
-                return "Exception|Salt is required!";
+                throw new ArgumentNullException(nameof(salt), "Must provide a salt");
             }
 
             return BCrypt.Net.BCrypt.HashPassword(password, salt);
         }
 
-        public static string EncryptUserProfile(string profile)
+        public string EncryptUserProfile(string profile)
         {
             var result = EncryptString(profile, Convert.ToBase64String(CookieToken));
 
             return result;
         }
 
-        public static string DecryptUserProfile(string profile)
+        public string DecryptUserProfile(string profile)
         {
             var result = DecryptString(profile, Convert.ToBase64String(CookieToken));
             return result;
         }
 
-        private static string EncryptString(string value, string keyString)
+        private string EncryptString(string value, string keyString)
         {
             var key = Encoding.UTF8.GetBytes(keyString);
 
@@ -82,7 +92,7 @@ namespace Data.Helpers
             return encryptedValue;
         }
 
-        private static string DecryptString(string value, string keyString)
+        private string DecryptString(string value, string keyString)
         {
             var fullCipher = Convert.FromBase64String(value);
 

@@ -105,7 +105,7 @@ namespace Api
                 app.UseCors(cors =>
                 {
                     cors
-                        .WithOrigins(ApplicationConstants.LocalhostEightyEighty)
+                        .WithOrigins(Settings.PanelLocalUrl)
                         .AllowAnyHeader();
                 });
             }
@@ -127,7 +127,7 @@ namespace Api
                 await next();
             });
 
-            app.MapWebSocketManager("/botcommandrelay", serviceProvider.GetService<BotCommandRelayHandler>());
+            app.MapWebSocketManager(WebSocketSettings.LocalBotCommandEndpoint, serviceProvider.GetService<BotCommandRelayHandler>());
         }
     }
 }
