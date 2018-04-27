@@ -19,8 +19,8 @@ namespace ThirdParty
         public TwitchService(Settings settings)
         {
             _twitchApi = new TwitchAPI();
-            _twitchApi.Settings.SetClientIdAsync(settings.Keys.Twitch.ClientId).GetAwaiter().GetResult();
-            _twitchApi.Settings.SetAccessTokenAsync(settings.Keys.Twitch.Bot.Oauth).GetAwaiter().GetResult();
+            _twitchApi.Settings.ClientId = settings.Keys.Twitch.ClientId;
+            _twitchApi.Settings.AccessToken = settings.Keys.Twitch.Bot.Oauth;
         }
 
         public async Task<TimeSpan?> GetUpTimeByChannel(string channelId)

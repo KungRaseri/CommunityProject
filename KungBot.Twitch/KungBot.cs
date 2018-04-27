@@ -11,7 +11,9 @@ using Microsoft.Extensions.Logging.Console;
 using RestSharp;
 using ThirdParty;
 using TwitchLib.Client;
+using TwitchLib.Client.Enums;
 using TwitchLib.Client.Events;
+using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Models;
 using TwitchLib.Client.Services;
 
@@ -39,7 +41,7 @@ namespace KungBot.Twitch
             });
 
             ILogger<TwitchClient> logger = new Logger<TwitchClient>(factory);
-            _client = new TwitchClient(logger);
+            _client = new TwitchClient(logger: logger);
 
             _twitchService = new TwitchService(_settings);
         }
@@ -79,7 +81,7 @@ namespace KungBot.Twitch
             var client = new RestClient(WebSocketSettings.LocalBotCommandRelayUrl);
             var request = new RestRequest(Method.GET);
             request.AddQueryParameter("command", "timeout");
-            request.AddQueryParameter("message", $"{e.Username} has been banned. Reason: {e.BanReason} Kappa");
+            request.AddQueryParameter("message", $"{e.UserBan.Username} has been banned. Reason: {e.UserBan.BanReason} Kappa");
 
             await client.ExecuteGetTaskAsync(request);
         }
@@ -89,7 +91,7 @@ namespace KungBot.Twitch
             var client = new RestClient(WebSocketSettings.LocalBotCommandRelayUrl);
             var request = new RestRequest(Method.GET);
             request.AddQueryParameter("command", "timeout");
-            request.AddQueryParameter("message", $"{e.Username} timed out for {e.TimeoutDuration} seconds. Reason: {e.TimeoutReason} Kappa");
+            request.AddQueryParameter("message", $"{e.UserTimeout.Username} timed out for {e.UserTimeout.TimeoutDuration} seconds. Reason: {e.UserTimeout.TimeoutReason} Kappa");
 
             await client.ExecuteGetTaskAsync(request);
         }
@@ -135,7 +137,7 @@ namespace KungBot.Twitch
         private void OnNewSubscriber(object sender, OnNewSubscriberArgs e)
         {
             _client.SendMessage(e.Channel,
-                e.Subscriber.IsTwitchPrime
+                e.Subscriber.SubscriptionPlan == SubscriptionPlan.Prime
                     ? $"Welcome {e.Subscriber.DisplayName} to the {_settings.TwitchBotSettings.CommunityName}! You just earned {_settings.TwitchBotSettings.NewSubAwardAmount} {_settings.TwitchBotSettings.PointsName}! May the Lords bless you for using your Twitch Prime!"
                     : $"Welcome {e.Subscriber.DisplayName} to the {_settings.TwitchBotSettings.CommunityName}! You just earned {_settings.TwitchBotSettings.NewSubAwardAmount} {_settings.TwitchBotSettings.PointsName}!");
         }
@@ -143,7 +145,7 @@ namespace KungBot.Twitch
         private void OnWhisperReceived(object sender, OnWhisperReceivedArgs e)
         {
             if (e.WhisperMessage.Username == "KungRaseri")
-                _client.SendWhisper(e.WhisperMessage.Username, "Hey! Whispers are so cool!!");
+                _client.SendWhisper(e.WhisperMessage.Username, "Hey! Whispers are so cool!");
         }
 
         private void OnMessageReceived(object sender, OnMessageReceivedArgs e)

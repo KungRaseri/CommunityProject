@@ -13,7 +13,8 @@ namespace ThirdParty
 
         public TwitchBotService(ConnectionCredentials credentials)
         {
-            Client = new TwitchClient { ConnectionCredentials = credentials };
+            Client = new TwitchClient { };
+            Client.SetConnectionCredentials(credentials);
         }
 
         public void Connect()
