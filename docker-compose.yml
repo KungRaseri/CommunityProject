@@ -5,7 +5,7 @@ services:
     ports:
      - "80:80"
     networks:
-     - "api-services-network"
+     - api-services-network
     depends_on:
      - "couchdb"
   couchdb:
@@ -13,4 +13,8 @@ services:
     ports:
      - "5984:5984"
     networks:
-     - "api-services-network"
+     - api-services-network
+networks:
+  default:
+    external:
+      name: api-services-network
