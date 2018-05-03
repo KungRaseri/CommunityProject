@@ -3,15 +3,15 @@ WORKDIR /app
 
 # Copy csproj and restore as distinct layers
 COPY . ./
-RUN dotnet restore
+RUN dotnet restore Api/Api.csproj
 
 # Copy everything else and build
 COPY . ./
-RUN dotnet publish -c Release -o ../out
+RUN dotnet publish Api/Api.csproj -c Release -o ../out
 
 # Build runtime image
 FROM microsoft/aspnetcore:2.0
 WORKDIR /app
 COPY --from=build-env /app/out .
-EXPOSE 80 443 8080
+EXPOSE 80
 ENTRYPOINT ["dotnet", "Api.dll"]

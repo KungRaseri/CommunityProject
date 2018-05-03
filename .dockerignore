@@ -1,2 +1,15 @@
-bin\
-obj\
+**\bin\
+**\obj\
+.git
+.cache
+.vs
+.vscode
+.gitattributes
+.gitignore
+.travis.yml
+Dockerfile
+KungRaseri.sln
+KungRaseri.sln.DotSettings
+.md
+.csproj
+.pdb
