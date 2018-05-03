@@ -23,7 +23,6 @@ namespace Api
             return WebHost.CreateDefaultBuilder(args)
                 .UseApplicationInsights()
                 .UseConfiguration(config)
-                .UseIISIntegration()
                 .UseStartup<Startup>()
                 .Build();
         }
