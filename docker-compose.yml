@@ -3,11 +3,11 @@ services:
   web:
     build: .
     ports:
-     - "8080:8080"
+     - "80:80"
     depends_on:
      - "couchdb"
     environment:
-     - ASPNETCORE_URLS=http://*:8080
+     - ASPNETCORE_URLS=http://*:80
   couchdb:
     image: "couchdb:2.1.1"
     ports:
