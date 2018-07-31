@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Data.Models;
 using Data.Models.StreamElements.Booties;
+using Data.Models.StreamElements.Chatstats;
 using Data.Models.StreamElements.Giveaways;
 using Data.Models.StreamElements.Logs;
 using Data.Models.StreamElements.LoyaltySettings;
@@ -130,5 +131,20 @@ namespace ThirdParty
         }
 
         #endregion
+
+        #region Chatstats API
+
+        public async Task<ChatStats> GetChatStats(string username)
+        {
+            var request = new RestRequest() { Method = Method.GET, Resource = $"chatstats/{username}/stats" };
+
+            var response = await StreamElementsClient.ExecuteGetTaskAsync<ChatStats>(request);
+            var chatStats = JsonConvert.DeserializeObject<ChatStats>(response.Content);
+
+            return chatStats;
+        }
+
+        #endregion
+
     }
 }

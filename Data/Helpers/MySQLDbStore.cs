@@ -69,7 +69,7 @@ namespace Data.Helpers
             var result = new User();
             while (reader.Read())
             {
-                result.Id = reader[0].ToString();
+                result._id = reader[0].ToString();
                 result.Email = reader[1].ToString();
                 result.Password = reader[5].ToString();
                 result.PasswordSalt = reader[4].ToString();

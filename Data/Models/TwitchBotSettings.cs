@@ -9,5 +9,6 @@ namespace Data.Models
         public string NewSubAwardAmount { get; set; }
         public string PointsName { get; set; }
         public string Username { get; set; }
+        public int DefaultExperienceAmount { get; set; }
     }
 }

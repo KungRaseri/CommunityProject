@@ -83,7 +83,7 @@ namespace Api.Controllers.Account
 
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.PrimarySid, user.Id),
+                new Claim(ClaimTypes.PrimarySid, user._id),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email)
             };
 
@@ -99,13 +99,13 @@ namespace Api.Controllers.Account
 
             try
             {
-                var dbToken = await TokenCollection.FindTokenByUserId(user.Id);
+                var dbToken = await TokenCollection.FindTokenByUserId(user._id);
                 savedToken = await TokenCollection.AddOrUpdateTokenAsync(
                     dbToken == null || dbToken.Expiration < DateTime.UtcNow
                         ? new Token
                         {
                             Value = token,
-                            UserId = user.Id,
+                            UserId = user._id,
                             Issued = DateTime.UtcNow,
                             Expiration = jwt.ValidTo
                         }

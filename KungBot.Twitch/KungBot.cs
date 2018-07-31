@@ -25,12 +25,15 @@ namespace KungBot.Twitch
         private readonly TwitchClient _client;
         private readonly TwitchService _twitchService;
         private readonly List<Command> _commands;
+        private readonly CouchDbStore<Viewer> _viewerCollection;
 
         public KungBot()
         {
             //TODO: Put default couchdburl in appsettings and transform during CI/CD
             var settingsCollection = new CouchDbStore<Settings>(Settings.CouchDbUrl);
             _settings = settingsCollection.GetAsync().Result.FirstOrDefault()?.Value;
+
+            _viewerCollection = new CouchDbStore<Viewer>(Settings.CouchDbUrl);
 
             var commandCollection = new CouchDbStore<Command>(Settings.CouchDbUrl);
             _commands = commandCollection.GetAsync().Result.Select(row => row.Value).ToList();
@@ -46,9 +49,9 @@ namespace KungBot.Twitch
             _twitchService = new TwitchService(_settings);
         }
 
-        public void Connect()
+        public async Task Connect()
         {
-            Task.Run(InitializeBot);
+            await InitializeBot();
             Console.WriteLine("Connecting...");
             Console.WriteLine($"Loaded {_commands.Count} commands");
             _client.Connect();
@@ -98,6 +101,24 @@ namespace KungBot.Twitch
 
         private void OnChatCommandReceived(object sender, OnChatCommandReceivedArgs e)
         {
+            CheckForCommand(sender, e);
+        }
+
+        private async Task HandleViewerExperience(object sender, OnMessageReceivedArgs e)
+        {
+            if (e.ChatMessage.IsBroadcaster)
+                return;
+
+            var dbViewer = (await _viewerCollection.GetAsync("viewer-username", e.ChatMessage.Username)).FirstOrDefault()?.Value;
+
+            dbViewer.IsSubscriber = e.ChatMessage.IsSubscriber;
+            dbViewer.Experience += _settings.TwitchBotSettings.DefaultExperienceAmount;
+
+            await _viewerCollection.AddOrUpdateAsync(dbViewer);
+        }
+
+        private void CheckForCommand(object sender, OnChatCommandReceivedArgs e)
+        {
             var commandText = e.Command.CommandText;
 
             var runMe = _commands.Find(c => c.Name == commandText);
@@ -136,6 +157,7 @@ namespace KungBot.Twitch
 
         private void OnNewSubscriber(object sender, OnNewSubscriberArgs e)
         {
+
             _client.SendMessage(e.Channel,
                 e.Subscriber.SubscriptionPlan == SubscriptionPlan.Prime
                     ? $"Welcome {e.Subscriber.DisplayName} to the {_settings.TwitchBotSettings.CommunityName}! You just earned {_settings.TwitchBotSettings.NewSubAwardAmount} {_settings.TwitchBotSettings.PointsName}! May the Lords bless you for using your Twitch Prime!"
@@ -150,9 +172,32 @@ namespace KungBot.Twitch
 
         private void OnMessageReceived(object sender, OnMessageReceivedArgs e)
         {
+            HandleNewViewer(sender, e).GetAwaiter().GetResult();
+            HandleViewerExperience(sender, e).GetAwaiter().GetResult();
+
             //keyword matching
             //blacklist
             //whitelist
+        }
+
+        private async Task HandleNewViewer(object sender, OnMessageReceivedArgs e)
+        {
+            var client = (TwitchClient)sender;
+
+            var dbRows = await _viewerCollection.GetAsync("viewer-username", e.ChatMessage.Username);
+
+            if (!dbRows.Any())
+            {
+                client.SendMessage(e.ChatMessage.Channel, $"kungraHYPERS {e.ChatMessage.DisplayName}, welcome to the stream!");
+                var viewer = new Viewer()
+                {
+                    Username = e.ChatMessage.Username,
+                    IsSubscriber = e.ChatMessage.IsSubscriber,
+                    Experience = _settings.TwitchBotSettings.DefaultExperienceAmount
+                };
+
+                await _viewerCollection.AddOrUpdateAsync(viewer);
+            }
         }
 
         private void OnJoinedChannel(object sender, OnJoinedChannelArgs e)

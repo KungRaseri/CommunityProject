@@ -10,7 +10,7 @@ namespace Data.Models
         public string Identifier { get; set; }
         public bool IsActive { get; set; }
 
-        public string Id { get; set; }
-        public string Rev { get; set; }
+        public string _id { get; set; }
+        public string _rev { get; set; }
     }
 }

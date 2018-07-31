@@ -8,19 +8,22 @@ using Data.Models;
 using Data.Models.Twitch;
 using TwitchLib.Api;
 using TwitchLib.Api.Models.v5.Channels;
+using TwitchLib.Api.Models.v5.Subscriptions;
 using TwitchLib.Api.Models.v5.Videos;
+using TwitchLib.Client.Models;
+using TwitchLib.PubSub;
 
 namespace ThirdParty
 {
     public class TwitchService
     {
         private readonly TwitchAPI _twitchApi;
-
+        private readonly TwitchPubSub _twitchPubSub;
         public TwitchService(Settings settings)
         {
+            _twitchPubSub = new TwitchPubSub();
             _twitchApi = new TwitchAPI();
             _twitchApi.Settings.ClientId = settings.Keys.Twitch.ClientId;
-            _twitchApi.Settings.AccessToken = settings.Keys.Twitch.Bot.Oauth;
         }
 
         public async Task<TimeSpan?> GetUpTimeByChannel(string channelId)
@@ -95,6 +98,38 @@ namespace ThirdParty
             }
 
             return video;
+        }
+
+        public async Task<ChannelSubscribers> GetChannelSubscribers(string channelId)
+        {
+            ChannelSubscribers subscribers;
+            try
+            {
+                subscribers = await _twitchApi.Channels.v5.GetChannelSubscribersAsync(channelId, authToken: "0cie0p6cqx4mie6i6ueci1w7rhzcux");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+
+            return subscribers;
+        }
+
+        public async Task<List<Subscription>> GetChannelSubscribers2(string channelId)
+        {
+            List<Subscription> subscribers;
+            try
+            {
+                subscribers = await _twitchApi.Channels.v5.GetAllSubscribersAsync(channelId, "0cie0p6cqx4mie6i6ueci1w7rhzcux");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+
+            return subscribers;
         }
     }
 }

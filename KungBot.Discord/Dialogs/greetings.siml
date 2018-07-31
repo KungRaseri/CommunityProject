@@ -1,0 +1,46 @@
+﻿<Siml>
+
+  <Action ID="default-response">
+    <Response Hint="Test Response | Test Options | Test File Response | Test Image File Response">
+      This Bot is using a sample OSCOVA test dialog. Please type in any of the following to test response.
+    </Response>
+  </Action>
+
+  <Dialog Name="OscovaTestDialog">
+
+    <Intent Name="FallbackIntent">
+      <Fallback/>
+      <Action ID="default-response"/>
+    </Intent>
+
+    <Intent Name="HelpIntent">
+      <Expression Value="Help"/>
+      <Action ID="default-response"/>
+    </Intent>
+
+    <Intent Name="TestResponseIntent">
+      <Expression Value="test"/>
+      <Expression Value="bot test"/>
+      <Expression Value="test response"/>
+      <Response Text="This is a sample bot response."/>
+    </Intent>
+
+    <Intent Name="TestOptionsIntent">
+      <Expression Value="test options"/>
+      <Expression Value="options test"/>
+      <Response Hint="Option 1 | Option 2">
+        This is a sample bot response with options. Based on your channel you can either click on the options below or type them in.
+      </Response>
+    </Intent>
+
+    <Intent Name="TestOptionSelectedIntent">
+      <Expression Value="{option 1}"/>
+      <Expression Value="{option 2}"/>
+      <Entity Type="option"/>
+      <Response>
+        You selected: <Entity Get="option"/>
+      </Response>
+    </Intent>
+
+  </Dialog>
+</Siml>

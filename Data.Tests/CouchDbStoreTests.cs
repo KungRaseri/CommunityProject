@@ -14,13 +14,6 @@ namespace Data.Tests
         public void SetUpTests()
         {
             _usersCollection = new CouchDbStore<User>(Settings.CouchDbUrl);
-
-            var user = new User()
-            {
-                Email = "buttlicker@slurrrrrp.com"
-            };
-
-            _usersCollection.AddOrUpdateAsync(user).GetAwaiter().GetResult();
         }
 
         [TestMethod]
@@ -40,6 +33,16 @@ namespace Data.Tests
             var user = _usersCollection.FindUserByEmail(string.Empty).GetAwaiter().GetResult();
 
             Assert.IsNull(user);
+        }
+
+        [TestMethod, Ignore]
+        public void CreateView_ReturnsDocumentHeaderResponse()
+        {
+            var database = _usersCollection.CreateDatabase().Result;
+
+            var viewAll = _usersCollection.CreateView("user").Result;
+
+            var viewEmail = _usersCollection.CreateView("user", "email", "doc.email").Result;
         }
     }
 }

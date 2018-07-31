@@ -1,20 +1,8 @@
-version: '3'
+version: '3.4'
+
 services:
-  web:
-    build: .
-    ports:
-     - "80:80"
-    depends_on:
-     - "couchdb"
-    environment:
-     - ASPNETCORE_URLS=http://*:80
-  couchdb:
-    image: "couchdb:2.1.1"
-    ports:
-     - "5984:5984"
-    volumes:
-     - /opt/couchdb/data
-networks:
-  default:
-    external:
-      name: api-services-network
+  kungbot.discord:
+    image: ${DOCKER_REGISTRY}kungbotdiscord
+    build:
+      context: .
+      dockerfile: KungBot.Discord/Dockerfile

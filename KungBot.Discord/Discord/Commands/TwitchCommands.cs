@@ -40,7 +40,7 @@ namespace KungBot.Discord.Discord.Commands
                 var channel = searchResults.Channels.FirstOrDefault(c => c.Name == channelName);
                 if (channel == null)
                 {
-                    await cmdContext.RespondAsync($"```That channel doesn't exist. :mehdiFEELS:```");
+                    await cmdContext.RespondAsync($"```That channel doesn't exist.```");
                     return;
                 }
                 var followersResponse = await api.Channels.v5.GetChannelFollowersAsync(channel.Id);

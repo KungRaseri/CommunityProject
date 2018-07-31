@@ -56,5 +56,23 @@ namespace Api.Controllers.ThirdParty
 
             return StatusCode((int) HttpStatusCode.OK, Json(topAllTimePoints));
         }
+
+        [HttpGet]
+        [Route("chatstats/stats")]
+        public async Task<ActionResult> GetChatStats()
+        {
+            GetTopBootiesResponse topAllTimePoints;
+
+            try
+            {
+                topAllTimePoints = await _seClient.GetAllTimePoints();
+            }
+            catch (Exception e)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, Json(e));
+            }
+
+            return StatusCode((int)HttpStatusCode.OK, Json(topAllTimePoints));
+        }
     }
 }

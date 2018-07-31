@@ -8,6 +8,7 @@ using Data.Models.Twitch;
 using MyCouch;
 using MyCouch.Requests;
 using MyCouch.Responses;
+using Newtonsoft.Json;
 
 namespace Data.Helpers
 {
@@ -90,6 +91,19 @@ namespace Data.Helpers
         /// 
         /// </summary>
         /// <returns></returns>
+        public virtual async Task<ViewQueryResponse<T>> CreateView(string viewName, string suffix = "all", string emitParamOne = "doc._id", string emitParamTwo = "doc")
+        {
+            var viewJson = $"{{\"_id\": \"_design/{viewName.ToLower()}\", \"language\": \"javascript\", \"views\": {{ \"{viewName.ToLower()}-{suffix}\": {{ \"map\": \"function(doc) {{ emit({emitParamOne}, {emitParamTwo}); }}\" }}}}";
+
+            var view = await Client.Views.QueryAsync<T>(new QueryViewRequest(EntityName, $"{viewName}-{suffix}"));
+
+            return view;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public virtual async Task<ViewQueryResponse> CreateGetView(string map)
         {
             var viewRequest = new QueryViewRequest(EntityName, $"{EntityName}-all");
@@ -147,7 +161,7 @@ namespace Data.Helpers
                 if (record != null)
                 {
                     record.Video = vod?.Video;
-                    response = await Client.Documents.PutAsync(record.Id, Client.Serializer.Serialize(record));
+                    response = await Client.Documents.PutAsync(record._id, Client.Serializer.Serialize(record));
                 }
                 else
                 {
@@ -156,9 +170,9 @@ namespace Data.Helpers
             }
             else
             {
-                if (!string.IsNullOrEmpty(entity.Id))
+                if (!string.IsNullOrEmpty(entity._id))
                 {
-                    response = await Client.Documents.PutAsync(entity.Id, Client.Serializer.Serialize(entity));
+                    response = await Client.Documents.PutAsync(entity._id, entity._rev, Client.Serializer.Serialize(entity));
                 }
                 else
                 {
@@ -193,9 +207,9 @@ namespace Data.Helpers
 
             DocumentHeaderResponse response;
 
-            if (!string.IsNullOrEmpty(entity.Id))
+            if (!string.IsNullOrEmpty(entity._id))
             {
-                response = await Client.Documents.PutAsync(entity.Id, Client.Serializer.Serialize(entity));
+                response = await Client.Documents.PutAsync(entity._id, Client.Serializer.Serialize(entity));
             }
             else
             {

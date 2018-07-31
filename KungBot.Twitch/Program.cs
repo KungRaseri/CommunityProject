@@ -8,7 +8,7 @@ namespace KungBot.Twitch
         public static void Main(string[] args)
         {
             var bot = new KungBot();
-            bot.Connect();
+            bot.Connect().GetAwaiter().GetResult();
             try
             {
                 while (!Console.ReadLine()?.Contains("exit") ?? true)

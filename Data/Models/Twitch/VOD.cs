@@ -6,8 +6,8 @@ namespace Data.Models.Twitch
 {
     public class Vod : IEntity
     {
-        public string Id { get; set; }
-        public string Rev { get; set; }
+        public string _id { get; set; }
+        public string _rev { get; set; }
         public DateTime ImportedAt { get; set; }
         public Video Video { get; set; }
     }

@@ -2,7 +2,7 @@
 {
     public interface IEntity
     {
-        string Id { get; set; }
-        string Rev { get; set; }
+        string _id { get; set; }
+        string _rev { get; set; }
     }
 }

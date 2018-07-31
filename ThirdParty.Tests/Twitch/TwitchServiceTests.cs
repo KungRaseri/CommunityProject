@@ -72,5 +72,14 @@ namespace ThirdParty.Tests.Twitch
             var uptime = _twitchService.GetUpTimeByChannel(channelId).GetAwaiter().GetResult();
             Assert.IsInstanceOfType(uptime, typeof(TimeSpan?));
         }
+
+        [TestMethod]
+        public void GetChannelSubscribers_ReturnsChannelSubscribersList()
+        {
+            var channelId = _twitchService.GetChannelIdFromChannelName("kungraseri").GetAwaiter().GetResult();
+
+            var subscribers = _twitchService.GetChannelSubscribers(channelId).GetAwaiter().GetResult();
+            var subscribers2 = _twitchService.GetChannelSubscribers2(channelId).GetAwaiter().GetResult();
+        }
     }
 }
