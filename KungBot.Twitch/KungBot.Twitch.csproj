@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.1.1" />
+    <PackageReference Include="morelinq" Version="3.0.0" />
     <PackageReference Include="TwitchLib" Version="2.1.5" />
     <PackageReference Include="TwitchLib.Client" Version="2.1.4" />
     <PackageReference Include="TwitchLib.PubSub" Version="2.0.3" />

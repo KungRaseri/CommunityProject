@@ -3,6 +3,7 @@ using System.Linq;
 using Data;
 using Data.Helpers;
 using Data.Models;
+using MoreLinq;
 using ThirdParty;
 using TwitchLib.Client;
 using TwitchLib.Client.Models;
@@ -16,6 +17,7 @@ namespace KungBot.Twitch.Commands
         public AuthLevel AuthorizeLevel { get; set; }
         public bool IsActive { get; set; }
         private CouchDbStore<Viewer> _viewerCollection;
+        private CouchDbStore<ViewerRank> _viewerRankCollection;
 
         public void Perform(TwitchClient client, TwitchService service, ChatCommand chatCommand, Command command)
         {
@@ -23,10 +25,17 @@ namespace KungBot.Twitch.Commands
                 return;
 
             _viewerCollection = new CouchDbStore<Viewer>(Settings.CouchDbUrl);
+            _viewerRankCollection = new CouchDbStore<ViewerRank>(Settings.CouchDbUrl);
 
-            var dbViewer = (_viewerCollection.GetAsync("viewer-username", chatCommand.ChatMessage.Username).GetAwaiter().GetResult()).FirstOrDefault().Value;
+            var dbViewer = (_viewerCollection.GetAsync("viewer-username", chatCommand.ChatMessage.Username).GetAwaiter().GetResult()).FirstOrDefault()?.Value;
+            var viewRanks = _viewerRankCollection.GetAsync().GetAwaiter().GetResult();
+            if (dbViewer != null)
+            {
+                var viewerRank = viewRanks
+                    .LastOrDefault(r => r.Value.ExperienceRequired <= dbViewer.Experience)?.Value.RankName;
 
-            client.SendMessage(chatCommand.ChatMessage.Channel, $"{chatCommand.ChatMessage.Username}, You have {dbViewer.Experience} experience! kungraHYPERS");
+                client.SendMessage(chatCommand.ChatMessage.Channel, $"{chatCommand.ChatMessage.Username}, Your rank is {viewerRank}! You have {dbViewer.Experience} experience! kungraHYPERS");
+            }
         }
     }
 }
