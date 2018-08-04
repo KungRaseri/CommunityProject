@@ -21,7 +21,7 @@ namespace KungBot.Twitch
 {
     public class KungBot
     {
-        private readonly Settings _settings;
+        private readonly Settings _appSettings;
         private readonly TwitchClient _client;
         private readonly TwitchService _twitchService;
         private readonly List<Command> _commands;
@@ -29,9 +29,8 @@ namespace KungBot.Twitch
 
         public KungBot()
         {
-            //TODO: Put default couchdburl in appsettings and transform during CI/CD
             var settingsCollection = new CouchDbStore<Settings>(Settings.CouchDbUrl);
-            _settings = settingsCollection.GetAsync().Result.FirstOrDefault()?.Value;
+            _appSettings = settingsCollection.GetAsync().Result.FirstOrDefault()?.Value;
 
             _viewerCollection = new CouchDbStore<Viewer>(Settings.CouchDbUrl);
 
@@ -46,7 +45,7 @@ namespace KungBot.Twitch
             ILogger<TwitchClient> logger = new Logger<TwitchClient>(factory);
             _client = new TwitchClient(logger: logger);
 
-            _twitchService = new TwitchService(_settings);
+            _twitchService = new TwitchService(_appSettings);
         }
 
         public async Task Connect()
@@ -59,14 +58,16 @@ namespace KungBot.Twitch
 
         private async Task InitializeBot()
         {
-            var credentials = new ConnectionCredentials(_settings?.TwitchBotSettings.Username, _settings?.Keys.Twitch.Bot.Oauth);
+            var credentials = new ConnectionCredentials(_appSettings?.TwitchBotSettings.Username, _appSettings?.Keys.Twitch.Bot.Oauth);
 
             _client.Initialize(credentials, "KungRaseri", autoReListenOnExceptions: false);
-            _client.ChatThrottler = new MessageThrottler(_client, 20, TimeSpan.FromSeconds(30));
-            await _client.ChatThrottler.StartQueue();
-            _client.WhisperThrottler = new MessageThrottler(_client, 20, TimeSpan.FromSeconds(30));
+            _client.ChatThrottler = new MessageThrottler(_client, 15, TimeSpan.FromSeconds(30));
+            _client.WhisperThrottler = new MessageThrottler(_client, 15, TimeSpan.FromSeconds(30));
 
-            if (_settings != null) _client.AddChatCommandIdentifier(_settings.TwitchBotSettings.CommandCharacter);
+            await _client.ChatThrottler.StartQueue();
+            await _client.WhisperThrottler.StartQueue();
+
+            if (_appSettings != null) _client.AddChatCommandIdentifier(_appSettings.TwitchBotSettings.CommandCharacter);
 
             _client.OnJoinedChannel += OnJoinedChannel;
             _client.OnMessageReceived += OnMessageReceived;
@@ -76,10 +77,10 @@ namespace KungBot.Twitch
             _client.OnConnectionError += OnConnectionError;
             _client.OnChatCommandReceived += OnChatCommandReceived;
             _client.OnUserTimedout += OnUserTimedOut;
-            _client.OnUserBanned += ClientOnOnUserBanned;
+            _client.OnUserBanned += ClientOnUserBanned;
         }
 
-        private async void ClientOnOnUserBanned(object sender, OnUserBannedArgs e)
+        private async void ClientOnUserBanned(object sender, OnUserBannedArgs e)
         {
             var client = new RestClient(WebSocketSettings.LocalBotCommandRelayUrl);
             var request = new RestRequest(Method.GET);
@@ -112,7 +113,7 @@ namespace KungBot.Twitch
             var dbViewer = (await _viewerCollection.GetAsync("viewer-username", e.ChatMessage.Username)).FirstOrDefault()?.Value;
 
             dbViewer.IsSubscriber = e.ChatMessage.IsSubscriber;
-            dbViewer.Experience += _settings.TwitchBotSettings.DefaultExperienceAmount;
+            dbViewer.Experience += _appSettings.TwitchBotSettings.DefaultExperienceAmount;
 
             await _viewerCollection.AddOrUpdateAsync(dbViewer);
         }
@@ -160,8 +161,8 @@ namespace KungBot.Twitch
 
             _client.SendMessage(e.Channel,
                 e.Subscriber.SubscriptionPlan == SubscriptionPlan.Prime
-                    ? $"Welcome {e.Subscriber.DisplayName} to the {_settings.TwitchBotSettings.CommunityName}! You just earned {_settings.TwitchBotSettings.NewSubAwardAmount} {_settings.TwitchBotSettings.PointsName}! May the Lords bless you for using your Twitch Prime!"
-                    : $"Welcome {e.Subscriber.DisplayName} to the {_settings.TwitchBotSettings.CommunityName}! You just earned {_settings.TwitchBotSettings.NewSubAwardAmount} {_settings.TwitchBotSettings.PointsName}!");
+                    ? $"Welcome {e.Subscriber.DisplayName} to the {_appSettings.TwitchBotSettings.CommunityName}! You just earned {_appSettings.TwitchBotSettings.NewSubAwardAmount} {_appSettings.TwitchBotSettings.PointsName}! May the Lords bless you for using your Twitch Prime!"
+                    : $"Welcome {e.Subscriber.DisplayName} to the {_appSettings.TwitchBotSettings.CommunityName}! You just earned {_appSettings.TwitchBotSettings.NewSubAwardAmount} {_appSettings.TwitchBotSettings.PointsName}!");
         }
 
         private void OnWhisperReceived(object sender, OnWhisperReceivedArgs e)
@@ -176,8 +177,26 @@ namespace KungBot.Twitch
             HandleViewerExperience(sender, e).GetAwaiter().GetResult();
 
             //keyword matching
+            HandleKeywordMatching(sender, e);
             //blacklist
+            HandleBlacklistMatching(sender, e);
             //whitelist
+            HandleWhitelistMatching(sender, e);
+        }
+
+        private void HandleWhitelistMatching(object sender, OnMessageReceivedArgs e)
+        {
+
+        }
+
+        private void HandleBlacklistMatching(object sender, OnMessageReceivedArgs e)
+        {
+
+        }
+
+        private void HandleKeywordMatching(object sender, OnMessageReceivedArgs e)
+        {
+
         }
 
         private async Task HandleNewViewer(object sender, OnMessageReceivedArgs e)
@@ -193,7 +212,7 @@ namespace KungBot.Twitch
                 {
                     Username = e.ChatMessage.Username,
                     IsSubscriber = e.ChatMessage.IsSubscriber,
-                    Experience = _settings.TwitchBotSettings.DefaultExperienceAmount
+                    Experience = _appSettings.TwitchBotSettings.DefaultExperienceAmount
                 };
 
                 await _viewerCollection.AddOrUpdateAsync(viewer);
