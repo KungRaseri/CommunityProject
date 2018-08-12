@@ -9,6 +9,7 @@ using KungBot.Twitch.Commands;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 using RestSharp;
+using Serilog.Extensions.Logging;
 using ThirdParty;
 using TwitchLib.Client;
 using TwitchLib.Client.Enums;
@@ -16,6 +17,8 @@ using TwitchLib.Client.Events;
 using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Models;
 using TwitchLib.Client.Services;
+using TwitchLib.PubSub;
+using TwitchLib.PubSub.Events;
 
 namespace KungBot.Twitch
 {
@@ -24,6 +27,7 @@ namespace KungBot.Twitch
         private readonly Settings _appSettings;
         private readonly TwitchClient _client;
         private readonly TwitchService _twitchService;
+        private readonly TwitchPubSub _twitchPubSub;
         private readonly List<Command> _commands;
         private readonly CouchDbStore<Viewer> _viewerCollection;
 
@@ -43,9 +47,11 @@ namespace KungBot.Twitch
             });
 
             ILogger<TwitchClient> logger = new Logger<TwitchClient>(factory);
+            ILogger<TwitchPubSub> pubSubLogger = new Logger<TwitchPubSub>(factory);
             _client = new TwitchClient(logger: logger);
 
             _twitchService = new TwitchService(_appSettings);
+            _twitchPubSub = new TwitchPubSub(pubSubLogger);
         }
 
         public async Task Connect()
@@ -53,7 +59,9 @@ namespace KungBot.Twitch
             await InitializeBot();
             Console.WriteLine("Connecting...");
             Console.WriteLine($"Loaded {_commands.Count} commands");
+            _twitchPubSub.Connect();
             _client.Connect();
+            Console.WriteLine($"Connected...");
         }
 
         private async Task InitializeBot()
@@ -78,6 +86,46 @@ namespace KungBot.Twitch
             _client.OnChatCommandReceived += OnChatCommandReceived;
             _client.OnUserTimedout += OnUserTimedOut;
             _client.OnUserBanned += ClientOnUserBanned;
+            _twitchPubSub.OnPubSubServiceConnected += TwitchPubSubOnOnPubSubServiceConnected;
+            _twitchPubSub.OnPubSubServiceClosed += TwitchPubSubOnOnPubSubServiceClosed;
+            _twitchPubSub.OnChannelSubscription += TwitchPubSubOnOnChannelSubscription;
+            _twitchPubSub.OnFollow += TwitchPubSubOnOnFollow;
+            _twitchPubSub.OnEmoteOnly += TwitchPubSubOnOnEmoteOnly;
+            _twitchPubSub.OnEmoteOnlyOff += TwitchPubSubOnOnEmoteOnlyOff;
+
+            _twitchPubSub.ListenToFollows(_appSettings?.Keys.Twitch.ChannelId);
+            _twitchPubSub.ListenToSubscriptions(_appSettings?.Keys.Twitch.ChannelId);
+            _twitchPubSub.ListenToChatModeratorActions(_appSettings?.TwitchBotSettings.Username, _appSettings?.Keys.Twitch.ChannelId);
+        }
+
+        private void TwitchPubSubOnOnEmoteOnly(object sender, OnEmoteOnlyArgs e)
+        {
+            _client.SendMessage("kungraseri", $"emote mode on, ran by {e.Moderator}!");
+        }
+
+        private void TwitchPubSubOnOnEmoteOnlyOff(object sender, OnEmoteOnlyOffArgs e)
+        {
+            _client.SendMessage("kungraseri", $"emote mode off, ran by {e.Moderator}!");
+        }
+
+        private void TwitchPubSubOnOnFollow(object sender, OnFollowArgs e)
+        {
+            _client.SendMessage("kungraseri", $"Thank you for the follow, {e.DisplayName}!");
+        }
+
+        private void TwitchPubSubOnOnPubSubServiceClosed(object sender, EventArgs e)
+        {
+            _client.SendMessage("kungraseri", $"pubsub service closed");
+        }
+
+        private void TwitchPubSubOnOnChannelSubscription(object sender, OnChannelSubscriptionArgs e)
+        {
+            _client.SendMessage("kungraseri", $"{e.Subscription.DisplayName} just subscribed with a {e.Subscription.SubscriptionPlanName} sub!");
+        }
+
+        private void TwitchPubSubOnOnPubSubServiceConnected(object sender, EventArgs e)
+        {
+            _client.SendMessage("kungraseri", $"connected to the pubsub service");
         }
 
         private async void ClientOnUserBanned(object sender, OnUserBannedArgs e)
@@ -105,12 +153,13 @@ namespace KungBot.Twitch
             CheckForCommand(sender, e);
         }
 
-        private async Task HandleViewerExperience(object sender, OnMessageReceivedArgs e)
+        private async Task HandleViewerExperience(object sender, OnMessageReceivedArgs e, Viewer dbViewer = null)
         {
             if (e.ChatMessage.IsBroadcaster)
                 return;
 
-            var dbViewer = (await _viewerCollection.GetAsync("viewer-username", e.ChatMessage.Username)).FirstOrDefault()?.Value;
+            if (dbViewer == null)
+                await HandleNewViewer(sender, e);
 
             dbViewer.IsSubscriber = e.ChatMessage.IsSubscriber;
             dbViewer.Experience += _appSettings.TwitchBotSettings.DefaultExperienceAmount;
@@ -158,11 +207,16 @@ namespace KungBot.Twitch
 
         private void OnNewSubscriber(object sender, OnNewSubscriberArgs e)
         {
-
+            HandleNewSubscriber(sender, e, _viewerCollection.GetAsync("viewer-username", e.Subscriber.DisplayName.ToLowerInvariant()).GetAwaiter().GetResult().FirstOrDefault()?.Value).GetAwaiter().GetResult();
             _client.SendMessage(e.Channel,
                 e.Subscriber.SubscriptionPlan == SubscriptionPlan.Prime
                     ? $"Welcome {e.Subscriber.DisplayName} to the {_appSettings.TwitchBotSettings.CommunityName}! You just earned {_appSettings.TwitchBotSettings.NewSubAwardAmount} {_appSettings.TwitchBotSettings.PointsName}! May the Lords bless you for using your Twitch Prime!"
                     : $"Welcome {e.Subscriber.DisplayName} to the {_appSettings.TwitchBotSettings.CommunityName}! You just earned {_appSettings.TwitchBotSettings.NewSubAwardAmount} {_appSettings.TwitchBotSettings.PointsName}!");
+        }
+
+        private async Task HandleNewSubscriber(object sender, OnNewSubscriberArgs onNewSubscriberArgs, Viewer dbViewer = null)
+        {
+
         }
 
         private void OnWhisperReceived(object sender, OnWhisperReceivedArgs e)
@@ -173,8 +227,7 @@ namespace KungBot.Twitch
 
         private void OnMessageReceived(object sender, OnMessageReceivedArgs e)
         {
-            HandleNewViewer(sender, e).GetAwaiter().GetResult();
-            HandleViewerExperience(sender, e).GetAwaiter().GetResult();
+            HandleViewerExperience(sender, e, _viewerCollection.GetAsync("viewer-username", e.ChatMessage.Username).GetAwaiter().GetResult().FirstOrDefault()?.Value).GetAwaiter().GetResult();
 
             //keyword matching
             HandleKeywordMatching(sender, e);
@@ -199,20 +252,31 @@ namespace KungBot.Twitch
 
         }
 
-        private async Task HandleNewViewer(object sender, OnMessageReceivedArgs e)
+        private async Task HandleNewViewer(object sender, EventArgs e)
         {
             var client = (TwitchClient)sender;
+            var onMessage = (e is OnMessageReceivedArgs message) ? message : null;
+            var onSub = (e is OnNewSubscriberArgs sub) ? sub : null;
+            var username = (onMessage != null)
+                ? onMessage.ChatMessage.Username
+                : onSub?.Subscriber.DisplayName.ToLowerInvariant();
+            var channel = (onMessage != null)
+                ? onMessage.ChatMessage.Channel
+                : onSub?.Channel;
+            var isSub = (onSub != null) ? true : onMessage.ChatMessage.IsSubscriber;
+            var subMonthCount = onMessage?.ChatMessage.SubscribedMonthCount ?? 0;
 
-            var dbRows = await _viewerCollection.GetAsync("viewer-username", e.ChatMessage.Username);
+            var dbRows = await _viewerCollection.GetAsync("viewer-username", username);
 
             if (!dbRows.Any())
             {
-                client.SendMessage(e.ChatMessage.Channel, $"kungraHYPERS {e.ChatMessage.DisplayName}, welcome to the stream!");
+                client.SendMessage(channel, $"kungraHYPERS {username}, welcome to the stream!");
                 var viewer = new Viewer()
                 {
-                    Username = e.ChatMessage.Username,
-                    IsSubscriber = e.ChatMessage.IsSubscriber,
-                    Experience = _appSettings.TwitchBotSettings.DefaultExperienceAmount
+                    Username = username,
+                    IsSubscriber = isSub,
+                    Experience = _appSettings.TwitchBotSettings.DefaultExperienceAmount,
+                    SubscribedMonthCount = subMonthCount
                 };
 
                 await _viewerCollection.AddOrUpdateAsync(viewer);

@@ -9,8 +9,9 @@ namespace Data.Models
         public string Username { get; set; }
         public bool IsFollower { get; set; }
         public bool IsSubscriber { get; set; }
-        public SubscriptionLevel SubscriptionTier { get; set; }
+        public int SubscribedMonthCount { get; set; }
         public bool IsBanned { get; set; }
         public int Experience { get; set; }
+        public SubscriptionLevel SubscriptionLevel { get; set; }
     }
 }
