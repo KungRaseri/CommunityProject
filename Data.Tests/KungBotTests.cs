@@ -17,7 +17,7 @@ namespace Data.Tests
             _viewersCollection = new CouchDbStore<Viewer>(Settings.CouchDbUrl);
         }
 
-        [TestMethod]
+        [TestMethod, Ignore]
         public void CreateNewViewer_ReturnsViewer()
         {
             var viewer = new Viewer()
@@ -26,7 +26,7 @@ namespace Data.Tests
                 IsBanned = false,
                 IsFollower = true,
                 IsSubscriber = false,
-                SubscriptionTier = SubscriptionLevel.None,
+                SubscriptionLevel = SubscriptionLevel.None,
                 Username = "SneakyFellow"
             };
 
