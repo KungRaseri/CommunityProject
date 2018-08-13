@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.WebSockets;
 using System.Text;
@@ -14,7 +13,6 @@ using DSharpPlus.VoiceNext;
 using DSharpPlus.VoiceNext.Codec;
 using KungBot.Discord.Commands;
 using KungBot.Discord.Voice;
-using MoreLinq;
 using Syn.Bot.Channels.Discord;
 using Syn.Bot.Oscova;
 using Syn.Bot.Oscova.Events;
