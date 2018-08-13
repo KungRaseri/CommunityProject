@@ -1,4 +1,4 @@
-﻿namespace KungBot.Discord.Discord.Commands
+﻿namespace KungBot.Discord.Commands
 {
     public class DiscJockeyCommands
     {

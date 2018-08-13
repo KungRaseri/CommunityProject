@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.WebSockets;
 using System.Text;
@@ -9,7 +10,11 @@ using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.EventArgs;
 using DSharpPlus.Net.WebSocket;
-using KungBot.Discord.Discord.Commands;
+using DSharpPlus.VoiceNext;
+using DSharpPlus.VoiceNext.Codec;
+using KungBot.Discord.Commands;
+using KungBot.Discord.Voice;
+using MoreLinq;
 using Syn.Bot.Channels.Discord;
 using Syn.Bot.Oscova;
 using Syn.Bot.Oscova.Events;
@@ -18,11 +23,12 @@ namespace KungBot.Discord
 {
     public class KungBot
     {
-        private DiscordShardedClient Client;
+        private DiscordClient Client;
         private CommandsNextModule CommandsNext { get; set; }
         private DiscordChannel<OscovaBot> _discordChannel;
         private OscovaBot _oscovaBot;
         private readonly Settings _settings;
+        private VoiceNextClient _voiceNextClient;
 
         public static string CommandCharacter;
 
@@ -41,7 +47,15 @@ namespace KungBot.Discord
                 UseInternalLogHandler = true
             };
 
-            Client = new DiscordShardedClient(config);
+            var vnConfig = new VoiceNextConfiguration()
+            {
+                VoiceApplication = VoiceApplication.Music,
+                EnableIncoming = false
+            };
+
+
+            Client = new DiscordClient(config);
+            _voiceNextClient = Client.UseVoiceNext(vnConfig);
 
             CommandCharacter = _settings.DiscordBotSettings.CommandCharacter;
 
@@ -73,7 +87,7 @@ namespace KungBot.Discord
             {
                 StringPrefix = CommandCharacter,
                 EnableMentionPrefix = true
-            }).FirstOrDefault().Value;
+            });
 
             CommandsNext.CommandExecuted += CommandsNextOnCommandExecuted;
             CommandsNext.CommandErrored += CommandsNextOnCommandErrored;
@@ -83,6 +97,7 @@ namespace KungBot.Discord
             CommandsNext.RegisterCommands<DiscJockeyCommands>();
             CommandsNext.RegisterCommands<HumbleBundleCommands>();
             CommandsNext.RegisterCommands<JanitorCommands>();
+            CommandsNext.RegisterCommands<VoiceCommands>();
         }
 
         private void MainUserOnResponseReceived(object sender, ResponseReceivedEventArgs e)
@@ -154,7 +169,7 @@ namespace KungBot.Discord
 
         public async Task RunBotAsync()
         {
-            await Client.StartAsync();
+            await Client.ConnectAsync();
             await Task.Delay(-1);
         }
 
@@ -168,8 +183,8 @@ namespace KungBot.Discord
 
                 if (result.MessageType == WebSocketMessageType.Text)
                 {
-                    var channel = await Client.ShardClients.FirstOrDefault().Value.GetChannelAsync(143115828383055872);
-                    await Client.ShardClients.FirstOrDefault().Value.SendMessageAsync(channel, Encoding.UTF8.GetString(buffer, 0, result.Count));
+                    var channel = await Client.GetChannelAsync(143115828383055872);
+                    await Client.SendMessageAsync(channel, Encoding.UTF8.GetString(buffer, 0, result.Count));
 
                     Console.WriteLine(Encoding.UTF8.GetString(buffer, 0, result.Count));
                 }

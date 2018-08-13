@@ -1,4 +1,4 @@
-﻿namespace KungBot.Discord.Discord
+﻿namespace KungBot.Discord
 {
     public class TwitchStreamServices
     {

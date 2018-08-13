@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 
-namespace KungBot.Discord.Discord.Commands
+namespace KungBot.Discord.Commands
 {
     public class DungeonMasterCommands
     {

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Data;
 using Data.Helpers;
 using Data.Models;
 using DSharpPlus.CommandsNext;
@@ -10,7 +9,7 @@ using DSharpPlus.CommandsNext.Attributes;
 using TwitchLib.Api;
 using TwitchLib.Api.Models.v5.Clips;
 
-namespace KungBot.Discord.Discord.Commands
+namespace KungBot.Discord.Commands
 {
     public class TwitchCommands
     {

@@ -21,6 +21,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="DSharpPlus">
+      <HintPath>C:\Users\count\.nuget\packages\dsharpplus\3.2.3\lib\netstandard2.0\DSharpPlus.dll</HintPath>
+    </Reference>
     <Reference Include="DSharpPlus.CommandsNext">
       <HintPath>C:\Users\count\.nuget\packages\dsharpplus.commandsnext\3.2.3\lib\netstandard2.0\DSharpPlus.CommandsNext.dll</HintPath>
     </Reference>
