@@ -109,13 +109,12 @@ namespace KungBot.Twitch
             CheckForCommand(sender, e);
         }
 
-        public static async Task HandleViewerExperience(object sender, OnMessageReceivedArgs e, Viewer dbViewer = null)
+        public static async Task HandleViewerExperience(object sender, OnMessageReceivedArgs e)
         {
             if (e.ChatMessage.IsBroadcaster)
                 return;
 
-            if (dbViewer == null)
-                await HandleNewViewer(sender, e);
+            var dbViewer = await HandleNewViewer(sender, e);
 
             dbViewer.IsSubscriber = e.ChatMessage.IsSubscriber;
             dbViewer.Experience += _appSettings.TwitchBotSettings.DefaultExperienceAmount;
@@ -183,7 +182,7 @@ namespace KungBot.Twitch
 
         public static void OnMessageReceived(object sender, OnMessageReceivedArgs e)
         {
-            HandleViewerExperience(sender, e, _viewerCollection.GetAsync("viewer-username", e.ChatMessage.Username).GetAwaiter().GetResult().FirstOrDefault()?.Value).GetAwaiter().GetResult();
+            HandleViewerExperience(sender, e).GetAwaiter().GetResult();
 
             //keyword matching
             HandleKeywordMatching(sender, e);
@@ -208,7 +207,7 @@ namespace KungBot.Twitch
 
         }
 
-        public static async Task HandleNewViewer(object sender, EventArgs e)
+        public static async Task<Viewer> HandleNewViewer(object sender, EventArgs e)
         {
             var client = (TwitchClient)sender;
             var onMessage = (e is OnMessageReceivedArgs message) ? message : null;
@@ -222,21 +221,21 @@ namespace KungBot.Twitch
             var isSub = (onSub != null) ? true : onMessage.ChatMessage.IsSubscriber;
             var subMonthCount = onMessage?.ChatMessage.SubscribedMonthCount ?? 0;
 
-            var dbRows = await _viewerCollection.GetAsync("viewer-username", username);
+            var dbRows = (await _viewerCollection.GetAsync("viewer-username", username)).ToList();
 
-            if (!dbRows.Any())
+            if (dbRows.Any()) return dbRows.First().Value;
+
+            client.SendMessage(channel, $"kungraHYPERS {username}, welcome to the stream!");
+            var viewer = new Viewer()
             {
-                client.SendMessage(channel, $"kungraHYPERS {username}, welcome to the stream!");
-                var viewer = new Viewer()
-                {
-                    Username = username,
-                    IsSubscriber = isSub,
-                    Experience = _appSettings.TwitchBotSettings.DefaultExperienceAmount,
-                    SubscribedMonthCount = subMonthCount
-                };
+                Username = username,
+                IsSubscriber = isSub,
+                Experience = _appSettings.TwitchBotSettings.DefaultExperienceAmount,
+                SubscribedMonthCount = subMonthCount
+            };
 
-                await _viewerCollection.AddOrUpdateAsync(viewer);
-            }
+            return await _viewerCollection.AddOrUpdateAsync(viewer);
+
         }
 
         public static void OnJoinedChannel(object sender, OnJoinedChannelArgs e)

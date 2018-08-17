@@ -95,7 +95,7 @@ namespace KungBot.Discord
             CommandsNext.RegisterCommands<DiscJockeyCommands>();
             CommandsNext.RegisterCommands<HumbleBundleCommands>();
             CommandsNext.RegisterCommands<JanitorCommands>();
-            CommandsNext.RegisterCommands<VoiceCommands>();
+            //CommandsNext.RegisterCommands<VoiceCommands>();
         }
 
         private void MainUserOnResponseReceived(object sender, ResponseReceivedEventArgs e)
