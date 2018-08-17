@@ -16,16 +16,14 @@ namespace KungBot.Twitch.Commands
         public string Identifier { get; set; }
         public AuthLevel AuthorizeLevel { get; set; }
         public bool IsActive { get; set; }
-        private CouchDbStore<Viewer> _viewerCollection;
-        private CouchDbStore<ViewerRank> _viewerRankCollection;
 
         public void Perform(TwitchClient client, TwitchService service, ChatCommand chatCommand, Command command)
         {
             if (!IsActive)
                 return;
 
-            _viewerCollection = new CouchDbStore<Viewer>(Settings.CouchDbUrl);
-            _viewerRankCollection = new CouchDbStore<ViewerRank>(Settings.CouchDbUrl);
+            var _viewerCollection = new CouchDbStore<Viewer>(Settings.CouchDbUrl);
+            var _viewerRankCollection = new CouchDbStore<ViewerRank>(Settings.CouchDbUrl);
 
             var dbViewer = (_viewerCollection.GetAsync("viewer-username", chatCommand.ChatMessage.Username).GetAwaiter().GetResult()).FirstOrDefault()?.Value;
             var viewRanks = _viewerRankCollection.GetAsync().GetAwaiter().GetResult();

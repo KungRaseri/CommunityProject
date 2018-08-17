@@ -19,7 +19,6 @@ namespace KungBot.Twitch
     public class TwitchHandlers
     {
         private static TwitchClient _client;
-        private static TwitchPubSub _twitchPubSub;
         private static Settings _appSettings;
         private static CouchDbStore<Viewer> _viewerCollection;
         private static TwitchService _twitchService;
@@ -29,7 +28,7 @@ namespace KungBot.Twitch
             CouchDbStore<Viewer> viewerCollection, List<Command> commands)
         {
             _client = client;
-            _twitchPubSub = pubsubClient;
+            var _twitchPubSub = pubsubClient;
             _appSettings = settings;
             _viewerCollection = viewerCollection;
             _commands = commands;
@@ -73,6 +72,7 @@ namespace KungBot.Twitch
 
         public static void TwitchPubSubOnOnPubSubServiceClosed(object sender, EventArgs e)
         {
+            Console.WriteLine("pubsub service closed");
         }
 
         public static void TwitchPubSubOnOnChannelSubscription(object sender, OnChannelSubscriptionArgs e)
@@ -82,6 +82,7 @@ namespace KungBot.Twitch
 
         public static void TwitchPubSubOnOnPubSubServiceConnected(object sender, EventArgs e)
         {
+            Console.WriteLine("pubsub service open");
         }
 
         public static async void ClientOnUserBanned(object sender, OnUserBannedArgs e)

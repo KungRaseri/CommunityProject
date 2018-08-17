@@ -93,8 +93,6 @@ namespace Data.Helpers
         /// <returns></returns>
         public virtual async Task<ViewQueryResponse<T>> CreateView(string viewName, string suffix = "all", string emitParamOne = "doc._id", string emitParamTwo = "doc")
         {
-            var viewJson = $"{{\"_id\": \"_design/{viewName.ToLower()}\", \"language\": \"javascript\", \"views\": {{ \"{viewName.ToLower()}-{suffix}\": {{ \"map\": \"function(doc) {{ emit({emitParamOne}, {emitParamTwo}); }}\" }}}}";
-
             var view = await Client.Views.QueryAsync<T>(new QueryViewRequest(EntityName, $"{viewName}-{suffix}"));
 
             return view;

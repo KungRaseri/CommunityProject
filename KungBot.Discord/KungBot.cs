@@ -24,7 +24,6 @@ namespace KungBot.Discord
         private DiscordClient Client;
         private CommandsNextModule CommandsNext { get; set; }
         private readonly Settings _settings;
-        private VoiceNextClient _voiceNextClient;
 
         public KungBot(Settings settings)
         {
@@ -49,7 +48,7 @@ namespace KungBot.Discord
 
 
             Client = new DiscordClient(config);
-            _voiceNextClient = Client.UseVoiceNext(vnConfig);
+            Client.UseVoiceNext(vnConfig);
 
             Client.SetWebSocketClient<WebSocket4NetCoreClient>();
             Client.Ready += ClientOnReady;

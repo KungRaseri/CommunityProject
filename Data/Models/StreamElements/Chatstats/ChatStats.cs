@@ -11,11 +11,11 @@ namespace Data.Models.StreamElements.Chatstats
         public IEnumerable<ChatterStat> Chatters { get; set; }
         public IEnumerable<HashTagStat> HashTags { get; set; }
         public IEnumerable<CommandStat> Commands { get; set; }
-        public IEnumerable<BTTVEmoteStat> BttvEmotes { get; set; }
+        public IEnumerable<BttvEmoteStat> BttvEmotes { get; set; }
         public IEnumerable<TwitchEmoteStat> TwitchEmotes { get; set; }
     }
 
-    public class BTTVEmoteStat
+    public class BttvEmoteStat
     {
         public string Id { get; set; }
         public string Emote { get; set; }

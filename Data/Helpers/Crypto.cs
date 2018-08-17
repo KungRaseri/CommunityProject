@@ -7,7 +7,6 @@ namespace Data.Helpers
 {
     public class Crypto
     {
-        //TODO: Store in DB or appsettings.
         private readonly byte[] CookieToken;
 
         public Crypto(string token)
