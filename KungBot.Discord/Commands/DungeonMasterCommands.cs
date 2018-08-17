@@ -12,6 +12,7 @@ namespace KungBot.Discord.Commands
         [Command("roll")]
         public async Task GetRollCommand(CommandContext cmdContext, string rollInput)
         {
+            await cmdContext.Channel.DeleteMessageAsync(cmdContext.Message);
             var rand = new Random();
             if (!rollInput.Contains('d'))
             {
@@ -34,14 +35,13 @@ namespace KungBot.Discord.Commands
                 {
                     messageStrings.Add(rand.Next(1, diceAmount));
                 }
-                var message = $"{cmdContext.User.Mention}: Total: {messageStrings.Sum() + rollAddition} Roll: {string.Join("+", messageStrings)}{(rollAddition > 0 ? '+' + rollAddition.ToString() : "")}";
+                var message = $"{cmdContext.User.Mention}: {rollInput} Total: {messageStrings.Sum() + rollAddition} Roll: {string.Join("+", messageStrings)}{(rollAddition > 0 ? '+' + rollAddition.ToString() : "")}";
                 if (message.Length > 2000)
                 {
                     await cmdContext.RespondAsync("Try a smaller roll.  You're not a God.");
                     return;
                 }
                 await cmdContext.RespondAsync(message);
-
             }
             catch (Exception e)
             {

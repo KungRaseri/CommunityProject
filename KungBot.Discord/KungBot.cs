@@ -23,12 +23,8 @@ namespace KungBot.Discord
     {
         private DiscordClient Client;
         private CommandsNextModule CommandsNext { get; set; }
-        private DiscordChannel<OscovaBot> _discordChannel;
-        private OscovaBot _oscovaBot;
         private readonly Settings _settings;
         private VoiceNextClient _voiceNextClient;
-
-        public static string CommandCharacter;
 
         public KungBot(Settings settings)
         {
@@ -55,8 +51,6 @@ namespace KungBot.Discord
             Client = new DiscordClient(config);
             _voiceNextClient = Client.UseVoiceNext(vnConfig);
 
-            CommandCharacter = _settings.DiscordBotSettings.CommandCharacter;
-
             Client.SetWebSocketClient<WebSocket4NetCoreClient>();
             Client.Ready += ClientOnReady;
             Client.GuildAvailable += ClientOnGuildAvailable;
@@ -65,25 +59,13 @@ namespace KungBot.Discord
             Client.MessageCreated += ClientOnMessageCreated;
             Client.MessageUpdated += ClientOnMessageUpdated;
             Client.SocketClosed += ClientOnSocketClosed;
-
-            //_oscovaBot = new OscovaBot();
-            //_discordChannel = new DiscordChannel<OscovaBot>(_oscovaBot, _settings.Keys.Discord);
-
-            //_oscovaBot.Import(XDocument.Load("knowledge.siml"));
-            ////_oscovaBot.Import(XDocument.Load("salutations.siml"));
-
-            //_oscovaBot.Trainer.StartTraining();
-
-            //_oscovaBot.MainUser.ResponseReceived += MainUserOnResponseReceived;
-
-            //_discordChannel.Start().Wait();
         }
 
         public void Configure()
         {
             CommandsNext = Client.UseCommandsNext(new CommandsNextConfiguration()
             {
-                StringPrefix = CommandCharacter,
+                StringPrefix = _settings.DiscordBotSettings.CommandCharacter,
                 EnableMentionPrefix = true
             });
 
