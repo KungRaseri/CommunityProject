@@ -24,9 +24,9 @@ namespace Data.Helpers
         /// 
         /// </summary>
         /// <param name="settings"></param>
-        public MySqlDbStore(Settings settings)
+        public MySqlDbStore(ApplicationSettings settings)
         {
-            _connectionString = Settings.MySqlUrl;
+            _connectionString = ApplicationSettings.MySqlUrl;
             _connection = new MySqlConnection(_connectionString);
         }
 

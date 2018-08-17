@@ -13,11 +13,11 @@ namespace KungBot.Discord.Commands
 {
     public class TwitchCommands
     {
-        private readonly Settings _settings;
+        private readonly ApplicationSettings _settings;
 
         public TwitchCommands()
         {
-            var settingsCollection = new CouchDbStore<Settings>(Settings.CouchDbUrl);
+            var settingsCollection = new CouchDbStore<ApplicationSettings>(ApplicationSettings.CouchDbUrl);
             _settings = settingsCollection.GetAsync().Result.FirstOrDefault()?.Value;
         }
 

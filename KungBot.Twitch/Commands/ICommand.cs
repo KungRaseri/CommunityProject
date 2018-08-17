@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Data;
+using Data.Enumerations;
 using Data.Models;
 using ThirdParty;
 using TwitchLib.Client;

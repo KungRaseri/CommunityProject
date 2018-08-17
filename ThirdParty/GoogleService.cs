@@ -14,7 +14,7 @@ namespace ThirdParty
         public YoutubeEndpoint Youtube { get; set; }
         public UrlShortenerEndpoint UrlShortener { get; set; }
 
-        public GoogleService(Settings settings)
+        public GoogleService(ApplicationSettings settings)
         {
             Youtube = new YoutubeEndpoint(settings.Keys.GoogleApiKey);
             UrlShortener = new UrlShortenerEndpoint(settings.Keys.GoogleApiKey);

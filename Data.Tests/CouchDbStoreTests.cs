@@ -16,8 +16,8 @@ namespace Data.Tests
         [TestInitialize]
         public void SetUpTests()
         {
-            _usersCollection = new CouchDbStore<User>(Settings.CouchDbUrl);
-            _viewerRankCollection = new CouchDbStore<ViewerRank>(Settings.CouchDbUrl);
+            _usersCollection = new CouchDbStore<User>(ApplicationSettings.CouchDbUrl);
+            _viewerRankCollection = new CouchDbStore<ViewerRank>(ApplicationSettings.CouchDbUrl);
         }
 
         [TestMethod, Ignore]

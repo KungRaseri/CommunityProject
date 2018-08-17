@@ -19,7 +19,7 @@ namespace ThirdParty
     {
         private readonly TwitchAPI _twitchApi;
         private readonly TwitchPubSub _twitchPubSub;
-        public TwitchService(Settings settings)
+        public TwitchService(ApplicationSettings settings)
         {
             _twitchPubSub = new TwitchPubSub();
             _twitchApi = new TwitchAPI();

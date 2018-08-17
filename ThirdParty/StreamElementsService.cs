@@ -15,13 +15,13 @@ namespace ThirdParty
     public class StreamElementsService
     {
         public RestClient StreamElementsClient { get; set; }
-        private readonly Settings _settings;
+        private readonly ApplicationSettings _settings;
 
-        public StreamElementsService(Settings settings)
+        public StreamElementsService(ApplicationSettings settings)
         {
             _settings = settings;
 
-            StreamElementsClient = new RestClient(Settings.StreamElementsAPIUrl)
+            StreamElementsClient = new RestClient(ApplicationSettings.StreamElementsAPIUrl)
             {
                 Authenticator = new JwtAuthenticator(_settings.Keys.StreamElements)
             };

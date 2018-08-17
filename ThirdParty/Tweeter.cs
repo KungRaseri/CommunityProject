@@ -8,7 +8,7 @@ namespace ThirdParty
 {
     public class Twatter
     {
-        public Twatter(Settings settings)
+        public Twatter(ApplicationSettings settings)
         {
             ITwitterCredentials twitterCredentials = new Tweetinvi.Models.TwitterCredentials(settings.Keys.Twitter.ConsumerKey, settings.Keys.Twitter.ConsumerSecret, settings.Keys.Twitter.AccessToken, settings.Keys.Twitter.AccessTokenSecret);
             Auth.ApplicationCredentials = twitterCredentials;

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Data;
+using Data.Enumerations;
 using Data.Helpers;
 using Data.Models;
 using MoreLinq;
@@ -22,8 +23,8 @@ namespace KungBot.Twitch.Commands
             if (!IsActive)
                 return;
 
-            var _viewerCollection = new CouchDbStore<Viewer>(Settings.CouchDbUrl);
-            var _viewerRankCollection = new CouchDbStore<ViewerRank>(Settings.CouchDbUrl);
+            var _viewerCollection = new CouchDbStore<Viewer>(ApplicationSettings.CouchDbUrl);
+            var _viewerRankCollection = new CouchDbStore<ViewerRank>(ApplicationSettings.CouchDbUrl);
 
             var dbViewer = (_viewerCollection.GetAsync("viewer-username", chatCommand.ChatMessage.Username).GetAwaiter().GetResult()).FirstOrDefault()?.Value;
             var viewRanks = _viewerRankCollection.GetAsync().GetAwaiter().GetResult();

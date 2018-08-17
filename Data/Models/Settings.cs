@@ -2,7 +2,7 @@
 
 namespace Data.Models
 {
-    public class Settings : IEntity
+    public class ApplicationSettings : IEntity
     {
         public const string StreamElementsAPIUrl = "https://api.streamelements.com/kappa/v2";
         public const string PanelLocalUrl = "http://localhost:8080";
@@ -13,7 +13,5 @@ namespace Data.Models
         public string _rev { get; set; }
         public Keys Keys { get; set; }
         public string CookieToken { get; set; }
-        public TwitchBotSettings TwitchBotSettings { get; set; }
-        public DiscordBotSettings DiscordBotSettings { get; set; }
     }
 }

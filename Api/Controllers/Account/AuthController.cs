@@ -25,7 +25,7 @@ namespace Api.Controllers.Account
 
         public AuthController(IConfiguration configuration) : base(configuration)
         {
-            _userCollection = new CouchDbStore<User>(Settings.CouchDbUrl);
+            _userCollection = new CouchDbStore<User>(ApplicationSettings.CouchDbUrl);
             _cryptoService = new Crypto(_settings.CookieToken);
         }
 

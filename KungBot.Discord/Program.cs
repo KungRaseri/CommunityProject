@@ -12,16 +12,19 @@ namespace KungBot.Discord
     {
         public static void Main(string[] args)
         {
-            var settingsCollection = new CouchDbStore<Settings>(Settings.CouchDbUrl);
-            var settings = settingsCollection.GetAsync().Result.FirstOrDefault()?.Value;
+            var appSettingsCollection = new CouchDbStore<ApplicationSettings>(ApplicationSettings.CouchDbUrl);
+            var userCollection = new CouchDbStore<User>(ApplicationSettings.CouchDbUrl);
 
-            if (settings == null)
+            var appSettings = appSettingsCollection.GetAsync().Result.FirstOrDefault()?.Value;
+            var userSettings = userCollection.GetAsync("")
+
+            if (appSettings == null || userSettings == null)
             {
                 Console.WriteLine("Settings could not be found...");
                 return;
             }
 
-            var app = new KungBot(settings);
+            var app = new KungBot(appSettings, userSettings);
 
             try
             {

@@ -19,20 +19,22 @@ namespace KungBot.Twitch
     public class TwitchHandlers
     {
         private static TwitchClient _client;
-        private static Settings _appSettings;
+        private static UserSettings _userSettings;
+        private static ApplicationSettings _appSettings;
         private static CouchDbStore<Viewer> _viewerCollection;
         private static TwitchService _twitchService;
         private static List<Command> _commands;
 
-        public static void Init(TwitchClient client, TwitchPubSub pubsubClient, Settings settings,
+        public static void Init(TwitchClient client, TwitchPubSub pubsubClient, ApplicationSettings appSettings, UserSettings settings,
             CouchDbStore<Viewer> viewerCollection, List<Command> commands)
         {
             _client = client;
             var _twitchPubSub = pubsubClient;
-            _appSettings = settings;
+            _userSettings = settings;
+            _appSettings = appSettings;
             _viewerCollection = viewerCollection;
             _commands = commands;
-            _twitchService = new TwitchService(settings);
+            _twitchService = new TwitchService(_appSettings);
 
             _client.OnJoinedChannel += OnJoinedChannel;
             _client.OnMessageReceived += OnMessageReceived;
@@ -52,7 +54,7 @@ namespace KungBot.Twitch
 
             _twitchPubSub.ListenToFollows(_appSettings?.Keys.Twitch.ChannelId);
             _twitchPubSub.ListenToSubscriptions(_appSettings?.Keys.Twitch.ChannelId);
-            _twitchPubSub.ListenToChatModeratorActions(_appSettings?.TwitchBotSettings.Username, _appSettings?.Keys.Twitch.ChannelId);
+            _twitchPubSub.ListenToChatModeratorActions(_userSettings?.TwitchBotSettings.Username, _appSettings?.Keys.Twitch.ChannelId);
         }
 
         public static void TwitchPubSubOnOnEmoteOnly(object sender, OnEmoteOnlyArgs e)
@@ -118,7 +120,7 @@ namespace KungBot.Twitch
             var dbViewer = await HandleNewViewer(sender, e);
 
             dbViewer.IsSubscriber = e.ChatMessage.IsSubscriber;
-            dbViewer.Experience += _appSettings.TwitchBotSettings.DefaultExperienceAmount;
+            dbViewer.Experience += _userSettings.TwitchBotSettings.DefaultExperienceAmount;
 
             await _viewerCollection.AddOrUpdateAsync(dbViewer);
         }
@@ -166,8 +168,8 @@ namespace KungBot.Twitch
             HandleNewSubscriber(sender, e, _viewerCollection.GetAsync("viewer-username", e.Subscriber.DisplayName.ToLowerInvariant()).GetAwaiter().GetResult().FirstOrDefault()?.Value).GetAwaiter().GetResult();
             _client.SendMessage(e.Channel,
                 e.Subscriber.SubscriptionPlan == SubscriptionPlan.Prime
-                    ? $"Welcome {e.Subscriber.DisplayName} to the {_appSettings.TwitchBotSettings.CommunityName}! You just earned {_appSettings.TwitchBotSettings.NewSubAwardAmount} {_appSettings.TwitchBotSettings.PointsName}! May the Lords bless you for using your Twitch Prime!"
-                    : $"Welcome {e.Subscriber.DisplayName} to the {_appSettings.TwitchBotSettings.CommunityName}! You just earned {_appSettings.TwitchBotSettings.NewSubAwardAmount} {_appSettings.TwitchBotSettings.PointsName}!");
+                    ? $"Welcome {e.Subscriber.DisplayName} to the {_userSettings.TwitchBotSettings.CommunityName}! You just earned {_userSettings.TwitchBotSettings.NewSubAwardAmount} {_userSettings.TwitchBotSettings.PointsName}! May the Lords bless you for using your Twitch Prime!"
+                    : $"Welcome {e.Subscriber.DisplayName} to the {_userSettings.TwitchBotSettings.CommunityName}! You just earned {_userSettings.TwitchBotSettings.NewSubAwardAmount} {_userSettings.TwitchBotSettings.PointsName}!");
         }
 
         public static async Task HandleNewSubscriber(object sender, OnNewSubscriberArgs onNewSubscriberArgs, Viewer dbViewer = null)
@@ -231,7 +233,7 @@ namespace KungBot.Twitch
             {
                 Username = username,
                 IsSubscriber = isSub,
-                Experience = _appSettings.TwitchBotSettings.DefaultExperienceAmount,
+                Experience = _userSettings.TwitchBotSettings.DefaultExperienceAmount,
                 SubscribedMonthCount = subMonthCount
             };
 

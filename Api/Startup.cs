@@ -33,10 +33,10 @@ namespace Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddOptions();
-            services.Configure<Settings>(Configuration);
+            services.Configure<ApplicationSettings>(Configuration);
 
             var configSettings = Configuration.GetSection("Settings");
-            var settingsCollection = new CouchDbStore<Settings>(configSettings.GetSection("CouchDbUri").Value);
+            var settingsCollection = new CouchDbStore<ApplicationSettings>(configSettings.GetSection("CouchDbUri").Value);
 
             var settings = settingsCollection.GetAsync().GetAwaiter().GetResult().FirstOrDefault()?.Value;
 
@@ -105,7 +105,7 @@ namespace Api
                 app.UseCors(cors =>
                 {
                     cors
-                        .WithOrigins(Settings.PanelLocalUrl)
+                        .WithOrigins(ApplicationSettings.PanelLocalUrl)
                         .AllowAnyHeader();
                 });
             }

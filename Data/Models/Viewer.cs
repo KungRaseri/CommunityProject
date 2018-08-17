@@ -1,4 +1,5 @@
-﻿using Data.Interfaces;
+﻿using Data.Enumerations;
+using Data.Interfaces;
 
 namespace Data.Models
 {

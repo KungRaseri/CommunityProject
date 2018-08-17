@@ -1,4 +1,4 @@
-﻿namespace Data
+﻿namespace Data.Enumerations
 {
     public enum AuthLevel
     {

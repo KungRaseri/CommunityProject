@@ -17,10 +17,10 @@ namespace ThirdParty.Tests.StreamElements
         [TestInitialize]
         public void SetupTests()
         {
-            var settingsCollection = new CouchDbStore<Settings>(Settings.CouchDbUrl);
+            var settingsCollection = new CouchDbStore<ApplicationSettings>(ApplicationSettings.CouchDbUrl);
             var settings = settingsCollection.GetAsync().Result.FirstOrDefault()?.Value;
             _seClient = new StreamElementsService(settings);
-            _viewerCollection = new CouchDbStore<Viewer>(Settings.CouchDbUrl);
+            _viewerCollection = new CouchDbStore<Viewer>(ApplicationSettings.CouchDbUrl);
         }
 
         [TestMethod]

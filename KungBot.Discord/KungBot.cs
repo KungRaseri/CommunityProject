@@ -23,18 +23,20 @@ namespace KungBot.Discord
     {
         private DiscordClient Client;
         private CommandsNextModule CommandsNext { get; set; }
-        private readonly Settings _settings;
+        private readonly ApplicationSettings _appSettings;
+        private readonly UserSettings _userSettings;
 
-        public KungBot(Settings settings)
+        public KungBot(ApplicationSettings appSettings, UserSettings userSettings)
         {
-            _settings = settings;
+            _appSettings = appSettings;
+            _userSettings = userSettings;
         }
 
         public void Initialize()
         {
             var config = new DiscordConfiguration()
             {
-                Token = _settings.Keys.Discord,
+                Token = _appSettings.Keys.Discord,
                 TokenType = TokenType.Bot,
                 LogLevel = LogLevel.Debug,
                 UseInternalLogHandler = true
@@ -64,7 +66,7 @@ namespace KungBot.Discord
         {
             CommandsNext = Client.UseCommandsNext(new CommandsNextConfiguration()
             {
-                StringPrefix = _settings.DiscordBotSettings.CommandCharacter,
+                StringPrefix = _userSettings.DiscordBotSettings.CommandCharacter,
                 EnableMentionPrefix = true
             });
 
@@ -150,30 +152,6 @@ namespace KungBot.Discord
         {
             await Client.ConnectAsync();
             await Task.Delay(-1);
-        }
-
-        private async Task Receiving(ClientWebSocket client)
-        {
-            var buffer = new byte[1024 * 4];
-
-            while (true)
-            {
-                var result = await client.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-
-                if (result.MessageType == WebSocketMessageType.Text)
-                {
-                    var channel = await Client.GetChannelAsync(143115828383055872);
-                    await Client.SendMessageAsync(channel, Encoding.UTF8.GetString(buffer, 0, result.Count));
-
-                    Console.WriteLine(Encoding.UTF8.GetString(buffer, 0, result.Count));
-                }
-
-                else if (result.MessageType == WebSocketMessageType.Close)
-                {
-                    await client.CloseOutputAsync(WebSocketCloseStatus.NormalClosure, "", CancellationToken.None);
-                    break;
-                }
-            }
         }
     }
 }

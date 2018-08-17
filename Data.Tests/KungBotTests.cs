@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Data.Enumerations;
 using Data.Helpers;
 using Data.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -14,7 +15,7 @@ namespace Data.Tests
         [TestInitialize]
         public void SetUpTests()
         {
-            _viewersCollection = new CouchDbStore<Viewer>(Settings.CouchDbUrl);
+            _viewersCollection = new CouchDbStore<Viewer>(ApplicationSettings.CouchDbUrl);
         }
 
         [TestMethod, Ignore]
