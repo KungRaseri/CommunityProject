@@ -20,7 +20,6 @@ namespace KungBot.Twitch
     {
         private static TwitchClient _client;
         private static Account _account;
-        private static ApplicationSettings _appSettings;
         private static CouchDbStore<Viewer> _viewerCollection;
         private static TwitchService _twitchService;
         private static List<Command> _commandSettings;
@@ -29,12 +28,10 @@ namespace KungBot.Twitch
             CouchDbStore<Viewer> viewerCollection, List<Command> settings)
         {
             _client = client;
-            var _twitchPubSub = pubsubClient;
             _account = account;
-            _appSettings = appSettings;
             _viewerCollection = viewerCollection;
             _commandSettings = settings;
-            _twitchService = new TwitchService(_appSettings);
+            _twitchService = new TwitchService(appSettings);
 
             _client.OnJoinedChannel += OnJoinedChannel;
             _client.OnMessageReceived += OnMessageReceived;
@@ -45,16 +42,16 @@ namespace KungBot.Twitch
             _client.OnChatCommandReceived += OnChatCommandReceived;
             _client.OnUserTimedout += OnUserTimedOut;
             _client.OnUserBanned += ClientOnUserBanned;
-            _twitchPubSub.OnPubSubServiceConnected += TwitchPubSubOnOnPubSubServiceConnected;
-            _twitchPubSub.OnPubSubServiceClosed += TwitchPubSubOnOnPubSubServiceClosed;
-            _twitchPubSub.OnChannelSubscription += TwitchPubSubOnOnChannelSubscription;
-            _twitchPubSub.OnFollow += TwitchPubSubOnOnFollow;
-            _twitchPubSub.OnEmoteOnly += TwitchPubSubOnOnEmoteOnly;
-            _twitchPubSub.OnEmoteOnlyOff += TwitchPubSubOnOnEmoteOnlyOff;
+            pubsubClient.OnPubSubServiceConnected += TwitchPubSubOnOnPubSubServiceConnected;
+            pubsubClient.OnPubSubServiceClosed += TwitchPubSubOnOnPubSubServiceClosed;
+            pubsubClient.OnChannelSubscription += TwitchPubSubOnOnChannelSubscription;
+            pubsubClient.OnFollow += TwitchPubSubOnOnFollow;
+            pubsubClient.OnEmoteOnly += TwitchPubSubOnOnEmoteOnly;
+            pubsubClient.OnEmoteOnlyOff += TwitchPubSubOnOnEmoteOnlyOff;
 
-            _twitchPubSub.ListenToFollows(_appSettings?.Keys.Twitch.ChannelId);
-            _twitchPubSub.ListenToSubscriptions(_appSettings?.Keys.Twitch.ChannelId);
-            _twitchPubSub.ListenToChatModeratorActions(_account?.TwitchBotSettings.Username, _appSettings?.Keys.Twitch.ChannelId);
+            pubsubClient.ListenToFollows(appSettings?.Keys.Twitch.ChannelId);
+            pubsubClient.ListenToSubscriptions(appSettings?.Keys.Twitch.ChannelId);
+            pubsubClient.ListenToChatModeratorActions(_account?.TwitchBotSettings.Username, appSettings?.Keys.Twitch.ChannelId);
         }
 
         public static void TwitchPubSubOnOnEmoteOnly(object sender, OnEmoteOnlyArgs e)
@@ -205,7 +202,7 @@ namespace KungBot.Twitch
             var channel = (onMessage != null)
                 ? onMessage.ChatMessage.Channel
                 : onSub?.Channel;
-            var isSub = (onSub != null) ? true : onMessage.ChatMessage.IsSubscriber;
+            var isSub = (onSub != null) || onMessage.ChatMessage.IsSubscriber;
             var subMonthCount = onMessage?.ChatMessage.SubscribedMonthCount ?? 0;
 
             var dbRows = (await _viewerCollection.GetAsync("viewer-username", username)).ToList();
