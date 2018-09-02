@@ -10,10 +10,6 @@ namespace KungBot.Twitch.Commands
 {
     public interface ICommand
     {
-        string Name { get; set; }
-        string Identifier { get; set; }
-        AuthLevel AuthorizeLevel { get; set; }
-        bool IsActive { get; set; }
         void Perform(TwitchClient client, TwitchService service, ChatCommand chatCommand, Command command);
     }
 }

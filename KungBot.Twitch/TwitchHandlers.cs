@@ -129,28 +129,21 @@ namespace KungBot.Twitch
         {
             var commandText = e.Command.CommandText;
 
-            var runMe = _commands.Find(c => c.Name == commandText);
+            var commandSettings = _commands.Find(c => c.Name == commandText);
 
-            if (runMe == null)
+            if (commandSettings == null)
             {
                 return;
             }
 
-            var commandType = Type.GetType($"KungBot.Twitch.Commands.{runMe.Identifier}Command");
+            var commandType = Type.GetType($"KungBot.Twitch.Commands.{commandSettings.Identifier}Command");
 
             if (!(Activator.CreateInstance(commandType) is ICommand command))
             {
                 return;
             }
 
-            command.IsActive = runMe.IsActive;
-            command.Name = runMe.Name;
-            command.AuthorizeLevel = runMe.AuthorizationLevel;
-            command.Identifier = runMe.Identifier;
-
-            var commandMethod = commandType.GetMethod(runMe.Instructions);
-
-            commandMethod.Invoke(command, new object[] { _client, _twitchService, e.Command, runMe });
+            command.Perform(_client, _twitchService, e.Command, commandSettings);
         }
 
         public static void OnConnectionError(object sender, OnConnectionErrorArgs e)
