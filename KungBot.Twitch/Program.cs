@@ -16,7 +16,7 @@ namespace KungBot.Twitch
 
             var serviceProvider = serviceCollection.BuildServiceProvider();
 
-            var bot = new KungBot(serviceProvider.GetService<TwitchClient>(), serviceProvider.GetService<TwitchPubSub>());
+            var bot = serviceProvider.GetService<KungBot>();
             bot.Connect().GetAwaiter().GetResult();
             try
             {
@@ -37,7 +37,8 @@ namespace KungBot.Twitch
         {
             services.AddLogging(configure => configure.AddConsole())
                     .AddSingleton<TwitchClient>()
-                    .AddSingleton<TwitchPubSub>();
+                    .AddSingleton<TwitchPubSub>()
+                    .AddSingleton<KungBot>();
         }
     }
 }
