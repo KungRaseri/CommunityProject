@@ -40,7 +40,7 @@ namespace Data.Helpers
         /// </summary>
         /// <param name="emailUsername">The User's Email or Username</param>
         /// <returns></returns>
-        public virtual async Task<User> GetUserAsync(string emailUsername)
+        public virtual async Task<Account> GetUserAsync(string emailUsername)
         {
             emailUsername = MySqlHelper.EscapeString(emailUsername);
             string sqlWhere;
@@ -66,7 +66,7 @@ namespace Data.Helpers
 
             await _connection.OpenAsync();
             var reader = command.ExecuteReader();
-            var result = new User();
+            var result = new Account();
             while (reader.Read())
             {
                 result._id = reader[0].ToString();

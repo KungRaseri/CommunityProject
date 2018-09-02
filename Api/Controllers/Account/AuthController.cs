@@ -20,19 +20,19 @@ namespace Api.Controllers.Account
     [Route("api/v{version:ApiVersion}/[controller]")]
     public class AuthController : BaseApiController
     {
-        private readonly CouchDbStore<User> _userCollection;
+        private readonly CouchDbStore<Data.Models.Account> _userCollection;
         private readonly Crypto _cryptoService;
 
         public AuthController(IConfiguration configuration) : base(configuration)
         {
-            _userCollection = new CouchDbStore<User>(ApplicationSettings.CouchDbUrl);
+            _userCollection = new CouchDbStore<Data.Models.Account>(ApplicationSettings.CouchDbUrl);
             _cryptoService = new Crypto(_settings.CookieToken);
         }
 
         [AllowAnonymous]
         [Route("register")]
         [HttpPost]
-        public async Task<ActionResult> Register(User user)
+        public async Task<ActionResult> Register(Data.Models.Account user)
         {
             if (string.IsNullOrEmpty(user.Email) || string.IsNullOrEmpty(user.Password))
                 return StatusCode((int) HttpStatusCode.BadRequest,
@@ -47,7 +47,7 @@ namespace Api.Controllers.Account
 
             var hashedPassword = _cryptoService.PasswordCrypt(user.Password, salt);
 
-            user = new User
+            user = new Data.Models.Account
             {
                 Email = user.Email,
                 Password = hashedPassword,

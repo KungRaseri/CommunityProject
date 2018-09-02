@@ -10,13 +10,13 @@ namespace Data.Tests
     [TestClass]
     public class CouchDbStoreTests
     {
-        private CouchDbStore<User> _usersCollection { get; set; }
+        private CouchDbStore<Account> _usersCollection { get; set; }
         private CouchDbStore<ViewerRank> _viewerRankCollection { get; set; }
 
         [TestInitialize]
         public void SetUpTests()
         {
-            _usersCollection = new CouchDbStore<User>(ApplicationSettings.CouchDbUrl);
+            _usersCollection = new CouchDbStore<Account>(ApplicationSettings.CouchDbUrl);
             _viewerRankCollection = new CouchDbStore<ViewerRank>(ApplicationSettings.CouchDbUrl);
         }
 
@@ -27,7 +27,7 @@ namespace Data.Tests
 
             var user = _usersCollection.FindUserByEmail(email).GetAwaiter().GetResult();
 
-            Assert.IsInstanceOfType(user, typeof(User));
+            Assert.IsInstanceOfType(user, typeof(Account));
             Assert.AreEqual(user.Email, email);
         }
 

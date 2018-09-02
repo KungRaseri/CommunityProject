@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Linq;
-using System.Xml.Linq;
 using Data.Helpers;
 using Data.Models;
-using Syn.Bot.Channels.Discord;
-using Syn.Bot.Oscova;
 
 namespace KungBot.Discord
 {
@@ -13,18 +10,18 @@ namespace KungBot.Discord
         public static void Main(string[] args)
         {
             var appSettingsCollection = new CouchDbStore<ApplicationSettings>(ApplicationSettings.CouchDbUrl);
-            var userCollection = new CouchDbStore<User>(ApplicationSettings.CouchDbUrl);
+            var accountCollection = new CouchDbStore<Account>(ApplicationSettings.CouchDbUrl);
 
             var appSettings = appSettingsCollection.GetAsync().Result.FirstOrDefault()?.Value;
-            var userSettings = userCollection.GetAsync("")
+            var account = accountCollection.GetAsync("", "").Result.FirstOrDefault()?.Value;
 
-            if (appSettings == null || userSettings == null)
+            if (appSettings == null || account == null)
             {
                 Console.WriteLine("Settings could not be found...");
                 return;
             }
 
-            var app = new KungBot(appSettings, userSettings);
+            var app = new KungBot(appSettings, account);
 
             try
             {

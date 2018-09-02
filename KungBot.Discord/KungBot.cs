@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Net.WebSockets;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Data.Models;
 using DSharpPlus;
@@ -12,9 +9,6 @@ using DSharpPlus.Net.WebSocket;
 using DSharpPlus.VoiceNext;
 using DSharpPlus.VoiceNext.Codec;
 using KungBot.Discord.Commands;
-using KungBot.Discord.Voice;
-using Syn.Bot.Channels.Discord;
-using Syn.Bot.Oscova;
 using Syn.Bot.Oscova.Events;
 
 namespace KungBot.Discord
@@ -24,12 +18,12 @@ namespace KungBot.Discord
         private DiscordClient Client;
         private CommandsNextModule CommandsNext { get; set; }
         private readonly ApplicationSettings _appSettings;
-        private readonly UserSettings _userSettings;
+        private readonly Account _account;
 
-        public KungBot(ApplicationSettings appSettings, UserSettings userSettings)
+        public KungBot(ApplicationSettings appSettings, Account account)
         {
             _appSettings = appSettings;
-            _userSettings = userSettings;
+            _account = account;
         }
 
         public void Initialize()
@@ -66,7 +60,7 @@ namespace KungBot.Discord
         {
             CommandsNext = Client.UseCommandsNext(new CommandsNextConfiguration()
             {
-                StringPrefix = _userSettings.DiscordBotSettings.CommandCharacter,
+                StringPrefix = _account.DiscordBotSettings.CommandCharacter,
                 EnableMentionPrefix = true
             });
 

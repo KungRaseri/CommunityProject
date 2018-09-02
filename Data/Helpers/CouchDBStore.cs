@@ -221,7 +221,7 @@ namespace Data.Helpers
 
         public virtual async Task<T> FindUserByEmail(string email)
         {
-            if (typeof(T) != typeof(User))
+            if (typeof(T) != typeof(Account))
                 return null;
 
             var query = new Query(EntityName, $"{EntityName}-email") { Key = email };

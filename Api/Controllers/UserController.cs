@@ -17,17 +17,17 @@ namespace Api.Controllers
     [Authorize]
     public class UserController : BaseApiController
     {
-        private readonly CouchDbStore<User> _userCollection;
+        private readonly CouchDbStore<Data.Models.Account> _userCollection;
 
         public UserController(IConfiguration configuration) : base(configuration)
         {
-            _userCollection = new CouchDbStore<User>(ApplicationSettings.CouchDbUrl);
+            _userCollection = new CouchDbStore<Data.Models.Account>(ApplicationSettings.CouchDbUrl);
         }
 
         [HttpGet]
         public async Task<ActionResult> Get()
         {
-            List<Row<User>> users;
+            List<Row<Data.Models.Account>> users;
             try
             {
                 var dbUsers = await _userCollection.GetAsync();
@@ -50,7 +50,7 @@ namespace Api.Controllers
         [Route("[action]/{id}")]
         public async Task<ActionResult> Get(string id)
         {
-            User user;
+            Data.Models.Account user;
             try
             {
                 user = await _userCollection.FindAsync(id);

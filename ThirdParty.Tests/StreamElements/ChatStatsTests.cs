@@ -33,7 +33,7 @@ namespace ThirdParty.Tests.StreamElements
                 var viewer = new Viewer()
                 {
                     Username = chatter.Name,
-                    Experience = chatter.Amount
+                    Points = chatter.Amount
                 };
 
                 _viewerCollection.AddOrUpdateAsync(viewer).GetAwaiter().GetResult();

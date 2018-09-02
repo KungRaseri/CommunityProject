@@ -23,7 +23,7 @@ namespace Data.Tests
         {
             var viewer = new Viewer()
             {
-                Experience = 0,
+                Points = 0,
                 IsBanned = false,
                 IsFollower = true,
                 IsSubscriber = false,

@@ -17,7 +17,7 @@ namespace KungBot.Twitch
     public class KungBot
     {
         private readonly ApplicationSettings _appSettings;
-        private readonly UserSettings _userSettings;
+        private readonly Account _account;
         private readonly TwitchClient _client;
         private readonly TwitchPubSub _twitchPubSub;
         private readonly List<Command> _commands;
@@ -26,10 +26,10 @@ namespace KungBot.Twitch
         public KungBot()
         {
             var appSettingsCollection = new CouchDbStore<ApplicationSettings>(ApplicationSettings.CouchDbUrl);
-            var userSettingsCollection = new CouchDbStore<UserSettings>(ApplicationSettings.CouchDbUrl);
+            var accountCollection = new CouchDbStore<Account>(ApplicationSettings.CouchDbUrl);
 
             _appSettings = appSettingsCollection.GetAsync().Result.FirstOrDefault()?.Value;
-            _userSettings = userSettingsCollection.GetAsync().Result.FirstOrDefault()?.Value;
+            _account = accountCollection.GetAsync().Result.FirstOrDefault()?.Value;
 
             _viewerCollection = new CouchDbStore<Viewer>(ApplicationSettings.CouchDbUrl);
 
@@ -38,7 +38,10 @@ namespace KungBot.Twitch
 
             var factory = new LoggerFactory(new List<ILoggerProvider>()
             {
-                new ConsoleLoggerProvider(new ConsoleLoggerSettings(){Switches = {new KeyValuePair<string, LogLevel>("KungTheBot", LogLevel.Debug) }})
+                new ConsoleLoggerProvider(new ConsoleLoggerSettings()
+                {
+                    Switches = {new KeyValuePair<string, LogLevel>("KungTheBot", LogLevel.Debug)}
+                })
             });
 
             ILogger<TwitchClient> logger = new Logger<TwitchClient>(factory);
@@ -60,7 +63,8 @@ namespace KungBot.Twitch
 
         private async Task InitializeBot()
         {
-            var credentials = new ConnectionCredentials(_userSettings?.TwitchBotSettings.Username, _appSettings?.Keys.Twitch.Bot.Oauth);
+            var credentials = new ConnectionCredentials(_account?.TwitchBotSettings.Username,
+                _appSettings?.Keys.Twitch.Bot.Oauth);
 
             _client.Initialize(credentials, "KungRaseri", autoReListenOnExceptions: false);
             _client.ChatThrottler = new MessageThrottler(_client, 15, TimeSpan.FromSeconds(30));
@@ -69,9 +73,9 @@ namespace KungBot.Twitch
             await _client.ChatThrottler.StartQueue();
             await _client.WhisperThrottler.StartQueue();
 
-            if (_appSettings != null) _client.AddChatCommandIdentifier(_userSettings.TwitchBotSettings.CommandCharacter);
+            if (_appSettings != null) _client.AddChatCommandIdentifier(_account.TwitchBotSettings.CommandCharacter);
 
-            TwitchHandlers.Init(_client, _twitchPubSub, _appSettings, _userSettings, _viewerCollection, _commands);
+            TwitchHandlers.Init(_client, _twitchPubSub, _appSettings, _account, _viewerCollection, _commands);
         }
 
         public void Disconnect()

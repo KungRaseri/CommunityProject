@@ -31,9 +31,9 @@ namespace KungBot.Twitch.Commands
             if (dbViewer != null)
             {
                 var viewerRank = viewRanks
-                    .LastOrDefault(r => r.Value.ExperienceRequired <= dbViewer.Experience)?.Value.RankName;
+                    .LastOrDefault(r => r.Value.ExperienceRequired <= dbViewer.Points)?.Value.RankName;
 
-                client.SendMessage(chatCommand.ChatMessage.Channel, $"{chatCommand.ChatMessage.Username}, Your rank is {viewerRank}! You have {dbViewer.Experience} experience! kungraHYPERS");
+                client.SendMessage(chatCommand.ChatMessage.Channel, $"{chatCommand.ChatMessage.Username}, Your rank is {viewerRank}! You have {dbViewer.Points} experience! kungraHYPERS");
             }
         }
     }

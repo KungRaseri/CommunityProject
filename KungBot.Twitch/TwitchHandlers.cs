@@ -19,18 +19,18 @@ namespace KungBot.Twitch
     public class TwitchHandlers
     {
         private static TwitchClient _client;
-        private static UserSettings _userSettings;
+        private static Account _account;
         private static ApplicationSettings _appSettings;
         private static CouchDbStore<Viewer> _viewerCollection;
         private static TwitchService _twitchService;
         private static List<Command> _commands;
 
-        public static void Init(TwitchClient client, TwitchPubSub pubsubClient, ApplicationSettings appSettings, UserSettings settings,
+        public static void Init(TwitchClient client, TwitchPubSub pubsubClient, ApplicationSettings appSettings, Account account,
             CouchDbStore<Viewer> viewerCollection, List<Command> commands)
         {
             _client = client;
             var _twitchPubSub = pubsubClient;
-            _userSettings = settings;
+            _account = account;
             _appSettings = appSettings;
             _viewerCollection = viewerCollection;
             _commands = commands;
@@ -54,7 +54,7 @@ namespace KungBot.Twitch
 
             _twitchPubSub.ListenToFollows(_appSettings?.Keys.Twitch.ChannelId);
             _twitchPubSub.ListenToSubscriptions(_appSettings?.Keys.Twitch.ChannelId);
-            _twitchPubSub.ListenToChatModeratorActions(_userSettings?.TwitchBotSettings.Username, _appSettings?.Keys.Twitch.ChannelId);
+            _twitchPubSub.ListenToChatModeratorActions(_account?.TwitchBotSettings.Username, _appSettings?.Keys.Twitch.ChannelId);
         }
 
         public static void TwitchPubSubOnOnEmoteOnly(object sender, OnEmoteOnlyArgs e)
@@ -92,7 +92,7 @@ namespace KungBot.Twitch
             var client = new RestClient(WebSocketSettings.LocalBotCommandRelayUrl);
             var request = new RestRequest(Method.GET);
             request.AddQueryParameter("command", "timeout");
-            request.AddQueryParameter("message", $"{e.UserBan.Username} has been banned. Reason: {e.UserBan.BanReason} Kappa");
+            request.AddQueryParameter("message", $"{e.UserBan.Username} has been banned. Reason: {e.UserBan.BanReason}");
 
             await client.ExecuteGetTaskAsync(request);
         }
@@ -120,7 +120,7 @@ namespace KungBot.Twitch
             var dbViewer = await HandleNewViewer(sender, e);
 
             dbViewer.IsSubscriber = e.ChatMessage.IsSubscriber;
-            dbViewer.Experience += _userSettings.TwitchBotSettings.DefaultExperienceAmount;
+            dbViewer.Points += _account.TwitchBotSettings.DefaultExperienceAmount;
 
             await _viewerCollection.AddOrUpdateAsync(dbViewer);
         }
@@ -168,8 +168,8 @@ namespace KungBot.Twitch
             HandleNewSubscriber(sender, e, _viewerCollection.GetAsync("viewer-username", e.Subscriber.DisplayName.ToLowerInvariant()).GetAwaiter().GetResult().FirstOrDefault()?.Value).GetAwaiter().GetResult();
             _client.SendMessage(e.Channel,
                 e.Subscriber.SubscriptionPlan == SubscriptionPlan.Prime
-                    ? $"Welcome {e.Subscriber.DisplayName} to the {_userSettings.TwitchBotSettings.CommunityName}! You just earned {_userSettings.TwitchBotSettings.NewSubAwardAmount} {_userSettings.TwitchBotSettings.PointsName}! May the Lords bless you for using your Twitch Prime!"
-                    : $"Welcome {e.Subscriber.DisplayName} to the {_userSettings.TwitchBotSettings.CommunityName}! You just earned {_userSettings.TwitchBotSettings.NewSubAwardAmount} {_userSettings.TwitchBotSettings.PointsName}!");
+                    ? $"Welcome {e.Subscriber.DisplayName} to the {_account.TwitchBotSettings.CommunityName}! You just earned {_account.TwitchBotSettings.NewSubAwardAmount} {_account.TwitchBotSettings.PointsName}! May the Lords bless you for using your Twitch Prime!"
+                    : $"Welcome {e.Subscriber.DisplayName} to the {_account.TwitchBotSettings.CommunityName}! You just earned {_account.TwitchBotSettings.NewSubAwardAmount} {_account.TwitchBotSettings.PointsName}!");
         }
 
         public static async Task HandleNewSubscriber(object sender, OnNewSubscriberArgs onNewSubscriberArgs, Viewer dbViewer = null)
@@ -233,7 +233,7 @@ namespace KungBot.Twitch
             {
                 Username = username,
                 IsSubscriber = isSub,
-                Experience = _userSettings.TwitchBotSettings.DefaultExperienceAmount,
+                Points = _account.TwitchBotSettings.DefaultExperienceAmount,
                 SubscribedMonthCount = subMonthCount
             };
 

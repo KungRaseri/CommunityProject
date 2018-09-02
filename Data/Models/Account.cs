@@ -2,10 +2,13 @@
 
 namespace Data.Models
 {
-    public class UserSettings : IEntity
+    public class Account : IEntity
     {
         public string _id { get; set; }
         public string _rev { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
+        public string PasswordSalt { get; set; }
         public TwitchBotSettings TwitchBotSettings { get; set; }
         public DiscordBotSettings DiscordBotSettings { get; set; }
     }
