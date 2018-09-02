@@ -131,10 +131,9 @@ namespace KungBot.Twitch
 
             var commandSettings = _commandSettings.Find(c => c.Name == commandText);
 
-            if (commandSettings == null)
-            {
-                return;
-            }
+            if (commandSettings == null) return;
+            if (!commandSettings.IsActive) CommandUtility.GetCommandByKey("LogError")(_client, _twitchService, e.Command, commandSettings);
+
             CommandUtility.GetCommandByKey(commandSettings.Identifier)(_client, _twitchService, e.Command, commandSettings);
         }
 
