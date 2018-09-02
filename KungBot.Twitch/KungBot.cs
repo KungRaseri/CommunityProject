@@ -23,7 +23,7 @@ namespace KungBot.Twitch
         private readonly List<Command> _commands;
         private readonly CouchDbStore<Viewer> _viewerCollection;
 
-        public KungBot()
+        public KungBot(TwitchClient client, TwitchPubSub twitchPubSub)
         {
             var appSettingsCollection = new CouchDbStore<ApplicationSettings>(ApplicationSettings.CouchDbUrl);
             var accountCollection = new CouchDbStore<Account>(ApplicationSettings.CouchDbUrl);
