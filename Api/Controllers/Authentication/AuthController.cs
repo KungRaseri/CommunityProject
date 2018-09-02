@@ -12,42 +12,40 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
-namespace Api.Controllers.Account
+namespace Api.Controllers.Authentication
 {
     [ApiVersion("1")]
     [Route("api/v{version:ApiVersion}/[controller]")]
     public class AuthController : BaseApiController
     {
-        private readonly CouchDbStore<Data.Models.Account> _userCollection;
+        private readonly CouchDbStore<Account> _userCollection;
         private readonly Crypto _cryptoService;
 
         public AuthController(IConfiguration configuration) : base(configuration)
         {
-            _userCollection = new CouchDbStore<Data.Models.Account>(ApplicationSettings.CouchDbUrl);
+            _userCollection = new CouchDbStore<Account>(ApplicationSettings.CouchDbUrl);
             _cryptoService = new Crypto(_settings.CookieToken);
         }
 
         [AllowAnonymous]
         [Route("register")]
         [HttpPost]
-        public async Task<ActionResult> Register(Data.Models.Account user)
+        public async Task<ActionResult> Register(Account user)
         {
             if (string.IsNullOrEmpty(user.Email) || string.IsNullOrEmpty(user.Password))
-                return StatusCode((int) HttpStatusCode.BadRequest,
-                    Json(new {error = "Email or Password are required"}));
+                return StatusCode((int)HttpStatusCode.BadRequest,
+                    Json(new { error = "Email or Password are required" }));
 
-            var dbUser = await _userCollection.FindUserByEmail(user.Email);
+            var dbUser = await _userCollection.FindAsync(user.Email, "user-email");
 
             if (dbUser != null)
-                return StatusCode((int) HttpStatusCode.BadRequest, Json(new {error = "Account already exists"}));
+                return StatusCode((int)HttpStatusCode.BadRequest, Json(new { error = "Account already exists" }));
 
             var salt = BCrypt.Net.BCrypt.GenerateSalt();
 
             var hashedPassword = _cryptoService.PasswordCrypt(user.Password, salt);
 
-            user = new Data.Models.Account
+            user = new Account
             {
                 Email = user.Email,
                 Password = hashedPassword,
@@ -59,7 +57,7 @@ namespace Api.Controllers.Account
             dbUser.Password = string.Empty;
             dbUser.PasswordSalt = string.Empty;
 
-            return StatusCode((int) HttpStatusCode.OK, Json(dbUser));
+            return StatusCode((int)HttpStatusCode.OK, Json(dbUser));
         }
 
         [Route("token")]
@@ -68,18 +66,18 @@ namespace Api.Controllers.Account
         public async Task<ActionResult> Token(string email, string password)
         {
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
-                return StatusCode((int) HttpStatusCode.BadRequest,
-                    Json(new {error = "Email or Password are required"}));
+                return StatusCode((int)HttpStatusCode.BadRequest,
+                    Json(new { error = "Email or Password are required" }));
 
-            var user = await _userCollection.FindUserByEmail(email);
+            var user = await _userCollection.FindAsync(email, "user-email");
 
             if (user == null)
-                return StatusCode((int) HttpStatusCode.Unauthorized, Json(new {error = "Invalid credentials"}));
+                return StatusCode((int)HttpStatusCode.Unauthorized, Json(new { error = "Invalid credentials" }));
 
             var hashedPassword = _cryptoService.PasswordCrypt(password, user.PasswordSalt);
 
             if (!hashedPassword.Equals(user.Password))
-                return StatusCode((int) HttpStatusCode.Unauthorized, Json(new {error = "Invalid credentials"}));
+                return StatusCode((int)HttpStatusCode.Unauthorized, Json(new { error = "Invalid credentials" }));
 
             var claims = new List<Claim>
             {
@@ -99,7 +97,7 @@ namespace Api.Controllers.Account
 
             try
             {
-                var dbToken = await TokenCollection.FindTokenByUserId(user._id);
+                var dbToken = await TokenCollection.FindAsync(user._id, "token-userid");
                 savedToken = await TokenCollection.AddOrUpdateTokenAsync(
                     dbToken == null || dbToken.Expiration < DateTime.UtcNow
                         ? new Token
@@ -113,14 +111,14 @@ namespace Api.Controllers.Account
             }
             catch (Exception e)
             {
-                return StatusCode((int) HttpStatusCode.InternalServerError,
-                    Json(new {error = $"Error: {e.Message}. Stack Trace: {e.StackTrace}"}));
+                return StatusCode((int)HttpStatusCode.InternalServerError,
+                    Json(new { error = $"Error: {e.Message}. Stack Trace: {e.StackTrace}" }));
             }
 
             user.Password = string.Empty;
             user.PasswordSalt = string.Empty;
 
-            return StatusCode((int) HttpStatusCode.OK, Json(new
+            return StatusCode((int)HttpStatusCode.OK, Json(new
             {
                 user,
                 token = savedToken

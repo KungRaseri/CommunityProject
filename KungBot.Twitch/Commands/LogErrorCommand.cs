@@ -4,6 +4,7 @@ using System.Text;
 using Data.Models;
 using ThirdParty;
 using TwitchLib.Client;
+using TwitchLib.Client.Extensions;
 using TwitchLib.Client.Models;
 
 namespace KungBot.Twitch.Commands
