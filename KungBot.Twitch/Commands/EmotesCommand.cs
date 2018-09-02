@@ -11,11 +11,6 @@ namespace KungBot.Twitch.Commands
 {
     public class EmotesCommand : ICommand
     {
-        public string Name { get; set; }
-        public string Identifier { get; set; }
-        public AuthLevel AuthorizeLevel { get; set; }
-        public bool IsActive { get; set; }
-
         public void Perform(TwitchClient client, TwitchService service, ChatCommand chatCommand, Command command)
         {
             if (!IsActive)

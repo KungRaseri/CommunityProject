@@ -11,11 +11,6 @@ namespace KungBot.Twitch.Commands
 {
     public class UptimeCommand : ICommand
     {
-        public string Name { get; set; }
-        public string Identifier { get; set; }
-        public AuthLevel AuthorizeLevel { get; set; }
-        public bool IsActive { get; set; }
-
         public async void Perform(TwitchClient client, TwitchService service, ChatCommand chatCommand, Command command)
         {
             if (!command.IsActive)
