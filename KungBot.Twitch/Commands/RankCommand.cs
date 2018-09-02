@@ -15,7 +15,7 @@ namespace KungBot.Twitch.Commands
     {
         public void Perform(TwitchClient client, TwitchService service, ChatCommand chatCommand, Command command)
         {
-            if (!IsActive)
+            if (!command.IsActive)
                 return;
 
             var _viewerCollection = new CouchDbStore<Viewer>(ApplicationSettings.CouchDbUrl);
