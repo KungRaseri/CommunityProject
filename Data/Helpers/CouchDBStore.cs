@@ -218,29 +218,5 @@ namespace Data.Helpers
 
             return result;
         }
-
-        public virtual async Task<T> FindUserByEmail(string email)
-        {
-            if (typeof(T) != typeof(Account))
-                return null;
-
-            var query = new Query(EntityName, $"{EntityName}-email") { Key = email };
-
-            var response = await Store.QueryAsync<T>(query);
-
-            return response.FirstOrDefault()?.Value;
-        }
-
-        public virtual async Task<T> FindTokenByUserId(string userId)
-        {
-            if (typeof(T) != typeof(Token))
-                return null;
-
-            var query = new Query(EntityName, $"{EntityName}-userId") { Key = userId };
-
-            var response = await Store.QueryAsync<T>(query);
-
-            return response.FirstOrDefault()?.Value;
-        }
     }
 }

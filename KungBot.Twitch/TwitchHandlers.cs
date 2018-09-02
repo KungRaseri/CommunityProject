@@ -23,17 +23,17 @@ namespace KungBot.Twitch
         private static ApplicationSettings _appSettings;
         private static CouchDbStore<Viewer> _viewerCollection;
         private static TwitchService _twitchService;
-        private static List<Command> _commands;
+        private static List<Command> _commandSettings;
 
         public static void Init(TwitchClient client, TwitchPubSub pubsubClient, ApplicationSettings appSettings, Account account,
-            CouchDbStore<Viewer> viewerCollection, List<Command> commands)
+            CouchDbStore<Viewer> viewerCollection, List<Command> settings)
         {
             _client = client;
             var _twitchPubSub = pubsubClient;
             _account = account;
             _appSettings = appSettings;
             _viewerCollection = viewerCollection;
-            _commands = commands;
+            _commandSettings = settings;
             _twitchService = new TwitchService(_appSettings);
 
             _client.OnJoinedChannel += OnJoinedChannel;
@@ -129,28 +129,13 @@ namespace KungBot.Twitch
         {
             var commandText = e.Command.CommandText;
 
-            var runMe = _commands.Find(c => c.Name == commandText);
+            var commandSettings = _commandSettings.Find(c => c.Name == commandText);
 
-            if (runMe == null)
+            if (commandSettings == null)
             {
                 return;
             }
-
-            var commandType = Type.GetType($"KungBot.Twitch.Commands.{runMe.Identifier}Command");
-
-            if (!(Activator.CreateInstance(commandType) is ICommand command))
-            {
-                return;
-            }
-
-            command.IsActive = runMe.IsActive;
-            command.Name = runMe.Name;
-            command.AuthorizeLevel = runMe.AuthorizationLevel;
-            command.Identifier = runMe.Identifier;
-
-            var commandMethod = commandType.GetMethod(runMe.Instructions);
-
-            commandMethod.Invoke(command, new object[] { _client, _twitchService, e.Command, runMe });
+            CommandUtility.GetCommandByKey(commandSettings.Identifier)(_client, _twitchService, e.Command, commandSettings);
         }
 
         public static void OnConnectionError(object sender, OnConnectionErrorArgs e)

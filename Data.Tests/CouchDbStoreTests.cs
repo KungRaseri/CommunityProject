@@ -25,7 +25,7 @@ namespace Data.Tests
         {
             var email = "buttlicker@slurrrrrp.com";
 
-            var user = _usersCollection.FindUserByEmail(email).GetAwaiter().GetResult();
+            var user = _usersCollection.FindAsync(email, "user-email").GetAwaiter().GetResult();
 
             Assert.IsInstanceOfType(user, typeof(Account));
             Assert.AreEqual(user.Email, email);
@@ -34,7 +34,7 @@ namespace Data.Tests
         [TestMethod, Ignore]
         public void FindUserByEmail_UserDoesNotExist_ReturnsNull()
         {
-            var user = _usersCollection.FindUserByEmail(string.Empty).GetAwaiter().GetResult();
+            var user = _usersCollection.FindAsync(string.Empty, "user-email").GetAwaiter().GetResult();
 
             Assert.IsNull(user);
         }

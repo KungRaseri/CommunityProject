@@ -13,14 +13,14 @@ namespace KungBot.Twitch.Commands
 {
     public class RankCommand : ICommand
     {
-        public string Name { get; set; }
-        public string Identifier { get; set; }
-        public AuthLevel AuthorizeLevel { get; set; }
-        public bool IsActive { get; set; }
+        public string GetKey()
+        {
+            return "Rank";
+        }
 
         public void Perform(TwitchClient client, TwitchService service, ChatCommand chatCommand, Command command)
         {
-            if (!IsActive)
+            if (!command.IsActive)
                 return;
 
             var _viewerCollection = new CouchDbStore<Viewer>(ApplicationSettings.CouchDbUrl);

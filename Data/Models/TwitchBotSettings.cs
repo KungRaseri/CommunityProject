@@ -1,4 +1,5 @@
-﻿using Data.Interfaces;
+﻿using System.Collections.Generic;
+using Data.Interfaces;
 
 namespace Data.Models
 {
@@ -10,5 +11,6 @@ namespace Data.Models
         public string PointsName { get; set; }
         public string Username { get; set; }
         public int DefaultExperienceAmount { get; set; }
+        public List<Command> Commands { get; set; }
     }
 }
