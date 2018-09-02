@@ -20,7 +20,7 @@ namespace KungBot.Twitch
         private readonly Account _account;
         private readonly TwitchClient _client;
         private readonly TwitchPubSub _twitchPubSub;
-        private readonly List<Command> _commandSettings;
+        private readonly List<Command> _commands;
         private readonly CouchDbStore<Viewer> _viewerCollection;
 
         public KungBot(TwitchClient client, TwitchPubSub twitchPubSub)
@@ -34,7 +34,8 @@ namespace KungBot.Twitch
             _viewerCollection = new CouchDbStore<Viewer>(ApplicationSettings.CouchDbUrl);
 
             var commandCollection = new CouchDbStore<Command>(ApplicationSettings.CouchDbUrl);
-            _commandSettings = commandCollection.GetAsync().Result.Select(row => row.Value).ToList();
+            _commands = commandCollection.GetAsync().Result.Select(row => row.Value).ToList();
+
             var factory = new LoggerFactory(new List<ILoggerProvider>()
             {
                 new ConsoleLoggerProvider(new ConsoleLoggerSettings()
@@ -54,7 +55,7 @@ namespace KungBot.Twitch
         {
             await InitializeBot();
             Console.WriteLine("Connecting...");
-            Console.WriteLine($"Loaded {_commandSettings.Count} commands");
+            Console.WriteLine($"Loaded {_commands.Count} commands");
             _twitchPubSub.Connect();
             _client.Connect();
             Console.WriteLine($"Connected...");
@@ -74,7 +75,7 @@ namespace KungBot.Twitch
 
             if (_appSettings != null) _client.AddChatCommandIdentifier(_account.TwitchBotSettings.CommandCharacter);
 
-            TwitchHandlers.Init(_client, _twitchPubSub, _appSettings, _account, _viewerCollection, _commandSettings);
+            TwitchHandlers.Init(_client, _twitchPubSub, _appSettings, _account, _viewerCollection, _commands);
         }
 
         public void Disconnect()
