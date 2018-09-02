@@ -13,10 +13,10 @@ namespace KungBot.Twitch
         {
             var serviceCollection = new ServiceCollection();
             ConfigureServices(serviceCollection);
-
             var serviceProvider = serviceCollection.BuildServiceProvider();
 
             var bot = serviceProvider.GetService<KungBot>();
+
             bot.Connect().GetAwaiter().GetResult();
             try
             {
