@@ -13,7 +13,7 @@ namespace KungBot.Twitch.Commands
     {
         public void Perform(TwitchClient client, TwitchService service, ChatCommand chatCommand, Command command)
         {
-            if (!IsActive)
+            if (!command.IsActive)
                 return;
 
             client.SendMessage(chatCommand.ChatMessage.Channel, "Tier 1 emote: kungraHEY Tier 2 emote: kungraDERP Tier 3 emote: kungraTHRONE");
