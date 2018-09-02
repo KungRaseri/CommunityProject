@@ -1,5 +1,9 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Threading;
+using TwitchLib.Client;
+using TwitchLib.PubSub;
 
 namespace KungBot.Twitch
 {
@@ -7,7 +11,12 @@ namespace KungBot.Twitch
     {
         public static void Main(string[] args)
         {
-            var bot = new KungBot();
+            var serviceCollection = new ServiceCollection();
+            ConfigureServices(serviceCollection);
+
+            var serviceProvider = serviceCollection.BuildServiceProvider();
+
+            var bot = serviceProvider.GetService<KungBot>();
             bot.Connect().GetAwaiter().GetResult();
             try
             {
@@ -22,6 +31,14 @@ namespace KungBot.Twitch
             }
 
             bot.Disconnect();
+        }
+
+        private static void ConfigureServices(IServiceCollection services)
+        {
+            services.AddLogging(configure => configure.AddConsole())
+                    .AddSingleton<TwitchClient>()
+                    .AddSingleton<TwitchPubSub>()
+                    .AddSingleton<KungBot>();
         }
     }
 }

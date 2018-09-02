@@ -23,7 +23,7 @@ namespace KungBot.Twitch
         private readonly List<Command> _commandSettings;
         private readonly CouchDbStore<Viewer> _viewerCollection;
 
-        public KungBot()
+        public KungBot(TwitchClient client, TwitchPubSub twitchPubSub)
         {
             var appSettingsCollection = new CouchDbStore<ApplicationSettings>(ApplicationSettings.CouchDbUrl);
             var accountCollection = new CouchDbStore<Account>(ApplicationSettings.CouchDbUrl);
@@ -35,6 +35,7 @@ namespace KungBot.Twitch
 
             var commandCollection = new CouchDbStore<Command>(ApplicationSettings.CouchDbUrl);
             _commandSettings = commandCollection.GetAsync().Result.Select(row => row.Value).ToList();
+
             var factory = new LoggerFactory(new List<ILoggerProvider>()
             {
                 new ConsoleLoggerProvider(new ConsoleLoggerSettings()
