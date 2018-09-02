@@ -5,8 +5,6 @@ using System.Threading.Tasks;
 using Data.Helpers;
 using Data.Models;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Console;
-using ThirdParty;
 using TwitchLib.Client;
 using TwitchLib.Client.Models;
 using TwitchLib.Client.Services;
@@ -25,6 +23,9 @@ namespace KungBot.Twitch
 
         public KungBot(TwitchClient client, TwitchPubSub twitchPubSub)
         {
+            _client = client;
+            _twitchPubSub = twitchPubSub;
+
             var appSettingsCollection = new CouchDbStore<ApplicationSettings>(ApplicationSettings.CouchDbUrl);
             var accountCollection = new CouchDbStore<Account>(ApplicationSettings.CouchDbUrl);
 
@@ -35,20 +36,6 @@ namespace KungBot.Twitch
 
             var commandCollection = new CouchDbStore<Command>(ApplicationSettings.CouchDbUrl);
             _commandSettings = commandCollection.GetAsync().Result.Select(row => row.Value).ToList();
-
-            var factory = new LoggerFactory(new List<ILoggerProvider>()
-            {
-                new ConsoleLoggerProvider(new ConsoleLoggerSettings()
-                {
-                    Switches = {new KeyValuePair<string, LogLevel>("KungTheBot", LogLevel.Debug)}
-                })
-            });
-
-            ILogger<TwitchClient> logger = new Logger<TwitchClient>(factory);
-            ILogger<TwitchPubSub> pubSubLogger = new Logger<TwitchPubSub>(factory);
-            _client = new TwitchClient(logger: logger);
-
-            _twitchPubSub = new TwitchPubSub(pubSubLogger);
         }
 
         public async Task Connect()
