@@ -18,5 +18,10 @@ namespace KungBot.Twitch.Commands
 
             client.SendMessage(chatCommand.ChatMessage.Channel, "Tier 1 emote: kungraHEY Tier 2 emote: kungraDERP Tier 3 emote: kungraTHRONE");
         }
+
+        public string GetKey()
+        {
+            return "Emotes";
+        }
     }
 }

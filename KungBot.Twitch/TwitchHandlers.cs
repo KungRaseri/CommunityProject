@@ -23,17 +23,17 @@ namespace KungBot.Twitch
         private static ApplicationSettings _appSettings;
         private static CouchDbStore<Viewer> _viewerCollection;
         private static TwitchService _twitchService;
-        private static List<Command> _commands;
+        private static List<Command> _commandSettings;
 
         public static void Init(TwitchClient client, TwitchPubSub pubsubClient, ApplicationSettings appSettings, Account account,
-            CouchDbStore<Viewer> viewerCollection, List<Command> commands)
+            CouchDbStore<Viewer> viewerCollection, List<Command> settings)
         {
             _client = client;
             var _twitchPubSub = pubsubClient;
             _account = account;
             _appSettings = appSettings;
             _viewerCollection = viewerCollection;
-            _commands = commands;
+            _commandSettings = settings;
             _twitchService = new TwitchService(_appSettings);
 
             _client.OnJoinedChannel += OnJoinedChannel;
@@ -129,21 +129,13 @@ namespace KungBot.Twitch
         {
             var commandText = e.Command.CommandText;
 
-            var commandSettings = _commands.Find(c => c.Name == commandText);
+            var commandSettings = _commandSettings.Find(c => c.Name == commandText);
 
             if (commandSettings == null)
             {
                 return;
             }
-
-            var commandType = Type.GetType($"KungBot.Twitch.Commands.{commandSettings.Identifier}Command");
-
-            if (!(Activator.CreateInstance(commandType) is ICommand command))
-            {
-                return;
-            }
-
-            command.Perform(_client, _twitchService, e.Command, commandSettings);
+            CommandUtility.GetCommandByKey(commandSettings.Identifier)(_client, _twitchService, e.Command, commandSettings);
         }
 
         public static void OnConnectionError(object sender, OnConnectionErrorArgs e)

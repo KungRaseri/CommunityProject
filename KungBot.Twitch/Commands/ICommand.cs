@@ -11,5 +11,6 @@ namespace KungBot.Twitch.Commands
     public interface ICommand
     {
         void Perform(TwitchClient client, TwitchService service, ChatCommand chatCommand, Command command);
+        string GetKey();
     }
 }

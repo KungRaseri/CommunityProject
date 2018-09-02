@@ -13,6 +13,11 @@ namespace KungBot.Twitch.Commands
 {
     public class RankCommand : ICommand
     {
+        public string GetKey()
+        {
+            return "Rank";
+        }
+
         public void Perform(TwitchClient client, TwitchService service, ChatCommand chatCommand, Command command)
         {
             if (!command.IsActive)
