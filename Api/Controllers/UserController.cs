@@ -15,22 +15,22 @@ namespace Api.Controllers
     [ApiVersion("1")]
     [Route("api/v{versions:ApiVersion}/[controller]")]
     [Authorize]
-    public class UserController : BaseApiController
+    public class AccountController : BaseApiController
     {
-        private readonly CouchDbStore<Data.Models.Account> _userCollection;
+        private readonly CouchDbStore<Account> _accountCollection;
 
-        public UserController(IConfiguration configuration) : base(configuration)
+        public AccountController(IConfiguration configuration) : base(configuration)
         {
-            _userCollection = new CouchDbStore<Data.Models.Account>(ApplicationSettings.CouchDbUrl);
+            _accountCollection = new CouchDbStore<Account>(ApplicationSettings.CouchDbUrl);
         }
 
         [HttpGet]
         public async Task<ActionResult> Get()
         {
-            List<Row<Data.Models.Account>> users;
+            List<Row<Account>> users;
             try
             {
-                var dbUsers = await _userCollection.GetAsync();
+                var dbUsers = await _accountCollection.GetAsync();
                 users = dbUsers.ToList();
                 users.ForEach(user =>
                 {
@@ -40,7 +40,7 @@ namespace Api.Controllers
             }
             catch (Exception e)
             {
-                return StatusCode((int) HttpStatusCode.InternalServerError, Json(e));
+                return StatusCode((int)HttpStatusCode.InternalServerError, Json(e));
             }
 
             return Json(users);
@@ -50,19 +50,19 @@ namespace Api.Controllers
         [Route("[action]/{id}")]
         public async Task<ActionResult> Get(string id)
         {
-            Data.Models.Account user;
+            Account user;
             try
             {
-                user = await _userCollection.FindAsync(id);
+                user = await _accountCollection.FindAsync(id);
                 user.Password = string.Empty;
                 user.PasswordSalt = string.Empty;
             }
             catch (Exception e)
             {
-                return StatusCode((int) HttpStatusCode.InternalServerError, Json(e));
+                return StatusCode((int)HttpStatusCode.InternalServerError, Json(e));
             }
 
-            return StatusCode((int) HttpStatusCode.OK, Json(user));
+            return StatusCode((int)HttpStatusCode.OK, Json(user));
         }
     }
 }

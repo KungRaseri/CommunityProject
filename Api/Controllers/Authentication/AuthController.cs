@@ -60,6 +60,14 @@ namespace Api.Controllers.Authentication
             return StatusCode((int)HttpStatusCode.OK, Json(dbUser));
         }
 
+        [Route("twitch/callback")]
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> TwitchCallback(object twitchObject)
+        {
+            return StatusCode((int)HttpStatusCode.OK, Json(twitchObject));
+        }
+
         [Route("token")]
         [HttpPost]
         [AllowAnonymous]
