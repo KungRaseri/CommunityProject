@@ -11,6 +11,11 @@ namespace KungBot.Twitch.Commands
 {
     public class UptimeCommand : ICommand
     {
+        public string GetKey()
+        {
+            return "Uptime";
+        }
+
         public async void Perform(TwitchClient client, TwitchService service, ChatCommand chatCommand, Command command)
         {
             if (!command.IsActive)
