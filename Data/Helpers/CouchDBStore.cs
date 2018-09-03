@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Data.Interfaces;
 using Data.Models;
+using Data.Models.CouchDB;
 using Data.Models.Twitch;
 using MyCouch;
 using MyCouch.Requests;
@@ -64,13 +65,28 @@ namespace Data.Helpers
             var database = await GetDatabase();
             if (!string.IsNullOrEmpty(database.Error) && database.Reason.Contains("does not exist"))
             {
-                await CreateDatabase();
-                await CreateView($"{EntityName}", "all", "doc._id", "doc");
+                await CreateDatabasesWithViews();
             }
             else if (isCleanInstall)
             {
                 var deleteResponse = await DeleteDatabase();
-                var createResponse = await CreateDatabase();
+                await CreateDatabasesWithViews();
+            }
+        }
+
+        private async Task CreateDatabasesWithViews()
+        {
+            await CreateDatabase();
+            await CreateDesignDocument();
+            await CreateView(EntityName);
+
+            if (typeof(T) == typeof(Account))
+            {
+                await CreateView(EntityName, "email", "doc.email");
+            }
+            else if (typeof(T) == typeof(Token))
+            {
+                await CreateView(EntityName, "accountid", "doc.accountid");
             }
         }
 
@@ -103,27 +119,48 @@ namespace Data.Helpers
             return await CouchServerClient.Databases.DeleteAsync(request);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public async Task<ViewQueryResponse<T>> CreateView(string viewName, string suffix = "all", string emitParamOne = "doc._id", string emitParamTwo = "doc")
+        public async Task<DocumentHeaderResponse> CreateDesignDocument()
         {
-            var view = await Client.Views.QueryAsync<T>(new QueryViewRequest(EntityName, $"{viewName}-{suffix}"));
+            var doc = new DesignDocument()
+            {
+                views = new Dictionary<string, View>()
+                {
+                      {$"{EntityName}-all", new View(){map = "function (doc) {\n  emit(doc._id, doc);\n}"}}
+                },
+                language = "javascript"
+            };
 
-            return view;
+            var request = new PutDocumentRequest($@"_design/{EntityName}", JsonConvert.SerializeObject(doc));
+
+            var response = await Client.Documents.PutAsync(request);
+
+            return response;
         }
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public async Task<ViewQueryResponse> CreateGetView(string map)
+        public async Task<DesignDocument> CreateView(string viewName, string suffix = "all", string emitParamOne = "doc._id", string emitParamTwo = "doc", string reduce = "NONE")
         {
-            var viewRequest = new QueryViewRequest(EntityName, $"{EntityName}-all");
+            var getRequest = new GetDocumentRequest($"_design/{viewName}");
+            var getResponse = await Client.Documents.GetAsync(getRequest);
 
-            var view = await Client.Views.QueryAsync(viewRequest);
-            return view;
+            var designDocument = JsonConvert.DeserializeObject<DesignDocument>(getResponse.Content);
+
+            if (designDocument.views.Keys.All(k => k != $"{viewName}-{suffix}"))
+            {
+                designDocument.views.Add($"{viewName}-{suffix}", new View()
+                {
+                    map = $"function (doc) {{\n  emit({emitParamOne}, {emitParamTwo});\n}}"
+                });
+            }
+
+            var putRequest = new PutDocumentRequest(getResponse.Id, getResponse.Rev, JsonConvert.SerializeObject(designDocument));
+
+            await Client.Documents.PutAsync(putRequest);
+
+            return designDocument;
         }
 
         /// <summary>

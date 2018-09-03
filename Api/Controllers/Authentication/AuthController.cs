@@ -115,7 +115,7 @@ namespace Api.Controllers.Authentication
                         ? new Token
                         {
                             Value = token,
-                            UserId = account._id,
+                            AccountId = account._id,
                             Issued = DateTime.UtcNow,
                             Expiration = jwt.ValidTo
                         }

@@ -9,7 +9,7 @@ namespace Data.Models
         public string _rev { get; set; }
 
         public string Value { get; set; }
-        public string UserId { get; set; }
+        public string AccountId { get; set; }
         public DateTime Expiration { get; set; }
         public DateTime Issued { get; set; }
     }
