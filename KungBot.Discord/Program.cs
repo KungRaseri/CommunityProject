@@ -13,7 +13,7 @@ namespace KungBot.Discord
             var accountCollection = new CouchDbStore<Account>(ApplicationSettings.CouchDbUrl);
 
             var appSettings = appSettingsCollection.GetAsync().Result.FirstOrDefault()?.Value;
-            var account = accountCollection.GetAsync("", "").Result.FirstOrDefault()?.Value;
+            var account = accountCollection.GetAsync().Result.FirstOrDefault()?.Value;
 
             if (appSettings == null || account == null)
             {

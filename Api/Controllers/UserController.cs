@@ -27,15 +27,15 @@ namespace Api.Controllers
         [HttpGet]
         public async Task<ActionResult> Get()
         {
-            List<Row<Account>> users;
+            List<Row<Account>> accounts;
             try
             {
                 var dbUsers = await _accountCollection.GetAsync();
-                users = dbUsers.ToList();
-                users.ForEach(user =>
+                accounts = dbUsers.ToList();
+                accounts.ForEach(account =>
                 {
-                    user.Value.Password = string.Empty;
-                    user.Value.PasswordSalt = string.Empty;
+                    account.Value.Password = string.Empty;
+                    account.Value.PasswordSalt = string.Empty;
                 });
             }
             catch (Exception e)
@@ -43,26 +43,26 @@ namespace Api.Controllers
                 return StatusCode((int)HttpStatusCode.InternalServerError, Json(e));
             }
 
-            return Json(users);
+            return Json(accounts);
         }
 
         [HttpGet]
         [Route("[action]/{id}")]
         public async Task<ActionResult> Get(string id)
         {
-            Account user;
+            Account account;
             try
             {
-                user = await _accountCollection.FindAsync(id);
-                user.Password = string.Empty;
-                user.PasswordSalt = string.Empty;
+                account = await _accountCollection.FindAsync(id);
+                account.Password = string.Empty;
+                account.PasswordSalt = string.Empty;
             }
             catch (Exception e)
             {
                 return StatusCode((int)HttpStatusCode.InternalServerError, Json(e));
             }
 
-            return StatusCode((int)HttpStatusCode.OK, Json(user));
+            return StatusCode((int)HttpStatusCode.OK, Json(account));
         }
     }
 }

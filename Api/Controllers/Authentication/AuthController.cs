@@ -18,54 +18,58 @@ namespace Api.Controllers.Authentication
     [Route("api/v{version:ApiVersion}/[controller]")]
     public class AuthController : BaseApiController
     {
-        private readonly CouchDbStore<Account> _userCollection;
+        private readonly CouchDbStore<Account> _accountCollection;
         private readonly Crypto _cryptoService;
 
         public AuthController(IConfiguration configuration) : base(configuration)
         {
-            _userCollection = new CouchDbStore<Account>(ApplicationSettings.CouchDbUrl);
+            _accountCollection = new CouchDbStore<Account>(ApplicationSettings.CouchDbUrl);
             _cryptoService = new Crypto(_settings.CookieToken);
         }
 
         [AllowAnonymous]
         [Route("register")]
         [HttpPost]
-        public async Task<ActionResult> Register(Account user)
+        public async Task<ActionResult> Register(Account account)
         {
-            if (string.IsNullOrEmpty(user.Email) || string.IsNullOrEmpty(user.Password))
+            if (string.IsNullOrEmpty(account.Email) || string.IsNullOrEmpty(account.Password))
                 return StatusCode((int)HttpStatusCode.BadRequest,
                     Json(new { error = "Email or Password are required" }));
 
-            var dbUser = await _userCollection.FindAsync(user.Email, "user-email");
+            var dbAccount = await _accountCollection.FindAsync(account.Email, "account-email");
 
-            if (dbUser != null)
+            if (dbAccount != null)
                 return StatusCode((int)HttpStatusCode.BadRequest, Json(new { error = "Account already exists" }));
 
             var salt = BCrypt.Net.BCrypt.GenerateSalt();
 
-            var hashedPassword = _cryptoService.PasswordCrypt(user.Password, salt);
+            var hashedPassword = _cryptoService.PasswordCrypt(account.Password, salt);
 
-            user = new Account
+            account = new Account
             {
-                Email = user.Email,
+                Email = account.Email,
                 Password = hashedPassword,
                 PasswordSalt = salt
             };
 
-            dbUser = await _userCollection.AddOrUpdateAsync(user);
+            dbAccount = await _accountCollection.AddOrUpdateAsync(account);
 
-            dbUser.Password = string.Empty;
-            dbUser.PasswordSalt = string.Empty;
+            dbAccount.Password = string.Empty;
+            dbAccount.PasswordSalt = string.Empty;
 
-            return StatusCode((int)HttpStatusCode.OK, Json(dbUser));
+            return StatusCode((int)HttpStatusCode.OK, Json(dbAccount));
         }
 
-        [Route("twitch/callback")]
-        [HttpPost]
+        [Route("external/twitch/callback")]
+        [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult> TwitchCallback(object twitchObject)
+        public async Task<ActionResult> ExternalCallback(string code, string scope, string state = "", string error = "", string error_description = "")
         {
-            return StatusCode((int)HttpStatusCode.OK, Json(twitchObject));
+            if (!string.IsNullOrEmpty(error))
+            {
+                return StatusCode((int)HttpStatusCode.BadRequest, $"Error: {error} Description: {error_description}");
+            }
+            return StatusCode((int)HttpStatusCode.OK, "");
         }
 
         [Route("token")]
@@ -77,20 +81,20 @@ namespace Api.Controllers.Authentication
                 return StatusCode((int)HttpStatusCode.BadRequest,
                     Json(new { error = "Email or Password are required" }));
 
-            var user = await _userCollection.FindAsync(email, "user-email");
+            var account = await _accountCollection.FindAsync(email, "account-email");
 
-            if (user == null)
+            if (account == null)
                 return StatusCode((int)HttpStatusCode.Unauthorized, Json(new { error = "Invalid credentials" }));
 
-            var hashedPassword = _cryptoService.PasswordCrypt(password, user.PasswordSalt);
+            var hashedPassword = _cryptoService.PasswordCrypt(password, account.PasswordSalt);
 
-            if (!hashedPassword.Equals(user.Password))
+            if (!hashedPassword.Equals(account.Password))
                 return StatusCode((int)HttpStatusCode.Unauthorized, Json(new { error = "Invalid credentials" }));
 
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.PrimarySid, user._id),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email)
+                new Claim(ClaimTypes.PrimarySid, account._id),
+                new Claim(JwtRegisteredClaimNames.Email, account.Email)
             };
 
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.Keys.JWTSecurityKey));
@@ -105,13 +109,13 @@ namespace Api.Controllers.Authentication
 
             try
             {
-                var dbToken = await TokenCollection.FindAsync(user._id, "token-userid");
-                savedToken = await TokenCollection.AddOrUpdateTokenAsync(
+                var dbToken = await TokenCollection.FindAsync(account._id, "token-accountid");
+                savedToken = await TokenCollection.AddOrUpdateAsync(
                     dbToken == null || dbToken.Expiration < DateTime.UtcNow
                         ? new Token
                         {
                             Value = token,
-                            UserId = user._id,
+                            AccountId = account._id,
                             Issued = DateTime.UtcNow,
                             Expiration = jwt.ValidTo
                         }
@@ -123,12 +127,12 @@ namespace Api.Controllers.Authentication
                     Json(new { error = $"Error: {e.Message}. Stack Trace: {e.StackTrace}" }));
             }
 
-            user.Password = string.Empty;
-            user.PasswordSalt = string.Empty;
+            account.Password = string.Empty;
+            account.PasswordSalt = string.Empty;
 
             return StatusCode((int)HttpStatusCode.OK, Json(new
             {
-                user,
+                account,
                 token = savedToken
             }));
         }

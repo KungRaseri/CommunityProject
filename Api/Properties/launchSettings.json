@@ -18,7 +18,8 @@
       "launchUrl": "api/gateway",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "use64Bit": true
     },
     "Web": {
       "commandName": "IIS",
