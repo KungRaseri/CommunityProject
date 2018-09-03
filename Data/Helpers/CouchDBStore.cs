@@ -42,7 +42,7 @@ namespace Data.Helpers
         /// <summary>
         /// 
         /// </summary>
-        public CouchDbStore(string couchDbUrl, bool isCleanInstall = false)
+        public CouchDbStore(string couchDbUrl)
         {
             if (string.IsNullOrEmpty(couchDbUrl))
             {
@@ -56,38 +56,6 @@ namespace Data.Helpers
             CouchServerClient = new MyCouchServerClient(couchDbUrl);
 
             Store = new MyCouchStore(Client);
-
-            InitializeDatabase(isCleanInstall).GetAwaiter().GetResult();
-        }
-
-        private async Task InitializeDatabase(bool isCleanInstall)
-        {
-            var database = await GetDatabase();
-            if (!string.IsNullOrEmpty(database.Error) && database.Reason.Contains("does not exist"))
-            {
-                await CreateDatabasesWithViews();
-            }
-            else if (isCleanInstall)
-            {
-                var deleteResponse = await DeleteDatabase();
-                await CreateDatabasesWithViews();
-            }
-        }
-
-        private async Task CreateDatabasesWithViews()
-        {
-            await CreateDatabase();
-            await CreateDesignDocument();
-            await CreateView(EntityName);
-
-            if (typeof(T) == typeof(Account))
-            {
-                await CreateView(EntityName, "email", "doc.email");
-            }
-            else if (typeof(T) == typeof(Token))
-            {
-                await CreateView(EntityName, "accountid", "doc.accountid");
-            }
         }
 
         /// <summary>
