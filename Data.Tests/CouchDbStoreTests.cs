@@ -10,13 +10,13 @@ namespace Data.Tests
     [TestClass]
     public class CouchDbStoreTests
     {
-        private CouchDbStore<Account> _usersCollection { get; set; }
+        private CouchDbStore<Account> _accountsCollection { get; set; }
         private CouchDbStore<ViewerRank> _viewerRankCollection { get; set; }
 
         [TestInitialize]
         public void SetUpTests()
         {
-            _usersCollection = new CouchDbStore<Account>(ApplicationSettings.CouchDbUrl);
+            _accountsCollection = new CouchDbStore<Account>(ApplicationSettings.CouchDbUrl);
             _viewerRankCollection = new CouchDbStore<ViewerRank>(ApplicationSettings.CouchDbUrl);
         }
 
@@ -25,28 +25,28 @@ namespace Data.Tests
         {
             var email = "buttlicker@slurrrrrp.com";
 
-            var user = _usersCollection.FindAsync(email, "user-email").GetAwaiter().GetResult();
+            var account = _accountsCollection.FindAsync(email, "account-email").GetAwaiter().GetResult();
 
-            Assert.IsInstanceOfType(user, typeof(Account));
-            Assert.AreEqual(user.Email, email);
+            Assert.IsInstanceOfType(account, typeof(Account));
+            Assert.AreEqual(account.Email, email);
         }
 
         [TestMethod, Ignore]
         public void FindUserByEmail_UserDoesNotExist_ReturnsNull()
         {
-            var user = _usersCollection.FindAsync(string.Empty, "user-email").GetAwaiter().GetResult();
+            var account = _accountsCollection.FindAsync(string.Empty, "account-email").GetAwaiter().GetResult();
 
-            Assert.IsNull(user);
+            Assert.IsNull(account);
         }
 
         [TestMethod, Ignore]
         public void CreateView_ReturnsDocumentHeaderResponse()
         {
-            var database = _usersCollection.CreateDatabase().Result;
+            var database = _accountsCollection.CreateDatabase().Result;
 
-            var viewAll = _usersCollection.CreateView("user").Result;
+            var viewAll = _accountsCollection.CreateView("account").Result;
 
-            var viewEmail = _usersCollection.CreateView("user", "email", "doc.email").Result;
+            var viewEmail = _accountsCollection.CreateView("account", "email", "doc.email").Result;
         }
 
         [TestMethod, Ignore]

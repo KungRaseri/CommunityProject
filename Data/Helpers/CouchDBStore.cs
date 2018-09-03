@@ -16,7 +16,7 @@ namespace Data.Helpers
     /// 
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class CouchDbStore<T> where T : class, IEntity
+    public sealed class CouchDbStore<T> where T : class, IEntity
     {
         /// <summary>
         /// 
@@ -41,37 +41,53 @@ namespace Data.Helpers
         /// <summary>
         /// 
         /// </summary>
-        public CouchDbStore(string couchDbUrl)
+        public CouchDbStore(string couchDbUrl, bool isCleanInstall = false)
         {
             if (string.IsNullOrEmpty(couchDbUrl))
             {
-                throw new ArgumentException($"couchDbUrl parameter must not be null or empty. :mehdiNERD:");
+                throw new ArgumentException($"couchDbUrl parameter must not be null or empty.");
             }
 
             var dbConnectionInfo = new DbConnectionInfo(couchDbUrl, EntityName);
 
             Client = new MyCouchClient(dbConnectionInfo);
 
-            // If the database doesn't exist, create it.
             CouchServerClient = new MyCouchServerClient(couchDbUrl);
 
             Store = new MyCouchStore(Client);
+
+            InitializeDatabase(isCleanInstall).GetAwaiter().GetResult();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public virtual async Task<GetDatabaseResponse> GetDatabase()
+        private async Task InitializeDatabase(bool isCleanInstall)
         {
-            return await CouchServerClient.Databases.GetAsync(EntityName);
+            var database = await GetDatabase();
+            if (!string.IsNullOrEmpty(database.Error) && database.Reason.Contains("does not exist"))
+            {
+                await CreateDatabase();
+                await CreateView($"{EntityName}", "all", "doc._id", "doc");
+            }
+            else if (isCleanInstall)
+            {
+                var deleteResponse = await DeleteDatabase();
+                var createResponse = await CreateDatabase();
+            }
         }
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public virtual async Task<DatabaseHeaderResponse> CreateDatabase()
+        public async Task<GetDatabaseResponse> GetDatabase()
+        {
+            return await CouchServerClient.Databases.GetAsync($"{EntityName}");
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public async Task<DatabaseHeaderResponse> CreateDatabase()
         {
             var request = new PutDatabaseRequest(EntityName);
             return await CouchServerClient.Databases.PutAsync(request);
@@ -81,7 +97,7 @@ namespace Data.Helpers
         /// 
         /// </summary>
         /// <returns></returns>
-        public virtual async Task<DatabaseHeaderResponse> DeleteDatabase()
+        public async Task<DatabaseHeaderResponse> DeleteDatabase()
         {
             var request = new DeleteDatabaseRequest(EntityName);
             return await CouchServerClient.Databases.DeleteAsync(request);
@@ -91,7 +107,7 @@ namespace Data.Helpers
         /// 
         /// </summary>
         /// <returns></returns>
-        public virtual async Task<ViewQueryResponse<T>> CreateView(string viewName, string suffix = "all", string emitParamOne = "doc._id", string emitParamTwo = "doc")
+        public async Task<ViewQueryResponse<T>> CreateView(string viewName, string suffix = "all", string emitParamOne = "doc._id", string emitParamTwo = "doc")
         {
             var view = await Client.Views.QueryAsync<T>(new QueryViewRequest(EntityName, $"{viewName}-{suffix}"));
 
@@ -102,7 +118,7 @@ namespace Data.Helpers
         /// 
         /// </summary>
         /// <returns></returns>
-        public virtual async Task<ViewQueryResponse> CreateGetView(string map)
+        public async Task<ViewQueryResponse> CreateGetView(string map)
         {
             var viewRequest = new QueryViewRequest(EntityName, $"{EntityName}-all");
 
@@ -114,7 +130,7 @@ namespace Data.Helpers
         /// 
         /// </summary>
         /// <returns></returns>
-        public virtual async Task<IEnumerable<Row<T>>> GetAsync(string viewFilter = null, string key = null)
+        public async Task<IEnumerable<Row<T>>> GetAsync(string viewFilter = null, string key = null)
         {
             var query = new Query(EntityName, (string.IsNullOrEmpty(viewFilter)) ? $"{EntityName}-all" : viewFilter) { Key = key };
 
@@ -129,7 +145,7 @@ namespace Data.Helpers
         /// <param name="id"></param>
         /// <param name="viewFilter"></param>
         /// <returns></returns>
-        public virtual async Task<T> FindAsync(string id, string viewFilter = null)
+        public async Task<T> FindAsync(string id, string viewFilter = null)
         {
             var query = new Query(EntityName, (string.IsNullOrEmpty(viewFilter)) ? $"{EntityName}-all" : viewFilter) { Key = id };
 
@@ -143,7 +159,7 @@ namespace Data.Helpers
         /// </summary>
         /// <param name="entity">The entity to add or update</param>
         /// <returns></returns>
-        public virtual async Task<T> AddOrUpdateAsync(T entity)
+        public async Task<T> AddOrUpdateAsync(T entity)
         {
             DocumentHeaderResponse response;
 
@@ -160,6 +176,17 @@ namespace Data.Helpers
                 {
                     record.Video = vod?.Video;
                     response = await Client.Documents.PutAsync(record._id, Client.Serializer.Serialize(record));
+                }
+                else
+                {
+                    response = await Client.Documents.PostAsync(Client.Serializer.Serialize(entity));
+                }
+            }
+            else if (typeof(T) == typeof(Token))
+            {
+                if (!string.IsNullOrEmpty(entity._id))
+                {
+                    response = await Client.Documents.PutAsync(entity._id, Client.Serializer.Serialize(entity));
                 }
                 else
                 {
@@ -188,35 +215,9 @@ namespace Data.Helpers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public virtual async Task<bool> DeleteAsync(string id)
+        public async Task<bool> DeleteAsync(string id)
         {
             return await Store.DeleteAsync(id);
-        }
-
-        /// <summary>
-        /// An entity without the _id field passed in will add (POST) instead of update (PUT)
-        /// </summary>
-        /// <param name="entity">The entity to add or update</param>
-        /// <returns></returns>
-        public virtual async Task<T> AddOrUpdateTokenAsync(T entity)
-        {
-            if (typeof(T) != typeof(Token))
-                return null;
-
-            DocumentHeaderResponse response;
-
-            if (!string.IsNullOrEmpty(entity._id))
-            {
-                response = await Client.Documents.PutAsync(entity._id, Client.Serializer.Serialize(entity));
-            }
-            else
-            {
-                response = await Client.Documents.PostAsync(Client.Serializer.Serialize(entity));
-            }
-
-            var result = await Store.GetByIdAsync<T>(response.Id);
-
-            return result;
         }
     }
 }
