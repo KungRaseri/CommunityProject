@@ -2,6 +2,9 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
+using Data.Helpers;
+using Data.Models;
+using Tweetinvi.Core.Events;
 using TwitchLib.Client;
 using TwitchLib.PubSub;
 
@@ -38,6 +41,11 @@ namespace KungBot.Twitch
             services.AddLogging(configure => configure.AddConsole())
                     .AddSingleton<TwitchClient>()
                     .AddSingleton<TwitchPubSub>()
+                    .AddSingleton<ChannelManager>()
+                    .AddSingleton(serviceProvider=>new CouchDbStore<ApplicationSettings>(ApplicationSettings.CouchDbUrl))
+                    .AddSingleton(serviceProvider=>new CouchDbStore<Account>(ApplicationSettings.CouchDbUrl))
+                    .AddSingleton(serviceProvider=>new CouchDbStore<Viewer>(ApplicationSettings.CouchDbUrl))
+                    .AddSingleton(serviceProvider=>new CouchDbStore<Command>(ApplicationSettings.CouchDbUrl))
                     .AddSingleton<KungBot>();
         }
     }
