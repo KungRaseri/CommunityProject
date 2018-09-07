@@ -18,10 +18,8 @@ namespace ThirdParty
     public class TwitchService
     {
         private readonly TwitchAPI _twitchApi;
-        private readonly TwitchPubSub _twitchPubSub;
         public TwitchService(ApplicationSettings settings)
         {
-            _twitchPubSub = new TwitchPubSub();
             _twitchApi = new TwitchAPI();
             _twitchApi.Settings.ClientId = settings.Keys.Twitch.ClientId;
         }

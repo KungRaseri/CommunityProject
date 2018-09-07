@@ -16,16 +16,15 @@ namespace KungBot.Twitch
     {
         private readonly ApplicationSettings _appSettings;
         private readonly Account _account;
-        private readonly TwitchClient _client;
         private readonly TwitchPubSub _twitchPubSub;
         private readonly List<Command> _commandSettings;
         private readonly CouchDbStore<Viewer> _viewerCollection;
+        private ChannelManager _channelManager;
 
-        public KungBot(TwitchClient client, TwitchPubSub twitchPubSub)
+        public KungBot(TwitchPubSub twitchPubSub, ChannelManager channelManager)
         {
-            _client = client;
             _twitchPubSub = twitchPubSub;
-
+            _channelManager = channelManager;
             var appSettingsCollection = new CouchDbStore<ApplicationSettings>(ApplicationSettings.CouchDbUrl);
             var accountCollection = new CouchDbStore<Account>(ApplicationSettings.CouchDbUrl);
 
@@ -40,35 +39,23 @@ namespace KungBot.Twitch
 
         public async Task Connect()
         {
-            await InitializeBot();
+            InitializeBot();
             Console.WriteLine("Connecting...");
             Console.WriteLine($"Loaded {_commandSettings.Count} commands");
             _twitchPubSub.Connect();
-            _client.Connect();
+            _channelManager.Connect();
             Console.WriteLine($"Connected...");
         }
 
-        private async Task InitializeBot()
+        private void InitializeBot()
         {
-            var credentials = new ConnectionCredentials(_account?.TwitchBotSettings.Username,
-                _appSettings?.Keys.Twitch.Bot.Oauth);
-
-            _client.Initialize(credentials, "KungRaseri", autoReListenOnExceptions: false);
-            _client.ChatThrottler = new MessageThrottler(_client, 15, TimeSpan.FromSeconds(30));
-            _client.WhisperThrottler = new MessageThrottler(_client, 15, TimeSpan.FromSeconds(30));
-
-            await _client.ChatThrottler.StartQueue();
-            await _client.WhisperThrottler.StartQueue();
-
-            if (_appSettings != null) _client.AddChatCommandIdentifier(_account.TwitchBotSettings.CommandCharacter);
-
-            TwitchHandlers.Init(_client, _twitchPubSub, _appSettings, _account, _viewerCollection, _commandSettings);
+            _channelManager.Init();
+            TwitchHandlers.Init(_channelManager, _twitchPubSub, _appSettings, _account, _viewerCollection, _commandSettings);
         }
 
         public void Disconnect()
         {
-            _client.ChatThrottler.StopQueue();
-            _client.Disconnect();
+            _channelManager.Disconnect();
         }
     }
 }
