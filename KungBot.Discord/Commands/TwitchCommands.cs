@@ -21,7 +21,7 @@ namespace KungBot.Discord.Commands
             _settings = settingsCollection.GetAsync().Result.FirstOrDefault()?.Value;
         }
 
-        [Command("followage")]
+        [Command("followers")]
         public async Task GetChannelFollowingCommand(CommandContext cmdContext, string channelName)
         {
             var api = new TwitchAPI();

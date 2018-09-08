@@ -15,54 +15,54 @@ namespace Api.Controllers
     [ApiVersion("1")]
     [Route("api/v{versions:ApiVersion}/[controller]")]
     [Authorize]
-    public class UserController : BaseApiController
+    public class AccountController : BaseApiController
     {
-        private readonly CouchDbStore<Data.Models.Account> _userCollection;
+        private readonly CouchDbStore<Account> _accountCollection;
 
-        public UserController(IConfiguration configuration) : base(configuration)
+        public AccountController(IConfiguration configuration) : base(configuration)
         {
-            _userCollection = new CouchDbStore<Data.Models.Account>(ApplicationSettings.CouchDbUrl);
+            _accountCollection = new CouchDbStore<Account>(ApplicationSettings.CouchDbUrl);
         }
 
         [HttpGet]
         public async Task<ActionResult> Get()
         {
-            List<Row<Data.Models.Account>> users;
+            List<Row<Account>> accounts;
             try
             {
-                var dbUsers = await _userCollection.GetAsync();
-                users = dbUsers.ToList();
-                users.ForEach(user =>
+                var dbUsers = await _accountCollection.GetAsync();
+                accounts = dbUsers.ToList();
+                accounts.ForEach(account =>
                 {
-                    user.Value.Password = string.Empty;
-                    user.Value.PasswordSalt = string.Empty;
+                    account.Value.Password = string.Empty;
+                    account.Value.PasswordSalt = string.Empty;
                 });
             }
             catch (Exception e)
             {
-                return StatusCode((int) HttpStatusCode.InternalServerError, Json(e));
+                return StatusCode((int)HttpStatusCode.InternalServerError, Json(e));
             }
 
-            return Json(users);
+            return Json(accounts);
         }
 
         [HttpGet]
         [Route("[action]/{id}")]
         public async Task<ActionResult> Get(string id)
         {
-            Data.Models.Account user;
+            Account account;
             try
             {
-                user = await _userCollection.FindAsync(id);
-                user.Password = string.Empty;
-                user.PasswordSalt = string.Empty;
+                account = await _accountCollection.FindAsync(id);
+                account.Password = string.Empty;
+                account.PasswordSalt = string.Empty;
             }
             catch (Exception e)
             {
-                return StatusCode((int) HttpStatusCode.InternalServerError, Json(e));
+                return StatusCode((int)HttpStatusCode.InternalServerError, Json(e));
             }
 
-            return StatusCode((int) HttpStatusCode.OK, Json(user));
+            return StatusCode((int)HttpStatusCode.OK, Json(account));
         }
     }
 }
