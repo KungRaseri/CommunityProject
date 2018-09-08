@@ -72,7 +72,6 @@ namespace KungBot.Discord
             CommandsNext.RegisterCommands<DiscJockeyCommands>();
             CommandsNext.RegisterCommands<HumbleBundleCommands>();
             CommandsNext.RegisterCommands<JanitorCommands>();
-            //CommandsNext.RegisterCommands<VoiceCommands>();
         }
 
         private void MainUserOnResponseReceived(object sender, ResponseReceivedEventArgs e)
@@ -87,7 +86,6 @@ namespace KungBot.Discord
 
         private Task ClientOnMessageUpdated(MessageUpdateEventArgs e)
         {
-            //e.Message.CreateReactionAsync(e.Guild.Emojis[new Random().Next(0, e.Guild.Emojis.Count - 1)]);
             return Task.CompletedTask;
         }
 
@@ -97,10 +95,6 @@ namespace KungBot.Discord
             {
                 return Task.CompletedTask;
             }
-
-            //if (e.Message.Content.ToLower().Contains("hey") || e.Message.Content.ToLower().Contains("mehdio"))
-            //    e.Channel.SendMessageAsync(
-            //        $"{e.Guild.GetEmojisAsync().Result.FirstOrDefault(emoji => emoji.Name.Contains("kungHEY"))?.ToString()} {e.Author.Mention}");
 
             return Task.CompletedTask;
         }

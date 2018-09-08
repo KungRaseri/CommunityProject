@@ -11,7 +11,7 @@ namespace KungBot.Twitch.Commands
 {
     public static class CommandUtility
     {
-        public static IEnumerable<ICommand> _commands = new List<ICommand>
+        private static readonly IEnumerable<ICommand> _commands = new List<ICommand>
         {
             new EmotesCommand(),
             new RankCommand(),

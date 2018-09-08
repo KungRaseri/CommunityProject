@@ -5,7 +5,7 @@ using Data.Models;
 
 namespace KungBot.Discord
 {
-    public class Program
+    public static class Program
     {
         public static void Main(string[] args)
         {
@@ -13,7 +13,7 @@ namespace KungBot.Discord
             var accountCollection = new CouchDbStore<Account>(ApplicationSettings.CouchDbUrl);
 
             var appSettings = appSettingsCollection.GetAsync().Result.FirstOrDefault()?.Value;
-            var account = accountCollection.GetAsync().Result.FirstOrDefault()?.Value;
+            var account = accountCollection.GetAsync("account-email", "test@email.test.com").Result.FirstOrDefault()?.Value;
 
             if (appSettings == null || account == null)
             {
