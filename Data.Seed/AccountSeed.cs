@@ -22,10 +22,10 @@ namespace Data.Seed
             _accountCollection.CreateView("account").GetAwaiter().GetResult();
             _accountCollection.CreateView("account", "email", "doc.email").GetAwaiter().GetResult();
             _accountCollection.CreateView("account", "username", "doc.username").GetAwaiter().GetResult();
-            _accountCollection.CreateView("account", "twitchbotsettings", "doc.twitchbotsettings").GetAwaiter().GetResult();
-            _accountCollection.CreateView("account", "discordbotsettings", "doc.discordbotsettings").GetAwaiter().GetResult();
-            _accountCollection.CreateView("account", "viewers", "doc.viewers").GetAwaiter().GetResult();
-            _accountCollection.CreateView("account", "viewerranks", "doc.viewerranks").GetAwaiter().GetResult();
+            _accountCollection.CreateView("account", "twitchBotSettings", emitParamTwo: "doc.twitchBotSettings").GetAwaiter().GetResult();
+            _accountCollection.CreateView("account", "discordBotSettings", emitParamTwo: "doc.discordBotSettings").GetAwaiter().GetResult();
+            _accountCollection.CreateView("account", "viewers", emitParamTwo: "doc.viewers").GetAwaiter().GetResult();
+            _accountCollection.CreateView("account", "viewerRanks", emitParamTwo: "doc.viewerRanks").GetAwaiter().GetResult();
         }
 
         [TestMethod]
@@ -62,6 +62,28 @@ namespace Data.Seed
             var response = _accountCollection.AddOrUpdateAsync(account).GetAwaiter().GetResult();
 
             Assert.IsFalse(string.IsNullOrEmpty(response._id));
+        }
+
+        [TestMethod, Ignore("Remove if you want to generate X accounts, etc.")]
+        public void AddAccounts()
+        {
+            var accounts = Builder<Account>
+                .CreateListOfSize(1000)
+                .All()
+                .With(a => a._id = null)
+                .With(a => a._rev = null)
+                .With(a => a.Viewers = Builder<Viewer>.CreateListOfSize(100).Build().ToList())
+                .With(a => a.TwitchBotSettings = Builder<TwitchBotSettings>.CreateNew().Build())
+                .With(a => a.DiscordBotSettings = Builder<DiscordBotSettings>.CreateNew().Build())
+                .With(a => a.ViewerRanks = Builder<ViewerRank>.CreateListOfSize(15).Build().ToList())
+                .Build().ToList();
+
+            accounts.ForEach(a =>
+            {
+                var response = _accountCollection.AddOrUpdateAsync(a).GetAwaiter().GetResult();
+
+                Assert.IsFalse(string.IsNullOrEmpty(response._id));
+            });
         }
     }
 }
