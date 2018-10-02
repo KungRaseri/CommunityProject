@@ -20,28 +20,32 @@ namespace KungBot.Twitch
     {
         private static TwitchClient _client;
         private static Account _account;
-        private static CouchDbStore<Viewer> _viewerCollection;
         private static TwitchService _twitchService;
         private static List<Command> _commandSettings;
 
+        private static CouchDbStore<Account> _accountCollection;
+
         public static void Init(TwitchClient client, TwitchPubSub pubsubClient, ApplicationSettings appSettings, Account account,
-            CouchDbStore<Viewer> viewerCollection, List<Command> settings)
+            List<Command> settings, CouchDbStore<Account> accountCollection)
         {
             _client = client;
             _account = account;
-            _viewerCollection = viewerCollection;
             _commandSettings = settings;
             _twitchService = new TwitchService(appSettings);
+
+            _accountCollection = accountCollection;
 
             _client.OnJoinedChannel += OnJoinedChannel;
             _client.OnMessageReceived += OnMessageReceived;
             _client.OnWhisperReceived += OnWhisperReceived;
             _client.OnNewSubscriber += OnNewSubscriber;
+            _client.OnReSubscriber += ClientOnOnReSubscriber;
             _client.OnLog += OnLog;
             _client.OnConnectionError += OnConnectionError;
             _client.OnChatCommandReceived += OnChatCommandReceived;
             _client.OnUserTimedout += OnUserTimedOut;
             _client.OnUserBanned += ClientOnUserBanned;
+
             pubsubClient.OnPubSubServiceConnected += TwitchPubSubOnOnPubSubServiceConnected;
             pubsubClient.OnPubSubServiceClosed += TwitchPubSubOnOnPubSubServiceClosed;
             pubsubClient.OnChannelSubscription += TwitchPubSubOnOnChannelSubscription;
@@ -114,12 +118,15 @@ namespace KungBot.Twitch
             if (e.ChatMessage.IsBroadcaster)
                 return;
 
-            var dbViewer = await HandleNewViewer(sender, e);
+            var viewer = await HandleNewViewer(sender, e);
 
-            dbViewer.IsSubscriber = e.ChatMessage.IsSubscriber;
-            dbViewer.Points += _account.TwitchBotSettings.DefaultExperienceAmount;
+            viewer.IsSubscriber = e.ChatMessage.IsSubscriber;
+            viewer.Points += _account.TwitchBotSettings.DefaultExperienceAmount;
 
-            await _viewerCollection.AddOrUpdateAsync(dbViewer);
+            _account.Viewers.Add(viewer);
+
+            await _accountCollection.AddOrUpdateAsync(_account);
+
         }
 
         public static void CheckForCommand(object sender, OnChatCommandReceivedArgs e)
@@ -146,16 +153,43 @@ namespace KungBot.Twitch
 
         public static void OnNewSubscriber(object sender, OnNewSubscriberArgs e)
         {
-            HandleNewSubscriber(sender, e, _viewerCollection.GetAsync("viewer-username", e.Subscriber.DisplayName.ToLowerInvariant()).GetAwaiter().GetResult().FirstOrDefault()?.Value).GetAwaiter().GetResult();
+            HandleNewSubscriber(sender, e, e.Subscriber.DisplayName).GetAwaiter().GetResult();
+
             _client.SendMessage(e.Channel,
                 e.Subscriber.SubscriptionPlan == SubscriptionPlan.Prime
                     ? $"Welcome {e.Subscriber.DisplayName} to the {_account.TwitchBotSettings.CommunityName}! You just earned {_account.TwitchBotSettings.NewSubAwardAmount} {_account.TwitchBotSettings.PointsName}! May the Lords bless you for using your Twitch Prime!"
                     : $"Welcome {e.Subscriber.DisplayName} to the {_account.TwitchBotSettings.CommunityName}! You just earned {_account.TwitchBotSettings.NewSubAwardAmount} {_account.TwitchBotSettings.PointsName}!");
         }
 
-        public static async Task HandleNewSubscriber(object sender, OnNewSubscriberArgs onNewSubscriberArgs, Viewer dbViewer = null)
+        private static void ClientOnOnReSubscriber(object sender, OnReSubscriberArgs e)
         {
+            throw new NotImplementedException();
+        }
 
+        public static async Task HandleNewSubscriber(object sender, OnNewSubscriberArgs onNewSubscriberArgs, string viewerDisplayName)
+        {
+            var viewer = _account.Viewers.FirstOrDefault(u =>
+                u.Username.ToLowerInvariant().Equals(viewerDisplayName.ToLowerInvariant()));
+
+            if (viewer != null)
+            {
+                _account.Viewers.Remove(viewer);
+                viewer.IsSubscriber = true;
+                _account.Viewers.Add(viewer);
+                return;
+            }
+
+            viewer = new Viewer()
+            {
+                Username = viewerDisplayName,
+                IsSubscriber = true,
+                Points = _account.TwitchBotSettings.DefaultExperienceAmount,
+                SubscribedMonthCount = 1
+            };
+
+            _account.Viewers.Add(viewer);
+
+            await _accountCollection.AddOrUpdateAsync(_account);
         }
 
         public static void OnWhisperReceived(object sender, OnWhisperReceivedArgs e)
@@ -205,12 +239,13 @@ namespace KungBot.Twitch
             var isSub = (onSub != null) || onMessage.ChatMessage.IsSubscriber;
             var subMonthCount = onMessage?.ChatMessage.SubscribedMonthCount ?? 0;
 
-            var dbRows = (await _viewerCollection.GetAsync("viewer-username", username)).ToList();
+            var viewer = _account.Viewers.AsParallel().FirstOrDefault(u => u.Username.Equals(username));
 
-            if (dbRows.Any()) return dbRows.First().Value;
+            if (viewer != null) return viewer;
 
             client.SendMessage(channel, $"kungraHYPERS {username}, welcome to the stream!");
-            var viewer = new Viewer()
+
+            viewer = new Viewer()
             {
                 Username = username,
                 IsSubscriber = isSub,
@@ -218,7 +253,11 @@ namespace KungBot.Twitch
                 SubscribedMonthCount = subMonthCount
             };
 
-            return await _viewerCollection.AddOrUpdateAsync(viewer);
+            _account.Viewers.Add(viewer);
+
+            await _accountCollection.AddOrUpdateAsync(_account);
+
+            return viewer;
 
         }
 
