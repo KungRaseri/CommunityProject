@@ -7,10 +7,9 @@ using Data.Helpers;
 using Data.Models;
 using Data.Models.Twitch;
 using TwitchLib.Api;
-using TwitchLib.Api.Models.v5.Channels;
-using TwitchLib.Api.Models.v5.Subscriptions;
-using TwitchLib.Api.Models.v5.Videos;
-using TwitchLib.Client.Models;
+using TwitchLib.Api.V5.Models.Channels;
+using TwitchLib.Api.V5.Models.Subscriptions;
+using TwitchLib.Api.V5.Models.Videos;
 using TwitchLib.PubSub;
 
 namespace ThirdParty
@@ -28,12 +27,12 @@ namespace ThirdParty
 
         public async Task<TimeSpan?> GetUpTimeByChannel(string channelId)
         {
-            return await _twitchApi.Streams.v5.GetUptimeAsync(channelId);
+            return await _twitchApi.V5.Streams.GetUptimeAsync(channelId);
         }
 
         public async Task<string> GetChannelIdFromChannelName(string channelName)
         {
-            var channels = await _twitchApi.Search.v5.SearchChannelsAsync(channelName);
+            var channels = await _twitchApi.V5.Search.SearchChannelsAsync(channelName);
             var channel = channels.Channels.FirstOrDefault(ch => ch.Name.ToLower().Contains(channelName.ToLower()));
 
             return channel.Id;
@@ -41,7 +40,7 @@ namespace ThirdParty
 
         public async Task<ChannelVideos> GetVideosFromChannelId(string channelId, int? offset = null, List<string> broadcastTypes = null)
         {
-            var videos = await _twitchApi.Channels.v5.GetChannelVideosAsync(channelId, 100, offset, broadcastTypes);
+            var videos = await _twitchApi.V5.Channels.GetChannelVideosAsync(channelId, 100, offset, broadcastTypes);
 
             return videos;
         }
@@ -105,7 +104,7 @@ namespace ThirdParty
             ChannelSubscribers subscribers;
             try
             {
-                subscribers = await _twitchApi.Channels.v5.GetChannelSubscribersAsync(channelId, authToken: "0cie0p6cqx4mie6i6ueci1w7rhzcux");
+                subscribers = await _twitchApi.V5.Channels.GetChannelSubscribersAsync(channelId, authToken: "0cie0p6cqx4mie6i6ueci1w7rhzcux");
             }
             catch (Exception e)
             {
@@ -121,7 +120,7 @@ namespace ThirdParty
             List<Subscription> subscribers;
             try
             {
-                subscribers = await _twitchApi.Channels.v5.GetAllSubscribersAsync(channelId, "0cie0p6cqx4mie6i6ueci1w7rhzcux");
+                subscribers = await _twitchApi.V5.Channels.GetAllSubscribersAsync(channelId, "0cie0p6cqx4mie6i6ueci1w7rhzcux");
             }
             catch (Exception e)
             {

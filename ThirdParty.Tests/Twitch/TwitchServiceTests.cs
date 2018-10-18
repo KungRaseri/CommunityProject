@@ -3,7 +3,7 @@ using Data;
 using Data.Helpers;
 using Data.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TwitchLib.Api.Models.v5.Videos;
+using TwitchLib.Api.V5.Models.Videos;
 
 namespace ThirdParty.Tests.Twitch
 {

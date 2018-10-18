@@ -7,7 +7,7 @@ using Data.Models.Twitch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using ThirdParty;
-using TwitchLib.Api.Models.v5.Videos;
+using TwitchLib.Api.V5.Models.Videos;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

@@ -12,7 +12,8 @@ namespace ThirdParty.Tests.StreamElements
     public class ChatStatsTests
     {
         private StreamElementsService _seClient;
-        private CouchDbStore<Viewer> _viewerCollection;
+        private CouchDbStore<Account> _accountCollection;
+        private Account _account;
 
         [TestInitialize]
         public void SetupTests()
@@ -20,7 +21,9 @@ namespace ThirdParty.Tests.StreamElements
             var settingsCollection = new CouchDbStore<ApplicationSettings>(ApplicationSettings.CouchDbUrl);
             var settings = settingsCollection.GetAsync().Result.FirstOrDefault()?.Value;
             _seClient = new StreamElementsService(settings);
-            _viewerCollection = new CouchDbStore<Viewer>(ApplicationSettings.CouchDbUrl);
+            _accountCollection = new CouchDbStore<Account>(ApplicationSettings.CouchDbUrl);
+
+            _account = _accountCollection.GetAsync().GetAwaiter().GetResult().FirstOrDefault()?.Value;
         }
 
         [TestMethod]
@@ -36,8 +39,10 @@ namespace ThirdParty.Tests.StreamElements
                     Points = chatter.Amount
                 };
 
-                _viewerCollection.AddOrUpdateAsync(viewer).GetAwaiter().GetResult();
+                _account.Viewers.Add(viewer);
             });
+
+            _accountCollection.AddOrUpdateAsync(_account).GetAwaiter().GetResult();
         }
     }
 }
