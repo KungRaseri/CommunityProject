@@ -4,7 +4,6 @@ using Data.Helpers;
 using Data.Models;
 using FizzWare.NBuilder;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TwitchLib.Api.Models.ThirdParty.UsernameChange;
 
 namespace Data.Seed
 {

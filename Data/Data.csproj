@@ -11,6 +11,6 @@
     <PackageReference Include="MySql.Data" Version="8.0.12" />
     <PackageReference Include="SanderSade.UrlShortener" Version="1.0.0" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
-    <PackageReference Include="TwitchLib" Version="2.1.5" />
+    <PackageReference Include="TwitchLib" Version="3.0.1" />
   </ItemGroup>
 </Project>

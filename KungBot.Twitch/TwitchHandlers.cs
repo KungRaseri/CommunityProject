@@ -143,7 +143,7 @@ namespace KungBot.Twitch
 
         public static void OnConnectionError(object sender, OnConnectionErrorArgs e)
         {
-            Console.WriteLine($"{e.BotUsername}: \n{e.Error.Exception}\n{e.Error.Message}");
+            Console.WriteLine($"{e.BotUsername}: \n{e.Error.Message}");
         }
 
         public static void OnLog(object sender, OnLogArgs e)

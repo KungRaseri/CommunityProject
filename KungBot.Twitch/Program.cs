@@ -2,7 +2,11 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
+using TwitchLib.Api.Core.Enums;
 using TwitchLib.Client;
+using TwitchLib.Communication.Clients;
+using TwitchLib.Communication.Enums;
+using TwitchLib.Communication.Models;
 using TwitchLib.PubSub;
 
 namespace KungBot.Twitch
@@ -35,10 +39,20 @@ namespace KungBot.Twitch
 
         private static void ConfigureServices(IServiceCollection services)
         {
+            var clientOptions = new ClientOptions
+            {
+                MessagesAllowedInPeriod = 15,
+                ThrottlingPeriod = TimeSpan.FromSeconds(30),
+                ClientType = ClientType.Chat,
+                WhispersAllowedInPeriod = 15,
+
+            };
+            var client = new WebSocketClient(clientOptions);
+
             services.AddLogging(configure => configure.AddConsole())
-                    .AddSingleton<TwitchClient>()
-                    .AddSingleton<TwitchPubSub>()
-                    .AddSingleton<KungBot>();
+                        .AddSingleton<TwitchClient>(provider => new TwitchClient(client))
+                        .AddSingleton<TwitchPubSub>()
+                        .AddSingleton<KungBot>();
         }
     }
 }

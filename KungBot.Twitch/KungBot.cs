@@ -4,10 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Data.Helpers;
 using Data.Models;
-using Microsoft.Extensions.Logging;
 using TwitchLib.Client;
 using TwitchLib.Client.Models;
-using TwitchLib.Client.Services;
 using TwitchLib.PubSub;
 
 namespace KungBot.Twitch
@@ -49,14 +47,8 @@ namespace KungBot.Twitch
         {
             var credentials = new ConnectionCredentials(_account?.TwitchBotSettings.Username,
                 _appSettings?.Keys.Twitch.Bot.Oauth);
-
             _client.Initialize(credentials, "KungRaseri", autoReListenOnExceptions: false);
-            _client.ChatThrottler = new MessageThrottler(_client, 15, TimeSpan.FromSeconds(30));
-            _client.WhisperThrottler = new MessageThrottler(_client, 15, TimeSpan.FromSeconds(30));
-
-            await _client.ChatThrottler.StartQueue();
-            await _client.WhisperThrottler.StartQueue();
-
+            
             if (_account == null) throw new Exception("SHITS BROKE");
 
             if (_appSettings != null) _client.AddChatCommandIdentifier(_account.TwitchBotSettings.CommandCharacter);
@@ -66,7 +58,6 @@ namespace KungBot.Twitch
 
         public void Disconnect()
         {
-            _client.ChatThrottler.StopQueue();
             _client.Disconnect();
         }
     }

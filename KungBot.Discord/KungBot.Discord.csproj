@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
     <ProjectGuid>12EE5A56-110B-4CE5-AB0A-E84DD48E297D</ProjectGuid>
   </PropertyGroup>
 
@@ -27,10 +27,10 @@
     <PackageReference Include="Syn.Bot.Channels" Version="1.0.9" />
     <PackageReference Include="Syn.Neuro" Version="1.0.7" />
     <PackageReference Include="Syn.Oryzer" Version="1.3.0" />
-    <PackageReference Include="System.Drawing.Common" Version="4.5.0" />
-    <PackageReference Include="Telegram.Bot" Version="14.9.0" />
-    <PackageReference Include="TwitchLib" Version="2.1.5" />
-    <PackageReference Include="TwitchLib.Client" Version="2.1.4" />
+    <PackageReference Include="System.Drawing.Common" Version="4.5.1" />
+    <PackageReference Include="Telegram.Bot" Version="14.10.0" />
+    <PackageReference Include="TwitchLib" Version="3.0.1" />
+    <PackageReference Include="TwitchLib.Client" Version="3.0.3" />
   </ItemGroup>
 
   <ItemGroup>

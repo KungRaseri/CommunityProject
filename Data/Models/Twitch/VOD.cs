@@ -1,6 +1,6 @@
 ﻿using System;
 using Data.Interfaces;
-using TwitchLib.Api.Models.v5.Videos;
+using TwitchLib.Api.V5.Models.Videos;
 
 namespace Data.Models.Twitch
 {

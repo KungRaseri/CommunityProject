@@ -7,7 +7,7 @@ using Data.Models.Twitch;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ThirdParty;
 using Tweetinvi.Core.Extensions;
-using TwitchLib.Api.Models.v5.Channels;
+using TwitchLib.Api.V5.Models.Channels;
 
 namespace TwitchCrawler
 {
