@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Faker.Net" Version="1.0.3" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="1.3.2" />
     <PackageReference Include="MSTest.TestFramework" Version="1.3.2" />
@@ -19,6 +20,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="FizzWare.NBuilder">
+      <HintPath>C:\Users\count\.nuget\packages\nbuilder\6.0.0\lib\netstandard1.6\FizzWare.NBuilder.dll</HintPath>
+    </Reference>
     <Reference Include="UrlShortener">
       <HintPath>C:\Users\count\.nuget\packages\sandersade.urlshortener\1.0.0\lib\netstandard2.0\UrlShortener.dll</HintPath>
     </Reference>

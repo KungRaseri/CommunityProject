@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using Data.Helpers;
 using Data.Models;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using ThirdParty;

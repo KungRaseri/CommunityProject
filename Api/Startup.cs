@@ -89,6 +89,8 @@ namespace Api
                     });
             });
 
+            services.AddCors();
+
             services.AddWebSocketManager();
         }
 
@@ -101,7 +103,7 @@ namespace Api
                 app.UseCors(cors =>
                 {
                     cors
-                        .WithOrigins(ApplicationSettings.PanelLocalUrl)
+                        .WithOrigins("http://localhost:8081", ApplicationSettings.PanelLocalUrl)
                         .AllowAnyHeader();
                 });
             }

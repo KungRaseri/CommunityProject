@@ -1,4 +1,5 @@
-﻿using Data.Interfaces;
+﻿using Data.Helpers;
+using Data.Interfaces;
 
 namespace Data.Models
 {
@@ -7,6 +8,7 @@ namespace Data.Models
         public const string StreamElementsAPIUrl = "https://api.streamelements.com/kappa/v2";
         public const string PanelLocalUrl = "http://localhost:8080";
         public const string CouchDbUrl = "http://admin:123456789@localhost:5984/";
+        public const string MongoDbUrl = "mongodb://localhost:27017/";
         public const string MySqlUrl = "";
 
         public string _id { get; set; }
